@@ -44,6 +44,7 @@
 
 | Date | Branch | Owner | Integrated by | Result | Evidence |
 |---|---|---|---|---|---|
+| 2026-05-31 | `feature/claude-runner-wrapper-smoke` | Claude Code | Codex | live wrapper smoke validated | Real `scripts/run_claude_task.py` call used strict empty MCP and Claude tools `Read,Write`; Claude wrote only `docs/claude-runner-wrapper-smoke.md`; controller postflight passed. |
 | 2026-05-31 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | safe Claude dispatch wrapper added | `scripts/run_claude_task.py` enforces active lock, branch, strict MCP, budgeted `claude -p`, and postflight changed-file checks; tests use fake Claude for locked and out-of-lock writes. |
 | 2026-05-31 | `feature/claude-p-write-smoke` | Claude Code | Codex | write smoke exposed need for changed-file validator | Claude wrote a locked untracked file; follow-up adds `scripts/check_dual_agent_changes.py` so untracked paths are checked against active locks. |
 | 2026-05-30 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | validated locally | `uv run pytest tests/test_dual_agent_protocol.py -v`; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |
