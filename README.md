@@ -16,6 +16,7 @@
 - [参赛作战计划](docs/competition-plan.md)
 - [提交清单](docs/submission-checklist.md)
 - [推荐项目概念：RFP TrustRoom](docs/project-concept.md)
+- [RFP TrustRoom PRD](docs/rfp-trustroom-prd.md)
 - [飞书 AI 挑战赛经验迁移](docs/feishu-lessons-for-band.md)
 
 ## 不可妥协的验收点
