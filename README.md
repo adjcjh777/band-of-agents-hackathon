@@ -17,6 +17,7 @@
 - [提交清单](docs/submission-checklist.md)
 - [推荐项目概念：RFP TrustRoom](docs/project-concept.md)
 - [RFP TrustRoom PRD](docs/rfp-trustroom-prd.md)
+- [RFP TrustRoom 实现任务计划](docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md)
 - [飞书 AI 挑战赛经验迁移](docs/feishu-lessons-for-band.md)
 
 ## 不可妥协的验收点
