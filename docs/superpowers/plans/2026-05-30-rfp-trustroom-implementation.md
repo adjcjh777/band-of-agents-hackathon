@@ -27,7 +27,8 @@
 - Never commit `.env`, `agent_config.yaml`, API keys, true room ids, true agent keys, private logs or customer data.
 - Claude Code uses MiMo v2.5 Pro in this setup and has no multimodal ability. Assign it bounded text/code/test/doc tasks, not Chrome, screenshot, dashboard visual QA or live Band account tasks.
 - Codex controller owns file locks, shared entry files, final integration and any Chrome / multimodal / live Band validation.
-- Claude Code dispatch should use `claude -p --no-session-persistence --strict-mcp-config --mcp-config '{"mcpServers":{}}'` unless the task explicitly requires configured MCP access.
+- Claude Code write-capable dispatch should use `uv run python scripts/run_claude_task.py --task "<Task>" --prompt-file <file>`.
+- Direct Claude Code read-only dispatch should use `claude -p --no-session-persistence --strict-mcp-config --mcp-config '{"mcpServers":{}}'` unless the task explicitly requires configured MCP access.
 
 ## Dual-Agent Execution Overlay
 
@@ -37,6 +38,7 @@ Coordination reset artifacts:
 - `docs/agent-task-ledger.md`: active file locks, owner, branch, status and required checks.
 - `scripts/check_dual_agent_protocol.py`: machine check for active lock conflicts and forbidden paths.
 - `scripts/check_dual_agent_changes.py`: machine check that changed files, including untracked files, stay within active locked paths.
+- `scripts/run_claude_task.py`: Codex controller wrapper for safe `claude -p` write-capable dispatch.
 - `tests/test_dual_agent_protocol.py`: regression tests for the coordination guardrail.
 
 Parallel execution rule:

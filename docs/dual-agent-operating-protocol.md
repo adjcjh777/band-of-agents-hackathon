@@ -126,7 +126,15 @@ uv run python scripts/check_dual_agent_protocol.py
 
 ## 5. Claude Code 派发模板
 
-默认通过 `claude -p` 非交互派发 Claude Code。对只读或敏感任务，必须显式收口 MCP：
+默认通过 `scripts/run_claude_task.py` 派发写入型 Claude Code 任务。该脚本会先检查 active lock、当前分支、协议和当前 changed paths，再用 strict MCP 调用 `claude -p`，Claude 返回后继续运行 changed-file postflight。
+
+```bash
+uv run python scripts/run_claude_task.py \
+  --task "<Task>" \
+  --prompt-file /path/to/task-prompt.md
+```
+
+对只读或敏感任务直接使用 `claude -p` 时，必须显式收口 MCP：
 
 ```bash
 claude -p \

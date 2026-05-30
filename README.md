@@ -47,6 +47,11 @@ uv run python scripts/check_dual_agent_changes.py --task "<Task>"
 ```
 
 ```bash
+# Codex controller 标准派发入口：读取 active lock 后安全调用 claude -p
+uv run python scripts/run_claude_task.py --task "<Task>" --prompt-file /path/to/task-prompt.md
+```
+
+```bash
 # 启动本地服务
 uv run uvicorn trustroom.web.app:app --reload
 ```
