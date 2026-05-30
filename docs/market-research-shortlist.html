@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Band of Agents Hackathon 赛题市场稀缺性候选池</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #eef3f7;
+      --ink: #172234;
+      --muted: #5e6979;
+      --line: #d8e1ea;
+      --blue: #245fa8;
+      --green: #1f7559;
+      --amber: #8b5b15;
+      --red: #a23b3b;
+      --violet: #6552a8;
+      --shadow: 0 16px 36px rgba(25, 42, 61, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.62 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .shell {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 30px 20px 70px;
+    }
+
+    .hero,
+    .panel,
+    .card,
+    .source {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 30px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.24;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(30px, 4vw, 50px);
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: 23px;
+    }
+
+    h3 {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 920px;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfd;
+    }
+
+    .metric span,
+    .tag,
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 19px;
+    }
+
+    .panel {
+      padding: 24px;
+      margin-top: 18px;
+    }
+
+    .criteria {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .criterion {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .card {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 100%;
+    }
+
+    .card-header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .rank {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 3px;
+    }
+
+    .scores {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .score {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      background: #fbfcfd;
+      min-height: 58px;
+    }
+
+    .score b {
+      display: block;
+      font-size: 17px;
+      color: var(--ink);
+    }
+
+    .score span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      border: 1px solid var(--line);
+      background: #f5f8fb;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .chip.green {
+      color: var(--green);
+      background: #e9f6f0;
+      border-color: #b9e1d0;
+    }
+
+    .chip.amber {
+      color: var(--amber);
+      background: #fff3d8;
+      border-color: #ebcf97;
+    }
+
+    .chip.red {
+      color: var(--red);
+      background: #fff0f0;
+      border-color: #efc3c3;
+    }
+
+    .callout {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      padding: 13px 15px;
+      background: #f8fbff;
+      color: #3f536c;
+    }
+
+    .callout.green {
+      border-left-color: var(--green);
+      background: #f4fbf8;
+    }
+
+    .callout.amber {
+      border-left-color: var(--amber);
+      background: #fffaf0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3f8;
+      color: #41556c;
+      font-size: 13px;
+    }
+
+    tr.keep td:first-child {
+      border-left: 4px solid var(--green);
+    }
+
+    tr.reserve td:first-child {
+      border-left: 4px solid var(--amber);
+    }
+
+    tr.drop td:first-child {
+      border-left: 4px solid var(--red);
+    }
+
+    .decision {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .decision.keep {
+      color: #155d46;
+      background: #e7f5ef;
+      border-color: #b8dfcf;
+    }
+
+    .decision.reserve {
+      color: #735013;
+      background: #fff4dc;
+      border-color: #ecd19a;
+    }
+
+    .decision.drop {
+      color: #7d2929;
+      background: #ffe9e9;
+      border-color: #efbbbb;
+    }
+
+    .source {
+      padding: 18px 22px;
+      margin-top: 18px;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .criteria,
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .scores {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">市场稀缺性调研综合 | 2026-05-30 | 全部子代理完成后整理</p>
+      <h1>7 个 Band of Agents Hackathon 待选赛题</h1>
+      <p class="lead">
+        目标不是找“能做”的题，而是找市场上还缺、又能在一周内用 Band 展示真实多 Agent 协作的产品。下方 7 个不是最终定题，是给你手动筛选的 shortlist。
+      </p>
+      <div class="hero-grid">
+        <div class="metric">
+          <span>已研究方向</span>
+          <strong>18 个</strong>
+        </div>
+        <div class="metric">
+          <span>最终待选</span>
+          <strong>7 个</strong>
+        </div>
+        <div class="metric">
+          <span>统一门槛</span>
+          <strong>3+ Agent through Band</strong>
+        </div>
+        <div class="metric">
+          <span>共同边界</span>
+          <strong>Human approval + replay fallback</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>筛选标准</h2>
+      <div class="criteria">
+        <div class="criterion"><strong>市场稀缺</strong><br>避开单点 AI、普通 chatbot、又一套 dashboard。</div>
+        <div class="criterion"><strong>企业痛点</strong><br>能解释成本、风险、速度、合规或收入影响。</div>
+        <div class="criterion"><strong>Band 必需</strong><br>协作发生在 Band 中间，而不是最终通知。</div>
+        <div class="criterion"><strong>一周可演示</strong><br>可做 live path，也能做 replay fallback。</div>
+        <div class="criterion"><strong>可讲清楚</strong><br>评委 10 分钟内能看懂角色、交接、证据链。</div>
+      </div>
+      <p class="note">评分来自子代理调研与综合判断，满分 5。商业价值和 Band 适配高但市场过拥挤的方向，会被放到备选或淘汰。</p>
+    </section>
+
+    <section class="panel">
+      <h2>最终 7 个待选项</h2>
+      <div class="cards">
+        <article class="card">
+          <div class="card-header">
+            <div class="rank">1</div>
+            <div>
+              <h3>Security CaseLoop</h3>
+              <p class="subtitle">安全事件 / CVE 响应 / 合规调查的多 Agent 事实总线</p>
+            </div>
+          </div>
+          <div class="scores">
+            <div class="score"><b>4</b><span>市场稀缺</span></div>
+            <div class="score"><b>5</b><span>商业价值</span></div>
+            <div class="score"><b>5</b><span>Band 适配</span></div>
+            <div class="score"><b>4</b><span>可行性</span></div>
+          </div>
+          <div class="callout green">最值得优先筛。SOAR、漏洞管理、GRC 都拥挤，但“同一个事件横跨告警、取证、CVE、合规证据的多 Agent 协作链”仍稀缺。</div>
+          <ul>
+            <li><strong>Agent 角色：</strong>SOC 分流、Forensics、Compliance/Legal、Containment/Playbook。</li>
+            <li><strong>Demo 高光：</strong>注入高危 CVE，Band 中形成 timeline、证据、冲突仲裁、人工批准与最终调查包。</li>
+            <li><strong>主要竞品：</strong>Splunk SOAR、IBM QRadar SOAR、Cortex XSOAR、Microsoft Sentinel、ServiceNow SIR、Tenable、Wiz、Drata、Vanta。</li>
+            <li><strong>风险：</strong>安全与合规是高风险叙事，必须明确是 hackathon prototype，不做自动隔离或披露决定。</li>
+          </ul>
+          <div class="chips">
+            <span class="chip green">强推荐</span>
+            <span class="chip">Track 3</span>
+            <span class="chip">审计包</span>
+            <span class="chip">高商业痛点</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="rank">2</div>
+            <div>
+              <h3>RFP TrustRoom</h3>
+              <p class="subtitle">RFP + 安全问卷 + 证据同源的售前协作系统</p>
+            </div>
+          </div>
+          <div class="scores">
+            <div class="score"><b>4</b><span>市场稀缺</span></div>
+            <div class="score"><b>4</b><span>商业价值</span></div>
+            <div class="score"><b>5</b><span>Band 适配</span></div>
+            <div class="score"><b>4</b><span>可行性</span></div>
+          </div>
+          <div class="callout green">非常适合比赛。竞品多做 AI 草拟和内容库，但“提案、DDQ、安全问卷、证据索引在同一协作线程里可回放”仍是空位。</div>
+          <ul>
+            <li><strong>Agent 角色：</strong>需求建模、内容/语义、合规/安全、人工 SME reviewer。</li>
+            <li><strong>Demo 高光：</strong>同一客户 RFP + 安全问卷，触发证据过期冲突，Band 中协商、重写、签核、生成提交包。</li>
+            <li><strong>主要竞品：</strong>Responsive、Loopio、RFP360、Qvidian、PandaDoc、OneTrust、Drata、Vanta、Whistic。</li>
+            <li><strong>风险：</strong>要避免变成“又一个问答库”，核心必须是任务状态机、证据同源和人审闭环。</li>
+          </ul>
+          <div class="chips">
+            <span class="chip green">强推荐</span>
+            <span class="chip">Track 1/3</span>
+            <span class="chip">售前 ROI</span>
+            <span class="chip">一周可做</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="rank">3</div>
+            <div>
+              <h3>PromiseRail</h3>
+              <p class="subtitle">Sales 承诺到 Delivery 执行的交接控制层</p>
+            </div>
+          </div>
+          <div class="scores">
+            <div class="score"><b>4</b><span>市场稀缺</span></div>
+            <div class="score"><b>4</b><span>商业价值</span></div>
+            <div class="score"><b>5</b><span>Band 适配</span></div>
+            <div class="score"><b>4</b><span>可行性</span></div>
+          </div>
+          <div class="callout green">B2B 里很真实的痛点。不要做 CS 平台，要做“销售承诺语义化包 + 交付风险签收 + CS 连续性”的控制层。</div>
+          <ul>
+            <li><strong>Agent 角色：</strong>Sales Extractor、Solution Gap、Delivery Readiness、CS Continuity。</li>
+            <li><strong>Demo 高光：</strong>从 closed-won deal 抽出承诺、验收标准、依赖和风险，阻断不完整交接，生成责任时间线。</li>
+            <li><strong>主要竞品：</strong>Salesforce、HubSpot、Gainsight、ChurnZero、Planhat、Totango、Kantata、monday.com。</li>
+            <li><strong>风险：</strong>CRM/PSA/CS 字段口径复杂，MVP 要用样例数据和清晰 schema。</li>
+          </ul>
+          <div class="chips">
+            <span class="chip green">强推荐</span>
+            <span class="chip">Track 1</span>
+            <span class="chip">市场空位清楚</span>
+            <span class="chip">B2B SaaS</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="rank">4</div>
+            <div>
+              <h3>BugBridge</h3>
+              <p class="subtitle">Support -> Debug -> Engineering -> Reviewer 的可修复工单闭环</p>
+            </div>
+          </div>
+          <div class="scores">
+            <div class="score"><b>4</b><span>市场稀缺</span></div>
+            <div class="score"><b>5</b><span>商业价值</span></div>
+            <div class="score"><b>5</b><span>Band 适配</span></div>
+            <div class="score"><b>3</b><span>可行性</span></div>
+          </div>
+          <div class="callout">痛点非常强，但实现要克制。不要做 triage AI，要做“复现证据包 + debug 上下文 + PR reviewer 闭环”的协作协议。</div>
+          <ul>
+            <li><strong>Agent 角色：</strong>Support Parser、Debug/RCA、Engineer Patch、Reviewer/QA。</li>
+            <li><strong>Demo 高光：</strong>一条客户工单变成可复现包，触发 Sentry/GitHub mock，生成 patch 草案和 reviewer 退回/通过记录。</li>
+            <li><strong>主要竞品：</strong>Zendesk、Freshdesk、JSM、Sentry Seer、Datadog Incident AI、incident.io AI SRE、GitHub Copilot、Linear。</li>
+            <li><strong>风险：</strong>系统集成多，容易漂成“自动修 bug”。必须保留 reviewer 和 replay。</li>
+          </ul>
+          <div class="chips">
+            <span class="chip green">推荐</span>
+            <span class="chip">Track 1/2</span>
+            <span class="chip amber">集成风险</span>
+            <span class="chip">强业务价值</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="rank">5</div>
+            <div>
+              <h3>Finance CloseMesh</h3>
+              <p class="subtitle">费用、发票、审批、月结证据链的端到端协作层</p>
+            </div>
+          </div>
+          <div class="scores">
+            <div class="score"><b>4</b><span>市场稀缺</span></div>
+            <div class="score"><b>4</b><span>商业价值</span></div>
+            <div class="score"><b>5</b><span>Band 适配</span></div>
+            <div class="score"><b>3</b><span>可行性</span></div>
+          </div>
+          <div class="callout">单模块产品很多，但“票据采集 -> 合规评分 -> 动态审批 -> 月结证据包”端到端稀缺，适合用 Band 展示多角色交接。</div>
+          <ul>
+            <li><strong>Agent 角色：</strong>票据采集、合规评分、审批编排、闭账/审计。</li>
+            <li><strong>Demo 高光：</strong>金额阈值、供应商变更、票据缺失三类异常触发不同审批链，最终进入 close checklist。</li>
+            <li><strong>主要竞品：</strong>Concur、Expensify、Ramp、Bill.com、Stampli、Tipalti、FloQast、BlackLine、Trintech、金蝶、用友、钉钉智能财务。</li>
+            <li><strong>风险：</strong>财税规则和 ERP 接入复杂，比赛版要用 mock ERP 和规则兜底。</li>
+          </ul>
+          <div class="chips">
+            <span class="chip green">推荐</span>
+            <span class="chip">Track 1</span>
+            <span class="chip amber">ERP mock</span>
+            <span class="chip">审计链</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="rank">6</div>
+            <div>
+              <h3>Release GateRoom</h3>
+              <p class="subtitle">发布 go/no-go 决策室与可 replay 的证据包</p>
+            </div>
+          </div>
+          <div class="scores">
+            <div class="score"><b>4</b><span>市场稀缺</span></div>
+            <div class="score"><b>4</b><span>商业价值</span></div>
+            <div class="score"><b>5</b><span>Band 适配</span></div>
+            <div class="score"><b>3.5</b><span>可行性</span></div>
+          </div>
+          <div class="callout amber">这是之前 LaunchRoom 的近亲，但不是直接定题。优势是和官方示例、评审标准高度贴合；风险是要避开 incident/CI gate 工具的同质化。</div>
+          <ul>
+            <li><strong>Agent 角色：</strong>Release Manager、Risk/QA/Security、Operations/Rollback、Human Approver。</li>
+            <li><strong>Demo 高光：</strong>候选发布快照、风险争议、一票 NO-GO 阻断、回滚预案、最终决策包。</li>
+            <li><strong>主要竞品：</strong>JSM Change Management、Opsgenie、ServiceNow、Azure DevOps Gates、GitLab Approvals、Harness、LaunchDarkly、PagerDuty、incident.io、Rootly。</li>
+            <li><strong>风险：</strong>容易被评为“又一个发布面板”。必须让 Band 承载决策状态机和证据签署。</li>
+          </ul>
+          <div class="chips">
+            <span class="chip green">推荐</span>
+            <span class="chip">Track 1/2/3</span>
+            <span class="chip amber">需防同质化</span>
+            <span class="chip">评委易懂</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div class="rank">7</div>
+            <div>
+              <h3>Credit Approval CaseLoop</h3>
+              <p class="subtitle">贷款 / KYC / AML / 合规审批的人机协作原型</p>
+            </div>
+          </div>
+          <div class="scores">
+            <div class="score"><b>4</b><span>市场稀缺</span></div>
+            <div class="score"><b>5</b><span>商业价值</span></div>
+            <div class="score"><b>5</b><span>Band 适配</span></div>
+            <div class="score"><b>3</b><span>可行性</span></div>
+          </div>
+          <div class="callout">高价值高风险方向。不能做真实金融建议，要定位为“多人协作审批原型 + 可审计交接 + human approval”。</div>
+          <ul>
+            <li><strong>Agent 角色：</strong>Onboarding/KYC、Risk、Policy/Pricing、Compliance Exception、Human Approver。</li>
+            <li><strong>Demo 高光：</strong>正常、边缘、拒绝三类样例，Band 展示缺件、冲突规则、升级审批和 replay。</li>
+            <li><strong>主要竞品：</strong>nCino、Temenos、Mambu、Fenergo、Alloy、Trulioo、ComplyAdvantage、Pega、Unit21、Feedzai、Camunda、Appian。</li>
+            <li><strong>风险：</strong>监管敏感，文案和 demo 必须 no-overclaim，不提供真实信用/金融建议。</li>
+          </ul>
+          <div class="chips">
+            <span class="chip green">推荐</span>
+            <span class="chip">Track 3</span>
+            <span class="chip red">合规敏感</span>
+            <span class="chip">商业价值高</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>全部候选池与处理意见</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>方向</th>
+            <th>处理</th>
+            <th>评分概览</th>
+            <th>一句话判断</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="keep">
+            <td>Security incident / CVE / compliance investigation</td>
+            <td><span class="decision keep">入 7</span></td>
+            <td>4 / 5 / 5 / 4</td>
+            <td>跨 IR、漏洞、合规的事件级事实总线稀缺，商业痛点最强。</td>
+          </tr>
+          <tr class="keep">
+            <td>RFP / enterprise proposal / security questionnaire</td>
+            <td><span class="decision keep">入 7</span></td>
+            <td>4 / 4 / 5 / 4</td>
+            <td>把提案和安全问卷做成证据同源协作链，赛场可解释性强。</td>
+          </tr>
+          <tr class="keep">
+            <td>Sales-to-delivery handoff</td>
+            <td><span class="decision keep">入 7</span></td>
+            <td>4 / 4 / 5 / 4</td>
+            <td>销售承诺语义化与交付签收是明确空位，B2B 痛点真实。</td>
+          </tr>
+          <tr class="keep">
+            <td>Support -> Debug -> Engineering -> Reviewer</td>
+            <td><span class="decision keep">入 7</span></td>
+            <td>4 / 5 / 5 / 3</td>
+            <td>价值强，风险在集成；必须做复现证据包和 reviewer 闭环。</td>
+          </tr>
+          <tr class="keep">
+            <td>Finance ops: invoice / expense / month-end close</td>
+            <td><span class="decision keep">入 7</span></td>
+            <td>4 / 4 / 5 / 3</td>
+            <td>单点拥挤，但端到端审批到月结证据链有空位。</td>
+          </tr>
+          <tr class="keep">
+            <td>Release war room / launch readiness / go-no-go</td>
+            <td><span class="decision keep">入 7</span></td>
+            <td>4 / 4 / 5 / 3.5</td>
+            <td>评委易懂，Band 适配满；注意不要直接锁定为 LaunchRoom。</td>
+          </tr>
+          <tr class="keep">
+            <td>Financial services approval / KYC / AML</td>
+            <td><span class="decision keep">入 7</span></td>
+            <td>4 / 5 / 5 / 3</td>
+            <td>价值高但合规敏感，适合做审批协作原型。</td>
+          </tr>
+          <tr class="reserve">
+            <td>Launch campaign legal-brand review</td>
+            <td><span class="decision reserve">备选</span></td>
+            <td>4 / 4 / 5 / 4</td>
+            <td>文案和营销工具太拥挤，除非聚焦受监管行业法务前置。</td>
+          </tr>
+          <tr class="reserve">
+            <td>Multi-agent software development / PR review / QA</td>
+            <td><span class="decision reserve">备选</span></td>
+            <td>4 / 4 / 5 / 4</td>
+            <td>Codeband、Copilot、Cursor 等太贴脸；需要极细分企业流程才安全。</td>
+          </tr>
+          <tr class="reserve">
+            <td>Legal contract review / redline / approval</td>
+            <td><span class="decision reserve">备选</span></td>
+            <td>3 / 5 / 5 / 4</td>
+            <td>商业价值高，但红线审查功能层非常拥挤。</td>
+          </tr>
+          <tr class="reserve">
+            <td>Procurement / vendor risk / approval</td>
+            <td><span class="decision reserve">备选</span></td>
+            <td>3 / 4 / 5 / 4</td>
+            <td>企业套件多，适合轻量供应商风险审批 demo，但稀缺性不如前 7。</td>
+          </tr>
+          <tr class="reserve">
+            <td>Healthcare coordination / referral / PA</td>
+            <td><span class="decision reserve">备选</span></td>
+            <td>3 / 4 / 5 / 4</td>
+            <td>跨 EHR/payer 状态机有机会，但医疗数据和 no-diagnosis 边界要很谨慎。</td>
+          </tr>
+          <tr class="reserve">
+            <td>Insurance claims / policy coordination</td>
+            <td><span class="decision reserve">备选</span></td>
+            <td>3 / 4 / 5 / 3</td>
+            <td>保单条款级协调有空位，但核心系统与合规负担较重。</td>
+          </tr>
+          <tr class="reserve">
+            <td>Cross-team operational reporting / PMO risk radar</td>
+            <td><span class="decision reserve">备选</span></td>
+            <td>3 / 4 / 5 / 4</td>
+            <td>Band 适配强，但很容易被看成又一个 dashboard。</td>
+          </tr>
+          <tr class="reserve">
+            <td>HR onboarding/offboarding / access revocation</td>
+            <td><span class="decision reserve">备选</span></td>
+            <td>3 / 4 / 4 / 3</td>
+            <td>权限自动化拥挤，差异点只在知识资产迁移。</td>
+          </tr>
+          <tr class="drop">
+            <td>Customer support escalation governance</td>
+            <td><span class="decision drop">暂不入 7</span></td>
+            <td>3 / 4 / 5 / 4</td>
+            <td>AI 客服本体非常拥挤，治理层能做但差异不如 BugBridge。</td>
+          </tr>
+          <tr class="drop">
+            <td>Generic product launch campaign</td>
+            <td><span class="decision drop">暂不入 7</span></td>
+            <td>4 / 4 / 5 / 4</td>
+            <td>如果不加法务/合规门禁，会像 Jasper/Copy.ai/Adobe 生态里的普通营销工具。</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">评分顺序：市场稀缺 / 商业价值 / Band 适配 / 一周可行性。备选不代表差，只是相对更拥挤、风险更高，或更难证明市场空位。</p>
+    </section>
+
+    <section class="panel">
+      <h2>我的产品经理判断</h2>
+      <ol>
+        <li><strong>优先筛选 1-4：</strong>Security CaseLoop、RFP TrustRoom、PromiseRail、BugBridge。它们都有清楚的市场空位和强 Band 协作证据。</li>
+        <li><strong>如果想打监管高价值：</strong>Credit Approval CaseLoop 很有冲击力，但必须把边界讲清楚，不碰真实金融建议。</li>
+        <li><strong>如果想最贴官方与最容易讲：</strong>Release GateRoom 是好讲的题，但需要和普通 release/incident 工具拉开距离。</li>
+        <li><strong>如果想做运营财务闭环：</strong>Finance CloseMesh 有明确企业价值，但 demo 需要 mock ERP 和月结证据包。</li>
+        <li><strong>不要现在锁定 LaunchRoom：</strong>它仍在 7 个候选里，但不是唯一答案；我们先让你从这 7 个里筛。</li>
+      </ol>
+    </section>
+
+    <section class="source">
+      <h2>调研来源说明</h2>
+      <p>
+        本页面综合 18 个 gpt-5.3-codex-spark 子代理的市场调研输出、Chrome 实读官方比赛页与 Band 文档结果整理。官方硬约束见
+        <a href="chrome-official-reading.html">chrome-official-reading.html</a>。
+      </p>
+      <p class="note">
+        本页用于赛题筛选，不是最终 PRD。下一步应由你先筛掉不感兴趣或不适合个人资源的方向，再进入产品定义、demo 主路径和技术架构。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
