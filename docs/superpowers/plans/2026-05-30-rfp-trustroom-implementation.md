@@ -15,13 +15,34 @@
 ## Goal Execution Contract
 
 - Read `README.md`, `docs/rfp-trustroom-prd.md`, `docs/competition-plan.md`, and `docs/superpowers/specs/2026-05-30-trustroom-governed-evolution-design.md` before starting implementation tasks.
+- For Codex + Claude Code parallel work, also read `docs/dual-agent-operating-protocol.md` and `docs/agent-task-ledger.md`.
 - Do not read, edit, stage, commit or cite `pilotdeck/` unless the user explicitly asks for it.
 - Before edits: `git status --short --branch && git pull --ff-only`.
+- Before dispatching or integrating dual-agent work: `uv run python scripts/check_dual_agent_protocol.py`.
 - After edits: run the task verification plus `git diff --check`.
 - Commit and push the current branch. Do not assume the branch is `main`.
 - Every commit must include only files for the completed task.
 - If a task is blocked, write the blocker under that task and continue only if the next task is independent.
 - Never commit `.env`, `agent_config.yaml`, API keys, true room ids, true agent keys, private logs or customer data.
+- Claude Code uses MiMo v2.5 Pro in this setup and has no multimodal ability. Assign it bounded text/code/test/doc tasks, not Chrome, screenshot, dashboard visual QA or live Band account tasks.
+- Codex controller owns file locks, shared entry files, final integration and any Chrome / multimodal / live Band validation.
+
+## Dual-Agent Execution Overlay
+
+Coordination reset artifacts:
+
+- `docs/dual-agent-operating-protocol.md`: canonical collaboration rules.
+- `docs/agent-task-ledger.md`: active file locks, owner, branch, status and required checks.
+- `scripts/check_dual_agent_protocol.py`: machine check for active lock conflicts and forbidden paths.
+- `tests/test_dual_agent_protocol.py`: regression tests for the coordination guardrail.
+
+Parallel execution rule:
+
+- A task can start only after Codex controller adds it to the ledger as `active`.
+- Two active rows cannot lock the same file or parent/child path.
+- Shared files such as `README.md`, `pyproject.toml`, `uv.lock`, `AGENTS.md` and public submission docs stay controller-owned unless the ledger explicitly assigns them.
+- Claude Code can draft independent docs or code, but Codex controller integrates shared docs and final submission surfaces.
+- Every agent branch must return modified files, commands run, risks and status before controller merge.
 
 ## Enterprise Product Rules
 

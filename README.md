@@ -19,6 +19,9 @@
 - [RFP TrustRoom PRD](docs/rfp-trustroom-prd.md)
 - [RFP TrustRoom Enterprise Governed Evolution Spec](docs/superpowers/specs/2026-05-30-trustroom-governed-evolution-design.md)
 - [RFP TrustRoom 实现任务计划](docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md)
+- [Codex + Claude Code 双 Agent 协作协议](docs/dual-agent-operating-protocol.md)
+- [双 Agent 任务台账](docs/agent-task-ledger.md)
+- [双 Agent 协调重置计划](docs/superpowers/plans/2026-05-30-dual-agent-coordination-reset.md)
 - [飞书 AI 挑战赛经验迁移](docs/feishu-lessons-for-band.md)
 
 ## 本地运行
@@ -31,6 +34,11 @@ uv sync
 ```bash
 # 回放演示占位：用于本地复现与验收展示
 uv run python scripts/run_trustroom_replay.py --replay reports/trustroom_replay.example.jsonl
+```
+
+```bash
+# 双 Agent 并行前/集成前检查：确保 active 文件锁不冲突
+uv run python scripts/check_dual_agent_protocol.py
 ```
 
 ```bash
