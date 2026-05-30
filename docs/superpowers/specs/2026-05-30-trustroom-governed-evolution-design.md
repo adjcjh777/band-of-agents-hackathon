@@ -12,6 +12,30 @@ RFP TrustRoom 的主线仍然是 Band of Agents Hackathon 的参赛项目：用 
 
 > RFP TrustRoom is a Band-coordinated RFP response room where specialized agents collaborate on answers, then review their own coordination trace to propose safe, human-approved workflow improvements for the next customer response.
 
+### 1.1 Decision Summary
+
+本设计选择 **Governed Evolution over Autonomous Self-Rewriting**。
+
+要采纳的是自进化 Agent 的反馈循环、经验沉淀、自动压测和工作流调优思想；不采纳的是赛期内直接做源码自重写、模型微调、强化学习训练或不可控自动部署。这样可以把项目做厚，同时仍然服务官方赛题：让 Band 中的多 Agent 协作、审查、升级、决策和交接变得更可见。
+
+核心产品承诺：
+
+- 先完成 RFP / 安全问卷回答包，这是业务主路径。
+- 再展示系统如何从一次协作 trace 中提出下一轮流程改进，这是原创亮点。
+- 所有改进都以 proposal 形式出现，必须有人审、可评估、可回滚。
+- live、mock、replay 使用同一种事件和经验模型，防止演示路径割裂。
+
+### 1.2 Source Material Triage
+
+| 来源 | 采纳程度 | 采纳内容 | 不采纳内容 |
+|---|---|---|---|
+| MOSS | Concept only | 借鉴“Agent 可以提出代码/配置级改进”的想法 | 不做 live path 源码自重写，不让 Agent 直接改生产代码 |
+| EvoAgentX | Strong inspiration | 借鉴自动构建、评估、优化多 Agent workflow 的闭环 | 不直接引入完整框架作为核心依赖，避免赛期集成风险 |
+| Dr. Zero | Strong inspiration | 借鉴 data-free 自生成挑战题，用于生成 stress tests | 不实现 HRPO、RL 或训练流程 |
+| OpenAI Cookbook | Strong inspiration | 借鉴产出、反馈、meta prompting、评估、部署的工程闭环 | 不做真实生产自动重训 |
+| StuLife / ELL | Light inspiration | 借鉴 experience-driven lifelong learning，落成 ExperienceLedger | 不接入 benchmark 或模拟长期人生环境 |
+| XMUDeepLIT survey | Framing | 用作分类与叙事框架：model-centric 到 environment-driven | 不把项目转成研究综述或 benchmark 项目 |
+
 ## 2. Hackathon Fit
 
 官方赛题要求参赛者构建跨框架多 Agent 系统，至少 3 个 Agent 通过 Band 在 planning、execution、review、decision-making 或 task handoff 中协作。Band 必须是实际协作层，而不是最终通知系统或简单输出频道。
@@ -150,6 +174,43 @@ flowchart LR
 | Evaluation Harness | Readiness checks, stress tests, proposal validation | Domain Core, Replay Store |
 | Dashboard | Judge-facing view of business flow, Band collaboration, evolution and evidence | API, Replay Store |
 
+### 5.2 Execution Modes
+
+| Mode | Purpose | Band Dependency | Must Show | Must Not Claim |
+|---|---|---|---|---|
+| `mock` | deterministic local development before access is finalized | none | full workflow shape, agent roles, handoffs, risk gates, proposal generation | real Band collaboration |
+| `replay` | stable judge fallback and video fallback | none | previously captured or authored event log, replay badge, same core timeline schema | live run, current room state |
+| `live` | official hackathon evidence path | real Band account, room, remote agents | visible Band room or exported Band evidence, at least 3 agents, real handoff/review events | production reliability, enterprise compliance |
+
+All three modes must write `TimelineEvent` records. Dashboard rendering must depend on the event schema, not on mode-specific UI branches. This keeps the demo honest and makes replay a fallback rather than a separate fake product.
+
+### 5.3 Component Boundaries
+
+| Component | Input | Output | Hard Boundary |
+|---|---|---|---|
+| `sample_loader` | fictional sample pack files | validated intake payload | never reads real customer files by default |
+| `state_machine` | current run state, requested transition | accepted transition or explicit error | no Band calls, no LLM calls |
+| `agent_runtime` | `TaskEnvelope`, current run context | `AgentResult`, `TimelineEvent[]` | no direct writes to final pack without state machine |
+| `band_adapter` | room/message/event commands | normalized `TimelineEvent` mirror | no business logic, no secret exposure |
+| `replay_store` | event records | ordered replay timeline | replay always labeled replay |
+| `experience_ledger` | reviewed proposals | active/rejected lessons | no unreviewed lesson becomes active |
+| `evaluation_harness` | run artifacts, proposals, stress tests | pass/fail report with reasons | never changes workflow state by itself |
+| `dashboard` | API/read models | judge-facing pages | no secret, true room id, true agent key, or raw private trace |
+
+### 5.4 Architecture Options Considered
+
+**Option A: Thin MVP with replay timeline only**
+
+This is fastest, but it risks looking like a scripted local demo. It proves basic workflow feasibility but does not create enough originality beyond ordinary multi-agent orchestration.
+
+**Option B: Full self-evolving agent platform**
+
+This is more novel, but too broad for the hackathon. Source rewriting, RL, automated deployment and benchmark claims would pull the project away from Band's core challenge and create safety/overclaim risk.
+
+**Option C: RFP TrustRoom with Governed Evolution**
+
+This is the selected option. It keeps RFP response as the concrete enterprise workflow, uses Band as the visible collaboration layer, and adds a governed post-run improvement loop that is useful, understandable and demoable within the build window.
+
 ## 6. Core Workflow
 
 ### 6.1 Normal RFP Run
@@ -176,6 +237,17 @@ flowchart LR
 7. Next run loads applicable lessons as run context.
 8. Challenge Generator uses accepted lessons and failure patterns to create stress tests.
 9. Evaluation Harness checks whether the new workflow handles the stress tests safely.
+
+### 6.3 Failure Handling And Rollback
+
+The system should fail closed:
+
+- If evidence is missing, stale or conflicting, the affected answer moves to `needs_review` or `blocked`.
+- If Compliance Reviewer flags overclaim language, the draft cannot enter final pack until revised or human-approved.
+- If an evolution proposal lacks supporting event ids, it remains `pending_review` and cannot become a lesson.
+- If a proposal would weaken human approval, no-overclaim rules or evidence requirements, the evaluation harness rejects it.
+- If a previously accepted lesson causes a readiness check failure, it can be disabled by marking the lesson inactive and recording `rollback_note`.
+- If live Band access fails, the run switches to mock or replay only with an explicit mode badge; it does not silently continue as live.
 
 ## 7. Agent Roles
 
@@ -380,6 +452,50 @@ The recommended 5-minute demo flow:
 - No production deployment claim.
 - No legal, compliance, security certification or automated bidding decision.
 - No hidden conversion of replay output into a fake live demo.
+
+### 13.5 Changes Required To Existing Implementation Plan
+
+The current implementation plan should be revised before coding beyond T0:
+
+1. Add `T0.5: Architecture and governance contracts`.
+   - Commit this spec.
+   - Update README/PRD references to describe Governed Evolution as a controlled post-run loop, not autonomous self-modification.
+
+2. Split current `T1: Core contracts and state machine`.
+   - `T1a: Domain contracts` for existing RFP objects plus `EvolutionProposal`, `ExperienceLesson`, `StressTestCase`, `TaskEnvelope`.
+   - `T1b: Workflow state machine` with `post_run_review` and `evolution_review`.
+   - `T1c: Collaboration event schema` with mode-independent `TimelineEvent`.
+
+3. Move Band adapter boundary earlier.
+   - Create mock/replay adapter before sample data and dashboard work.
+   - Delay only real `LiveBandAdapter` until official access is confirmed.
+
+4. Expand sample/replay fixture requirements.
+   - Replay must include normal RFP workflow plus at least one evolution proposal, one human decision and one accepted lesson.
+   - Stress test fixture must include at least four trap types.
+
+5. Expand dashboard MVP.
+   - Initial dashboard must include a Governed Evolution section, not only final answer pack.
+   - Mode badges and replay honesty are required in the first dashboard version.
+
+6. Move public/secret safety earlier.
+   - Add `.env.example`, no-secret scan and public repo strategy before live Band work.
+   - Do not push secrets, true room ids, true agent keys or private logs.
+
+7. Add kickoff and submission-day Chrome review gates.
+   - Kickoff gate: confirm official access, promo code, live Band constraints and X402 page ambiguity.
+   - Submission gate: re-check deadline, required fields, prize/partner terms and submission format.
+
+### 13.6 Acceptance Criteria For This Spec
+
+This architecture is ready for implementation planning when all of the following are true:
+
+- The main demo can still be explained as RFP / security questionnaire response in one sentence.
+- At least 3 agent roles collaborate through Band or Band-compatible event mirrors.
+- Governed Evolution is visible in the timeline and dashboard.
+- No proposal becomes active without human approval.
+- The replay path demonstrates the same core workflow as live, with clear labeling.
+- The implementation plan has been updated so each new domain object and workflow state has tests.
 
 ## 14. References
 
