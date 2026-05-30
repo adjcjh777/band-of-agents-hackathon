@@ -10,7 +10,7 @@
 ## 项目边界
 
 - 当前项目是 Band of Agents Hackathon 的参赛准备与后续实现仓库。
-- 默认主线是 `LaunchRoom`：一个用 Band 协调多 Agent 的企业发布评审 / release war room 原型。
+- 默认主线是 `RFP TrustRoom`：一个用 Band 协调多 Agent 的 RFP / 安全问卷 / 证据同源售前协作原型。
 - `pilotdeck/` 是另一个 agent 的工作目录，默认不要读取、修改、提交或引用；只有用户明确要求时才处理。
 - 不要提交 `.env`、`agent_config.yaml`、API key、真实 room id、真实 agent key、日志里的敏感标识或本地私密数据。
 

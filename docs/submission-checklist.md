@@ -29,7 +29,7 @@
 - [ ] Demo 展示 Band room 或 Band 协作日志。
 - [ ] 有任务交接：A Agent 的输出成为 B Agent 的输入。
 - [ ] 有 reviewer / risk / QA 的反驳、补证据或 veto。
-- [ ] 有最终业务决策：go、no-go、conditional go。
+- [ ] 有最终业务产物：answer pack、security questionnaire 回答表、evidence index。
 - [ ] 有 human approval 或 escalation。
 - [ ] 有审计时间线。
 - [ ] 有 live path 和 replay fallback 的明确标注。
@@ -52,37 +52,37 @@
 - [ ] License 使用 MIT 或兼容 MIT。
 - [ ] `docs/judge-10-minute-experience.md` 或等价材料。
 - [ ] `docs/demo-runbook.md` 或等价材料。
-- [ ] `reports/launchroom_replay.example.jsonl` 或录屏中可见的 Band live evidence。
+- [ ] `reports/trustroom_replay.example.jsonl` 或录屏中可见的 Band live evidence。
 
 ## 建议提交文案草稿
 
 Project Title:
 
-LaunchRoom
+RFP TrustRoom
 
 Short Description:
 
-An enterprise release war room where specialized AI agents coordinate through Band to plan, review, test, and approve software launches with a visible audit trail.
+A multi-agent RFP and security questionnaire response room where specialized AI agents coordinate through Band to draft answers, verify evidence, review risk, and produce an auditable submission pack.
 
 Long Description 草稿：
 
-LaunchRoom turns a messy enterprise software release review into a coordinated multi-agent workflow. A human submits a launch request, then specialized agents for product analysis, engineering planning, QA, and risk review collaborate through a Band room. They share structured context, hand off tasks, challenge each other, escalate risks, and produce a go/no-go release recommendation with an auditable timeline. Band is the core collaboration layer: agents are routed with @mentions, recruit peers when needed, exchange state, and post events that make the workflow transparent. The result is a practical enterprise workflow for teams that need faster release decisions without losing review quality, traceability, or human control.
+RFP TrustRoom turns a messy B2B RFP and security questionnaire response into a coordinated multi-agent workflow. A human uploads customer requirements, questionnaire rows, and company knowledge snippets, then specialized agents for requirement decomposition, evidence retrieval, answer drafting, and compliance review collaborate through a Band room. They share structured context, hand off tasks, challenge unsupported claims, escalate high-risk answers to a human SME, and produce a submission pack with an auditable timeline. Band is the core collaboration layer: agents are routed with @mentions, exchange state, recruit reviewers when needed, and post events that make the workflow transparent. The result is a practical enterprise workflow for teams that need faster proposal responses without losing evidence quality, traceability, or human control.
 
 Technology tags:
 
-Band, Band SDK, multi-agent systems, enterprise workflow, release management, AI agents, audit trail, human-in-the-loop, Python, FastAPI, AI/ML API
+Band, Band SDK, multi-agent systems, enterprise workflow, RFP response, security questionnaire, evidence management, AI agents, audit trail, human-in-the-loop, Python, FastAPI, AI/ML API
 
 ## 视频结构
 
-0:00-0:25 痛点：企业上线评审卡在跨角色沟通。
+0:00-0:25 痛点：RFP 和安全问卷卡在售前、产品、安全、法务、SME 跨角色沟通。
 
-0:25-0:55 解决方案：LaunchRoom 的 Agent 角色和 Band 协作层。
+0:25-0:55 解决方案：RFP TrustRoom 的 Agent 角色和 Band 协作层。
 
-0:55-3:30 Live demo：提交上线请求，3-4 个 Agent 通过 Band 协作、交接、审查、升级。
+0:55-3:30 Live demo：上传 RFP / 安全问卷，3-4 个 Agent 通过 Band 协作、交接、审查、升级。
 
 3:30-4:20 技术结构：Band room、Agent API、SDK、events、dashboard。
 
-4:20-5:00 商业价值与下一步：更快发布、可审计、可控、可扩展到合规/采购/客服升级。
+4:20-5:00 商业价值与下一步：更快售前响应、证据可追溯、风险可控、可扩展到 vendor due diligence / procurement。
 
 ## 飞书经验带来的额外提交 gate
 

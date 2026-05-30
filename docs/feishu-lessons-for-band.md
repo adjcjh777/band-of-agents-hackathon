@@ -11,7 +11,7 @@
 Band 这次也要这样收敛：
 
 - 不讲“我们有很多 Agent”。
-- 要讲“企业发布/决策流程里，多角色协作为什么会卡住”。
+- 要讲“RFP / 安全问卷响应里，多角色协作、证据复用和风险签核为什么会卡住”。
 - Band 的价值不是聊天窗口，而是 Agent identity、room routing、shared context、handoff、state、audit。
 - 每个 demo 动作都要回答：这个动作如果没有 Band，会不会更难做？
 
@@ -23,12 +23,12 @@ Band 这次照搬这个结构，准备一条 `10 分钟评委路线`：
 
 | 时间 | 评委看到什么 | 目的 |
 |---|---|---|
-| 0:00-1:00 | 企业发布评审痛点 | 先让评委相信这是实际企业流程 |
-| 1:00-2:00 | LaunchRoom 输入一个发布请求 | 建立具体场景 |
+| 0:00-1:00 | RFP / 安全问卷响应痛点 | 先让评委相信这是实际企业流程 |
+| 1:00-2:00 | RFP TrustRoom 导入 RFP、问卷和知识库片段 | 建立具体场景 |
 | 2:00-4:00 | 3 个以上 Agent 在 Band room 中被 @mention 并分工 | 证明 Band 是协作层 |
-| 4:00-6:00 | QA / Risk Agent 反驳、补证据或 veto | 证明不是线性自动化 |
+| 4:00-6:00 | Evidence / Compliance Agent 反驳、补证据或 veto | 证明不是线性自动化 |
 | 6:00-7:30 | Human approval / escalation | 证明企业可控 |
-| 7:30-9:00 | Dashboard 展示 timeline、state、handoff、final decision | 证明可观察和可审计 |
+| 7:30-9:00 | Dashboard 展示 timeline、state、handoff、final submission pack | 证明可观察和可审计 |
 | 9:00-10:00 | 讲边界、fallback、下一步 | 避免 overclaim |
 
 ## 3. 必须有 replay fallback
@@ -57,7 +57,7 @@ Band 这次的边界：
 - 已完成 hackathon demo。
 - 至少 3 个 Agent 通过 Band 协作。
 - Band room / @mention / handoff / events / shared state 在 demo 中可见。
-- LaunchRoom 展示了一个企业发布评审流程的可行原型。
+- RFP TrustRoom 展示了一个 RFP / 安全问卷响应流程的可行原型。
 
 不能说：
 
@@ -73,8 +73,8 @@ Band 这次的边界：
 
 | 飞书项目证据 | Band 版对应物 |
 |---|---|
-| `reports/demo_replay.json` | `reports/launchroom_replay.jsonl` |
-| readiness check | `scripts/check_launchroom_readiness.py` |
+| `reports/demo_replay.json` | `reports/trustroom_replay.jsonl` |
+| readiness check | `scripts/check_trustroom_readiness.py` |
 | 评委 10 分钟体验包 | `docs/judge-10-minute-experience.md` |
 | benchmark report | `docs/demo-evidence-report.md` |
 | no-overclaim 边界 | `README.md` 顶部和提交材料 |
@@ -90,7 +90,7 @@ Band 这次的边界：
 - task state
 - handoff source and target
 - decision / risk / blocker
-- final recommendation
+- final submission pack
 
 ## 6. 评审材料要面向人，不面向内部工程字段
 
@@ -98,7 +98,7 @@ Band 这次的边界：
 
 Band 这次也一样：
 
-- 页面第一屏讲“这次发布能不能上线，为什么”。
+- 页面第一屏讲“这份 RFP / 安全问卷能不能提交，哪些回答需要补证据或人工签核”。
 - Agent timeline 用角色名，不用内部 UUID。
 - 内部 room id、API key、agent credentials 永远不展示。
 - 日志字段只在 technical appendix 里出现。
@@ -110,8 +110,8 @@ Band 这次也一样：
 - `docs/judge-10-minute-experience.md`
 - `docs/demo-runbook.md`
 - `docs/demo-evidence-report.md`
-- `scripts/check_launchroom_readiness.py`
-- `scripts/run_launchroom_replay.py`
-- `reports/launchroom_replay.example.jsonl`
+- `scripts/check_trustroom_readiness.py`
+- `scripts/run_trustroom_replay.py`
+- `reports/trustroom_replay.example.jsonl`
 
 这些文件不需要开赛前全部完成，但开赛后第一天至少要有骨架。
