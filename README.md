@@ -1,0 +1,35 @@
+# Band of Agents Hackathon 参赛准备包
+
+最后更新：2026-05-29
+
+官方入口：https://lablab.ai/ai-hackathons/band-of-agents-hackathon
+
+## 当前判断
+
+这个比赛的核心不是“做一个 Agent 应用”，而是证明 Band 真正承担了多 Agent 协作层：Agent 之间需要通过 Band 沟通、共享结构化上下文、招募/邀请其他 Agent、移交任务、协调状态，并在 demo 中让这些行为可见。
+
+推荐主线：`LaunchRoom`，一个面向企业软件发布 / 产品上线的多 Agent 作战室。它把需求澄清、实现计划、风险/合规审查、测试与发布准备放进同一个 Band room，让至少 3 个专职 Agent 通过 Band 完成一次真实的上线决策流。
+
+## 本地文档
+
+- [官方页面调研](docs/official-research.md)
+- [参赛作战计划](docs/competition-plan.md)
+- [提交清单](docs/submission-checklist.md)
+- [推荐项目概念：LaunchRoom](docs/project-concept.md)
+- [飞书 AI 挑战赛经验迁移](docs/feishu-lessons-for-band.md)
+
+## 不可妥协的验收点
+
+- 至少 3 个 Agent 通过 Band 协作。
+- Band 必须在核心工作流中使用，不能只是最终通知渠道。
+- Demo 必须看得见 Agent 角色、交接、共享上下文、状态变化和最终业务价值。
+- 提交必须包含公开视频/演示、公开 GitHub、可访问 Demo URL、封面图、短描述、长描述、技术标签。
+- 代码和提交材料要保持原创，并按官方页面要求兼容 MIT 许可。
+
+## 近期动作
+
+1. 注册并确认 lablab.ai、Band、Band Discord、lablab Discord、AI/ML API 访问。
+2. 开赛前先跑通 Band SDK 的最小远程 Agent：创建 Remote Agent、拿 Agent UUID/API key、`uv add "band-sdk[langgraph]"`、本地验证连接。
+3. 用 `LaunchRoom` 先做 15 分钟 demo 剧本，而不是先写大系统：一个上线请求进入，3-4 个 Agent 协作产出发布决策。
+4. 开赛后第一天必须把 Band room 里的端到端协作录下来，后面所有功能都围绕这条演示链路增强。
+5. 参考飞书项目的做法，第一天就补 replay fallback、评委 10 分钟体验包和 no-overclaim 边界，不等最后一天再补材料。
