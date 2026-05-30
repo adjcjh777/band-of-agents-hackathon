@@ -146,7 +146,7 @@ claude -p \
   '<prompt>'
 ```
 
-注意：`--mcp-config '{}'` 不是合法配置；必须使用 `{"mcpServers":{}}`。写入型任务只允许最小工具集合，例如 `Read,Write,Bash`，并通过 `--allowedTools` 限制 Bash 命令。
+注意：`--mcp-config '{}'` 不是合法配置；必须使用 `{"mcpServers":{}}`。写入型任务默认只给 Claude Code `Read,Write`；required checks 由 `scripts/run_claude_task.py` 在 Claude 返回后执行。只有任务确实需要 shell 操作时，才临时打开 Bash，并必须额外说明原因和允许命令。
 
 每次给 Claude Code 的 prompt 必须包含：
 

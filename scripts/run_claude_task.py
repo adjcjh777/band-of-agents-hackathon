@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import shlex
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -20,6 +22,10 @@ from check_dual_agent_protocol import (
 ROOT = Path(__file__).resolve().parents[1]
 STRICT_EMPTY_MCP_CONFIG = '{"mcpServers":{}}'
 DEFAULT_MAX_BUDGET_USD = "0.15"
+MANDATORY_POSTFLIGHT_COMMANDS = (
+    "uv run python scripts/check_dual_agent_protocol.py",
+    "git diff --check",
+)
 
 
 @dataclass(frozen=True)
@@ -94,10 +100,8 @@ def build_controller_prompt(context: DispatchContext, task_prompt: str) -> str:
 - 不要提交 .env、agent_config.yaml、API key、真实 room id、真实 agent key、敏感日志。
 - MiMo v2.5 Pro 没有多模态能力；不要承担截图、视觉、Chrome 登录态页面检查。
 - 需要改 locked paths 之外的文件时立即停止并返回 NEEDS_CONTEXT。
-- 完成后运行 required checks：{required_checks}
-- 还必须运行：uv run python scripts/check_dual_agent_protocol.py
-- 还必须运行：uv run python scripts/check_dual_agent_changes.py --task "{context.task}"
-- 还必须运行：git diff --check
+- 不要运行 Bash、git、uv、python 或 shell 命令；Codex controller wrapper 会在你返回后执行检查。
+- required checks 将由 Codex controller wrapper 执行：{required_checks}
 
 返回格式必须是 JSON 对象，字段：
 - status: DONE, DONE_WITH_CONCERNS, NEEDS_CONTEXT, BLOCKED
@@ -112,18 +116,7 @@ def build_controller_prompt(context: DispatchContext, task_prompt: str) -> str:
 
 
 def default_allowed_tools(task: str, required_checks: str) -> list[str]:
-    tools = [
-        "Read",
-        "Write",
-        "Bash(git status --short --branch)",
-        "Bash(uv run python scripts/check_dual_agent_protocol.py)",
-        f'Bash(uv run python scripts/check_dual_agent_changes.py --task "{task}")',
-        f"Bash(uv run python scripts/check_dual_agent_changes.py --task {task})",
-        "Bash(git diff --check)",
-    ]
-    for command in split_required_checks(required_checks):
-        tools.append(f"Bash({command})")
-    return dedupe(tools)
+    return ["Read", "Write"]
 
 
 def split_required_checks(required_checks: str) -> list[str]:
@@ -184,6 +177,37 @@ def run_postflight(context: DispatchContext) -> list[str]:
     )
 
 
+def postflight_commands(context: DispatchContext) -> list[str]:
+    changed_file_check = (
+        "uv run python scripts/check_dual_agent_changes.py "
+        f"--task {shlex.quote(context.task)}"
+    )
+    return dedupe(
+        split_required_checks(context.lock.required_checks)
+        + list(MANDATORY_POSTFLIGHT_COMMANDS)
+        + [changed_file_check]
+    )
+
+
+def run_postflight_commands(context: DispatchContext) -> list[str]:
+    errors: list[str] = []
+    env = os.environ.copy()
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    for command in postflight_commands(context):
+        result = subprocess.run(
+            command,
+            cwd=context.repo,
+            shell=True,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        if result.returncode != 0:
+            details = "\n".join(part for part in [result.stdout.strip(), result.stderr.strip()] if part)
+            errors.append(f"postflight command failed ({command!r}): {details}")
+    return errors
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Safely dispatch one active ledger task to Claude Code.")
     parser.add_argument("--task", required=True, help="Active ledger task name to dispatch.")
@@ -194,7 +218,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--protocol", type=Path, default=DEFAULT_PROTOCOL, help="Path to dual-agent protocol.")
     parser.add_argument("--claude-bin", default="claude", help="Claude Code executable.")
     parser.add_argument("--max-budget-usd", default=DEFAULT_MAX_BUDGET_USD, help="Maximum spend for claude -p.")
-    parser.add_argument("--tools", default="Read,Write,Bash", help="Claude tool list.")
+    parser.add_argument("--tools", default="Read,Write", help="Claude tool list.")
     parser.add_argument("--allowed-tool", action="append", default=[], help="Additional allowed tool entry.")
     parser.add_argument("--output-format", default="json", choices=["text", "json", "stream-json"])
     parser.add_argument("--dry-run", action="store_true", help="Print command metadata without calling Claude.")
@@ -241,7 +265,7 @@ def main(argv: list[str] | None = None) -> int:
     if result.returncode != 0:
         return result.returncode
 
-    postflight_errors = run_postflight(context)
+    postflight_errors = run_postflight(context) + run_postflight_commands(context)
     if postflight_errors:
         print("Claude task postflight failed:", file=sys.stderr)
         for error in postflight_errors:

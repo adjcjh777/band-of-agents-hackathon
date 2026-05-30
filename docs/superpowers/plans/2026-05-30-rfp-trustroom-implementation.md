@@ -47,6 +47,7 @@ Parallel execution rule:
 - Two active rows cannot lock the same file or parent/child path.
 - A Claude Code write-capable task is not accepted until `scripts/check_dual_agent_changes.py --task "<Task>"` confirms all changed paths are covered by that task's lock.
 - Sensitive Claude Code calls should use strict empty MCP config; the verified empty config shape is `{"mcpServers":{}}`, not `{}`.
+- Claude Code write-capable dispatch should default to `Read,Write` only; the controller wrapper, not Claude, runs required checks and git-related commands.
 - Shared files such as `README.md`, `pyproject.toml`, `uv.lock`, `AGENTS.md` and public submission docs stay controller-owned unless the ledger explicitly assigns them.
 - Claude Code can draft independent docs or code, but Codex controller integrates shared docs and final submission surfaces.
 - Every agent branch must return modified files, commands run, risks and status before controller merge.

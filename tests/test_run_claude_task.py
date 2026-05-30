@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -31,7 +32,11 @@ run_claude_task = load_script("run_claude_task", RUNNER_SCRIPT)
 def write_repo(tmp_path: Path, *, task_owner: str = "Claude Code") -> tuple[Path, Path, Path]:
     repo = tmp_path / "repo"
     docs = repo / "docs"
+    scripts = repo / "scripts"
     docs.mkdir(parents=True)
+    scripts.mkdir(parents=True)
+    shutil.copy(PROTOCOL_SCRIPT, scripts / "check_dual_agent_protocol.py")
+    shutil.copy(CHANGES_SCRIPT, scripts / "check_dual_agent_changes.py")
     protocol = docs / "dual-agent-operating-protocol.md"
     ledger = docs / "agent-task-ledger.md"
     protocol.write_text("# Protocol\n", encoding="utf-8")
