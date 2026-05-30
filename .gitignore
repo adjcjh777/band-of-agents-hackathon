@@ -6,7 +6,9 @@
 pilotdeck/
 
 logs/
-reports/
+reports/*
+!reports/.gitkeep
+!reports/*.example.jsonl
 tmp/
 .tmp/
 

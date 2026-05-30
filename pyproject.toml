@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rfp-trustroom"
+version = "0.1.0"
+description = "Hackathon MVP for RFP TrustRoom, a replay-first multi-agent sales collaboration demo."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "jinja2",
+    "pydantic",
+    "uvicorn",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/trustroom"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

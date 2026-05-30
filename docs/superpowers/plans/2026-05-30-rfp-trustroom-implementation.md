@@ -33,7 +33,7 @@ Target split: Codex Pro handles about 60% of main implementation and final revie
 
 ## Todo Board
 
-- [ ] T0: Repo scaffold and dependency baseline
+- [x] T0: Repo scaffold and dependency baseline
 - [ ] T1: Core contracts and state machine
 - [ ] T2: Sample packs and replay fixture
 - [ ] T3: Mock agent runner
@@ -77,25 +77,25 @@ Boundary:
 
 Todo:
 
-- [ ] Create directories: `src/trustroom/`, `src/trustroom/agents/`, `src/trustroom/band/`, `src/trustroom/web/templates/`, `samples/`, `reports/`, `scripts/`, `tests/`.
-- [ ] Add empty `__init__.py` files under Python packages.
-- [ ] Add `pyproject.toml` with Python `>=3.11`, dependencies `fastapi`, `uvicorn`, `jinja2`, `pydantic`, and dev dependency `pytest`.
-- [ ] Modify `.gitignore` so `reports/*.example.jsonl` and `reports/.gitkeep` can be committed while other reports remain ignored.
-- [ ] Add `reports/.gitkeep`.
-- [ ] Update `README.md` with setup command `uv sync`, replay command placeholder `uv run python scripts/run_trustroom_replay.py --replay reports/trustroom_replay.example.jsonl`, and local web command `uv run uvicorn trustroom.web.app:app --reload`.
+- [x] Create directories: `src/trustroom/`, `src/trustroom/agents/`, `src/trustroom/band/`, `src/trustroom/web/templates/`, `samples/`, `reports/`, `scripts/`, `tests/`.
+- [x] Add empty `__init__.py` files under Python packages.
+- [x] Add `pyproject.toml` with Python `>=3.11`, dependencies `fastapi`, `uvicorn`, `jinja2`, `pydantic`, and dev dependency `pytest`.
+- [x] Modify `.gitignore` so `reports/*.example.jsonl` and `reports/.gitkeep` can be committed while other reports remain ignored.
+- [x] Add `reports/.gitkeep`.
+- [x] Update `README.md` with setup command `uv sync`, replay command placeholder `uv run python scripts/run_trustroom_replay.py --replay reports/trustroom_replay.example.jsonl`, and local web command `uv run uvicorn trustroom.web.app:app --reload`.
 
 Verification:
 
-- [ ] `uv sync` succeeds.
-- [ ] `uv run python -c "import fastapi, pydantic, jinja2"` exits 0.
-- [ ] `git status --short` shows no `pilotdeck/` files.
-- [ ] `git diff --check` exits 0.
+- [x] `uv sync` succeeds.
+- [x] `uv run python -c "import fastapi, pydantic, jinja2"` exits 0.
+- [x] `git status --short` shows no `pilotdeck/` files.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add pyproject.toml README.md .gitignore reports/.gitkeep src tests samples scripts`
-- [ ] `git commit -m "chore: scaffold TrustRoom project"`
-- [ ] `git push origin main`
+- [x] `git add pyproject.toml README.md .gitignore reports/.gitkeep src tests samples scripts`
+- [x] `git commit -m "chore: scaffold TrustRoom project"`
+- [x] `git push origin main`
 
 Done when:
 

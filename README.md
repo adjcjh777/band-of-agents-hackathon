@@ -20,6 +20,25 @@
 - [RFP TrustRoom 实现任务计划](docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md)
 - [飞书 AI 挑战赛经验迁移](docs/feishu-lessons-for-band.md)
 
+## 本地运行
+
+```bash
+# 安装运行环境与依赖
+uv sync
+```
+
+```bash
+# 回放演示占位：用于本地复现与验收展示
+uv run python scripts/run_trustroom_replay.py --replay reports/trustroom_replay.example.jsonl
+```
+
+```bash
+# 启动本地服务
+uv run uvicorn trustroom.web.app:app --reload
+```
+
+`replay` 路径基于示例事件日志做可复现演示；`live` 路径会在 Band 接入确认后通过适配器连接真实协作环境，不能把 replay 结果伪装成 live。
+
 ## 不可妥协的验收点
 
 - 至少 3 个 Agent 通过 Band 协作。
