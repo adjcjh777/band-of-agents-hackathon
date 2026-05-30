@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Band of Agents Hackathon Chrome 实读备忘</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fb;
+      --surface: #ffffff;
+      --surface-2: #eef4f7;
+      --ink: #18212f;
+      --muted: #5d6878;
+      --line: #dbe3ea;
+      --blue: #285ea8;
+      --green: #24735a;
+      --red: #a93e3e;
+      --amber: #8a5b14;
+      --steel: #43556b;
+      --shadow: 0 16px 40px rgba(32, 47, 69, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.62 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .hero-main,
+    .panel,
+    .metric,
+    .timeline,
+    .source-list {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-main {
+      padding: 30px;
+      min-height: 260px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 820px;
+      font-size: clamp(30px, 4vw, 52px);
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 820px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .mini {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #fbfcfd;
+    }
+
+    .mini span,
+    .metric span,
+    .pill,
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .mini strong,
+    .metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 17px;
+      color: var(--ink);
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 20px;
+    }
+
+    .metric strong {
+      font-size: 26px;
+    }
+
+    .metric.good {
+      border-left: 5px solid var(--green);
+    }
+
+    .metric.warn {
+      border-left: 5px solid var(--amber);
+    }
+
+    .metric.risk {
+      border-left: 5px solid var(--red);
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel.full {
+      grid-column: 1 / -1;
+    }
+
+    .callout {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f9fbff;
+      padding: 14px 16px;
+      margin-top: 14px;
+      color: var(--steel);
+    }
+
+    .callout.warn {
+      border-left-color: var(--amber);
+      background: #fffaf0;
+    }
+
+    .callout.risk {
+      border-left-color: var(--red);
+      background: #fff7f7;
+    }
+
+    ul,
+    ol {
+      margin: 10px 0 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .tracks {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .track {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfd;
+      padding: 16px;
+    }
+
+    .track strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .track p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: var(--surface-2);
+      color: var(--steel);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .timeline {
+      padding: 18px 18px 18px 24px;
+      margin-top: 12px;
+    }
+
+    .event {
+      position: relative;
+      padding: 0 0 18px 20px;
+      border-left: 2px solid var(--line);
+    }
+
+    .event:last-child {
+      padding-bottom: 0;
+    }
+
+    .event::before {
+      content: "";
+      position: absolute;
+      left: -6px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .event time {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .event strong {
+      display: block;
+      margin-top: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3f8;
+      color: var(--steel);
+      font-size: 13px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .status.ok {
+      color: #145b45;
+      background: #e7f5ef;
+      border-color: #b9dfcf;
+    }
+
+    .status.warn {
+      color: #6c4712;
+      background: #fff3d8;
+      border-color: #ecd09a;
+    }
+
+    .status.bad {
+      color: #7b2727;
+      background: #ffe7e7;
+      border-color: #efb7b7;
+    }
+
+    .source-list {
+      padding: 18px 22px;
+      margin-top: 18px;
+    }
+
+    .source-list ol {
+      columns: 2;
+      column-gap: 36px;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .section-grid,
+      .tracks {
+        grid-template-columns: 1fr;
+      }
+
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .source-list ol {
+        columns: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-main">
+        <p class="eyebrow">Chrome 实读备忘 | 2026-05-30 | Asia/Shanghai</p>
+        <h1>Band of Agents Hackathon 官方信息与产品设计约束</h1>
+        <p class="lead">
+          本页用于防止上下文压缩后丢失关键信息。内容来自 Chrome 真实打开的官方比赛页、Band 官网、Band 文档、Codeband GitHub 渲染页、lablab 提交指南和 AI/ML API 官网。
+        </p>
+        <div class="meta-grid">
+          <div class="mini">
+            <span>比赛时间</span>
+            <strong>2026-06-12 23:00 至 2026-06-19 23:00 CST</strong>
+          </div>
+          <div class="mini">
+            <span>核心要求</span>
+            <strong>至少 3 个 Agent 通过 Band 真实协作</strong>
+          </div>
+          <div class="mini">
+            <span>奖池</span>
+            <strong>总计 $9,500</strong>
+          </div>
+          <div class="mini">
+            <span>提交硬点</span>
+            <strong>Public GitHub repo + Demo URL + 视频 + PDF slides</strong>
+          </div>
+        </div>
+      </div>
+
+      <aside class="hero-side" aria-label="关键结论">
+        <div class="metric good">
+          <span>最重要结论</span>
+          <strong>Band 必须在工作流中间</strong>
+          <p class="note">不能只是最终通知、输出频道或薄包装。</p>
+        </div>
+        <div class="metric warn">
+          <span>页面异常</span>
+          <strong>X402 赛道是隐藏污染块</strong>
+          <p class="note">DOM 中存在但可见尺寸为 0，不作为本赛主线。</p>
+        </div>
+        <div class="metric risk">
+          <span>提交风险</span>
+          <strong>当前私有仓库不能直接作为最终提交仓库</strong>
+          <p class="note">最终需要公开仓库或公开的净化版提交仓库。</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section-grid">
+      <article class="panel full">
+        <h2>官方比赛硬约束</h2>
+        <div class="tracks">
+          <div class="track">
+            <strong>Track 1: Internal Enterprise Workflows</strong>
+            <p>跨部门审批、交接、运营协调。官方例子包括 HR、finance、procurement、sales-to-delivery、support escalation。</p>
+          </div>
+          <div class="track">
+            <strong>Track 2: Multi-Agent Software Development</strong>
+            <p>planner、engineer、reviewer、tester、documentation、merge preparation。Codeband 是参考实现，不宜简单复刻。</p>
+          </div>
+          <div class="track">
+            <strong>Track 3: Regulated & High-Stakes Workflows</strong>
+            <p>医疗、金融审批、法律合同、保险理赔、合规、风险、网络安全调查。</p>
+          </div>
+        </div>
+        <div class="callout">
+          强项目要让 Agent 协作“可见、有用、处于核心位置”。官方评审特别看 task handoff、shared context、role specialization、task state、coordination。
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>赛程</h2>
+        <div class="timeline">
+          <div class="event">
+            <time>2026-06-12 23:00 China Standard Time</time>
+            <strong>Hackathon Kick-off</strong>
+          </div>
+          <div class="event">
+            <time>2026-06-12 23:10</time>
+            <strong>lablab.ai opening words</strong>
+          </div>
+          <div class="event">
+            <time>2026-06-12 23:15</time>
+            <strong>Band opening words</strong>
+          </div>
+          <div class="event">
+            <time>2026-06-12 23:20</time>
+            <strong>Introduction to the Challenge</strong>
+          </div>
+          <div class="event">
+            <time>2026-06-12 23:30</time>
+            <strong>Hackathon Guide</strong>
+          </div>
+          <div class="event">
+            <time>2026-06-13 00:00</time>
+            <strong>Discord Q&amp;A session</strong>
+          </div>
+          <div class="event">
+            <time>2026-06-19 23:00</time>
+            <strong>End of Submissions</strong>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>官方示例项目</h2>
+        <ul>
+          <li>Product launch workflow: research、planning、copywriting、review agents 协作。</li>
+          <li>Software delivery workflow: planner、engineer、tester、reviewer 跨开发生命周期交接。</li>
+          <li>Compliance review system: policy、legal、risk、operations agents 共享上下文后给出建议。</li>
+          <li>Customer support escalation: triage、knowledge、resolution、manager-review agents 处理复杂工单。</li>
+          <li>Procurement workflow: analysis、vendor-risk、approval、reporting agents 协调采购决策。</li>
+        </ul>
+        <div class="callout warn">
+          这些是官方例子，不等于必须做。筛题时应优先选市场稀缺、但仍能强展示 Band 协调层的方向。
+        </div>
+      </article>
+
+      <article class="panel full">
+        <h2>Band 能力边界</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>类别</th>
+              <th>Chrome 实读信息</th>
+              <th>对产品设计的含义</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>定位</td>
+              <td>Band 是 AI agents 的 shared operational layer，提供 persistent identity、multi-agent coordination、structured memory、unified audit trail。</td>
+              <td>产品叙事不要说“我们发明多 Agent”，要说“用 Band 把原本分散的专职 Agent 变成可审计协作流程”。</td>
+            </tr>
+            <tr>
+              <td>框架兼容</td>
+              <td>Agents 保留自己的 runtime、prompts、tools、LLM providers。Band 连接 LangGraph、CrewAI、Anthropic、OpenAI、Gemini、Pydantic AI 等。</td>
+              <td>Demo 可以让不同角色用不同模型或框架，展示 cross-framework collaboration。</td>
+            </tr>
+            <tr>
+              <td>Remote Agent</td>
+              <td>Remote agents 在自己的环境运行，通过 REST 发送命令，通过 WebSocket 接收 Band 消息。</td>
+              <td>架构上应把前端、业务状态机、每个 Agent worker、Band room 分开，便于 replay 和故障降级。</td>
+            </tr>
+            <tr>
+              <td>平台工具</td>
+              <td>SDK 自动提供 thenvoi_send_message、thenvoi_send_event、thenvoi_add_participant、thenvoi_remove_participant、thenvoi_get_participants、thenvoi_lookup_peers、thenvoi_create_chatroom。</td>
+              <td>Demo 高光应包含主动招募专家、@mention 交接、事件记录、参与者变化，而不是只串行调用 LLM。</td>
+            </tr>
+            <tr>
+              <td>消息可见性</td>
+              <td>Agent 只看到明确 mention 到自己的消息。Human 可以看到全部消息。</td>
+              <td>可以把 @mention 作为可视化任务路由证据。每个 Agent 的输入边界要设计清楚。</td>
+            </tr>
+            <tr>
+              <td>Messages vs Events</td>
+              <td>messages 用于面向参与者的文本消息，events 用于 tool calls、thoughts、errors、task progress 等信息记录。</td>
+              <td>审计链最好同时展示“对话交接”和“结构化事件”，这样更贴合评审标准。</td>
+            </tr>
+            <tr>
+              <td>API 视角</td>
+              <td>Human API 回答 “What’s mine?”，Agent API 回答 “Who can I work with?”。Agent key 不能访问 human endpoints。</td>
+              <td>不要让 Agent 扮演人类管理员。human approval 应做成明确节点。</td>
+            </tr>
+            <tr>
+              <td>测试</td>
+              <td>Band SDK 提供 FakeAgentTools，可在不连接 live platform 的情况下测试 adapter logic、tool calls、message handling。</td>
+              <td>比赛前可以先写 unit tests 和 replay fallback，Kickoff 后再接真实 Band 平台。</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>技术准备清单</h2>
+        <ul>
+          <li>Python 3.10+ 或 3.11+。Connect Any Agent 页写 3.11+，SDK Setup 页写 3.10+，实际按 3.11+ 更稳。</li>
+          <li>uv package manager。</li>
+          <li>Band account。</li>
+          <li>LLM provider API key，例如 OpenAI 或 Anthropic。</li>
+          <li>每个 Remote Agent 在 Band 平台创建后会得到 Agent UUID 和 API key，API key 只显示一次。</li>
+          <li><code>.env</code> 和 <code>agent_config.yaml</code> 必须进 <code>.gitignore</code>。</li>
+          <li>平台 URL 示例：<code>THENVOI_REST_URL=https://app.band.ai/</code>，<code>THENVOI_WS_URL=wss://app.band.ai/api/v1/socket/websocket</code>。</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h2>Codeband 可借鉴但不宜复刻</h2>
+        <ul>
+          <li>Codeband 是基于 Band.ai 的 adversarial multi-model coding agents 工具。</li>
+          <li>默认协作形态：Conductor、Planner、Plan Reviewer、Coders、Code Reviewers、Mergemaster、Watchdog。</li>
+          <li>亮点：cross-model review、git worktree 隔离、risk-aware merging、headless/local/docker/distributed 运行。</li>
+          <li>分布式模式通过 Band.ai WebSocket 和 memory 协调，代码通过 Git remote 移动。</li>
+        </ul>
+        <div class="callout warn">
+          官方把 Codeband 放在资源里，说明多 Agent 软件开发方向已有强参考实现。若参赛做该方向，必须找更细、更企业化的缺口。
+        </div>
+      </article>
+
+      <article class="panel full">
+        <h2>提交材料与评审雷区</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>事项</th>
+              <th>实读结论</th>
+              <th>行动</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic Information</td>
+              <td>Project Title、Short Description、Long Description、Technology &amp; Category Tags。</td>
+              <td>Short description 控制在 255 字符以内，Long description 至少 100 words。</td>
+            </tr>
+            <tr>
+              <td>展示材料</td>
+              <td>Cover Image PNG/JPG，推荐 16:9；Video Presentation 最多 5 分钟 MP4；Slide Presentation 为 PDF。</td>
+              <td>视频必须先讲问题和评审视角，再展示主路径，不要只录屏跑功能。</td>
+            </tr>
+            <tr>
+              <td>代码与部署</td>
+              <td>需要 Public GitHub Repository、Demo Application Platform、Application URL。</td>
+              <td>当前 private repo 只适合作业仓库。最终提交前准备公开净化仓库或将仓库转公开。</td>
+            </tr>
+            <tr>
+              <td>评审标准</td>
+              <td>Application of Technology、Presentation、Business Value、Originality。</td>
+              <td>每个 demo 场景都要明确 Band 协作证据、企业价值、差异化、可复盘审计链。</td>
+            </tr>
+            <tr>
+              <td>Prize terms</td>
+              <td>规则、奖项和条款可能变动；奖项发放可能最长 90 天；submission 必须 original 和 MIT-compliant。</td>
+              <td>README 与提交文案保留 no-overclaim，不声称生产级合规或长期稳定运行。</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>AI/ML API 合作资源</h2>
+        <ul>
+          <li>官方页写明每人 $10 credits，最多 500 名参与者。</li>
+          <li>Promo code 会在 kickoff 公布，有效期到比赛结束。</li>
+          <li>Partner prize: $1,000 cash + $1,000 AI/ML API credits。</li>
+          <li>AI/ML API 官网定位是 one API for 500+ models，OpenAI 和 Anthropic compatible。</li>
+          <li>可能需要 billing 或 subscription setup，不使用时要取消以避免后续费用。</li>
+        </ul>
+        <div class="callout">
+          可作为模型路由、reasoning、extraction、summarization、multimodal workflow 的加分项，但不要为了 partner prize 把主产品方向扭成 API 展示。
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>页面异常与可信度处理</h2>
+        <div class="callout risk">
+          Chrome DOM 中发现隐藏的 X402 Payments / Launch &amp; Fund Your Startup 内容块，包括 Agent-to-Agent Payments、Consumer AI Payments、B2B FinOps、On-chain Commerce Primitives。该块尺寸为 0，和 Band of Agents 页面标题、评审标准、资源区不一致。
+        </div>
+        <ul>
+          <li>判断：页面模板或隐藏内容污染。</li>
+          <li>处理：不把 X402 当作 Band of Agents 主赛道。</li>
+          <li>例外：除非 kickoff stream 或官方 Discord 明确确认 X402 与本赛相关。</li>
+          <li>技术备注：docs.band.ai 的 <code>.md</code> 页面和 GitHub raw README 在 Chrome 中被拦截器报 <code>net::ERR_BLOCKED_BY_CLIENT</code>，已改用可见网页正文和 GitHub 渲染 README。</li>
+        </ul>
+      </article>
+
+      <article class="panel full">
+        <h2>从产品经理视角提炼出的设计原则</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>原则</th>
+              <th>为什么重要</th>
+              <th>落到产品上的形态</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>先选真实企业流程，不选泛 AI 工具</td>
+              <td>Business Value 和 Originality 都要求解决真实流程，而不是展示聊天能力。</td>
+              <td>选一个高摩擦流程：审批、交接、风险复核、合规调查、发布 go/no-go。</td>
+            </tr>
+            <tr>
+              <td>Agent 必须有角色边界</td>
+              <td>评审会看 role specialization 和 task handoff。</td>
+              <td>每个 Agent 有输入、输出、可调用工具、失败条件和升级目标。</td>
+            </tr>
+            <tr>
+              <td>Band 协作证据要可视化</td>
+              <td>单看最终结果很像普通 agent workflow。</td>
+              <td>展示 Band room、@mention、participant changes、events、状态机和审计时间线。</td>
+            </tr>
+            <tr>
+              <td>必须设计 human approval</td>
+              <td>高风险工作流不能伪装成全自动生产系统。</td>
+              <td>Human reviewer 作为签批节点，Agent 提供建议和证据，最终决策由人确认。</td>
+            </tr>
+            <tr>
+              <td>准备 live path 和 replay fallback</td>
+              <td>Band/API/模型现场不稳定会毁掉演示。</td>
+              <td>同一 demo 场景有 live run、recorded events、replay JSON、失败回退说明。</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="panel full">
+        <h2>当前市场调研子代理状态快照</h2>
+        <p class="note">这不是最终 7 个候选项，只是防止上下文压缩后忘记当前进度。用户要求：所有子代理调研完成之前，不进入下一步筛选。</p>
+        <table>
+          <thead>
+            <tr>
+              <th>赛题方向</th>
+              <th>状态</th>
+              <th>关键结论</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Launch campaign: research / planning / copywriting / legal-brand review</td>
+              <td><span class="status ok">已完成</span></td>
+              <td>AI 文案、品牌治理、项目协同很拥挤；稀缺点在法务与品牌审查前置化、可追溯化、可 replay 的联合编排。评分：稀缺性 4，商业价值 4，Band 适配 5，可行性 4。</td>
+            </tr>
+            <tr>
+              <td>Bug triage / support-to-engineering-to-reviewer loop</td>
+              <td><span class="status ok">已完成</span></td>
+              <td>不要做另一个 triage AI，机会在 Support -> Debug -> Eng -> Reviewer 的统一状态机、repro evidence package 和审计闭环。评分：稀缺性 4，商业价值 5，Band 适配 5，可行性 3。</td>
+            </tr>
+            <tr>
+              <td>Sales-to-delivery handoff</td>
+              <td><span class="status ok">已完成</span></td>
+              <td>不是 AI 客户成功平台，而是 Sales promises -> Delivery execution -> CS continuity 的交接控制层。评分：稀缺性 4，商业价值 4，Band 适配 5，可行性 4。</td>
+            </tr>
+            <tr>
+              <td>Customer support escalation governance</td>
+              <td><span class="status ok">已完成</span></td>
+              <td>AI 客服本体拥挤，稀缺点是跨供应商升级治理、manager-review agent、override 和 SLA 复核闭环。评分：稀缺性 3，商业价值 4，Band 适配 5，可行性 4。</td>
+            </tr>
+            <tr>
+              <td>Release war room / launch readiness / go-no-go review</td>
+              <td><span class="status bad">失败待重派</span></td>
+              <td>子代理因上下文窗口满失败，需要用短任务重派。</td>
+            </tr>
+            <tr>
+              <td>Multi-agent software development / PR review / Codeband-like</td>
+              <td><span class="status bad">失败待重派</span></td>
+              <td>子代理因上下文窗口满失败，需要用短任务重派。注意 Codeband 已覆盖大量此方向，需找更细分缺口。</td>
+            </tr>
+            <tr>
+              <td>RFP、procurement、HR、finance、legal、security、insurance 等剩余方向</td>
+              <td><span class="status warn">待派生</span></td>
+              <td>等待 Chrome 官方信息落盘后继续分批派生，仍使用 gpt-5.3-codex-spark。</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="panel full">
+        <h2>下一步工作顺序</h2>
+        <ol>
+          <li>继续完成所有赛题方向的市场稀缺性调研，不在完成前综合 7 个候选。</li>
+          <li>失败的 release war room 和 multi-agent software development 子代理用更短 prompt 重派。</li>
+          <li>新增 RFP、procurement、legal contract、finance close、security incident、HR access、insurance claims 等方向调研。</li>
+          <li>完成后按市场稀缺性、商业价值、Band 适配、七天可行性、演示可见性筛成 7 个待选项。</li>
+          <li>用户手动筛选后，再进入 PRD、demo 主路径、技术架构、提交材料规划。</li>
+        </ol>
+      </article>
+    </section>
+
+    <section class="source-list">
+      <h2>Chrome 实读来源</h2>
+      <ol>
+        <li><a href="https://lablab.ai/ai-hackathons/band-of-agents-hackathon">Band of Agents Hackathon official page</a></li>
+        <li><a href="https://www.band.ai/">Band official site</a></li>
+        <li><a href="https://docs.band.ai/welcome">Band docs: Welcome</a></li>
+        <li><a href="https://docs.band.ai/getting-started/connect-remote-agent">Band docs: Connect Any Agent</a></li>
+        <li><a href="https://docs.band.ai/api/introduction">Band docs: API Introduction</a></li>
+        <li><a href="https://docs.band.ai/integrations/sdks/tutorials/setup">Band docs: SDK Setup</a></li>
+        <li><a href="https://docs.band.ai/integrations/sdks/tutorials/testing-agents">Band docs: Testing Agents</a></li>
+        <li><a href="https://github.com/thenvoi/codeband">Codeband GitHub repository</a></li>
+        <li><a href="https://lablab.ai/delivering-your-hackathon-solution">lablab submission guidelines</a></li>
+        <li><a href="https://lablab.ai/ai-articles/hackathon-guidelines">lablab hackathon guidelines</a></li>
+        <li><a href="https://lablab.ai/getting-started-guide">lablab getting started guide</a></li>
+        <li><a href="https://aimlapi.com/?via=damian&amp;utm_source=lablab+hackathon&amp;utm_medium=lablab&amp;utm_campaign=hackathon">AI/ML API official site</a></li>
+      </ol>
+      <p class="note">读取说明：本文件是备忘和决策辅助，不替代 kickoff stream、官方 Discord 和后续页面变更。比赛时间、规则、奖项、提交要求以官方最新页面为准。</p>
+    </section>
+  </main>
+</body>
+</html>
