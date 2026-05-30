@@ -43,4 +43,5 @@
 
 | Date | Branch | Owner | Integrated by | Result | Evidence |
 |---|---|---|---|---|---|
+| 2026-05-31 | `feature/claude-p-write-smoke` | Claude Code | Codex | write smoke validated in isolated worktree | Claude wrote only `docs/claude-p-write-smoke.md`; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |
 | 2026-05-30 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | validated locally | `uv run pytest tests/test_dual_agent_protocol.py -v`; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |
