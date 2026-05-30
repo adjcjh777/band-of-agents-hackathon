@@ -1,0 +1,45 @@
+# AGENTS.md
+
+本文件是给 Codex / 自动执行代理看的项目规则。作用范围是本目录及其子目录。
+
+## 语言规则
+
+- 内部思考和对用户回复默认使用中文。
+- 面向用户、队友或评委的文档优先写成清楚、直接、可执行的中文，不要堆内部术语。
+
+## 项目边界
+
+- 当前项目是 Band of Agents Hackathon 的参赛准备与后续实现仓库。
+- 默认主线是 `LaunchRoom`：一个用 Band 协调多 Agent 的企业发布评审 / release war room 原型。
+- `pilotdeck/` 是另一个 agent 的工作目录，默认不要读取、修改、提交或引用；只有用户明确要求时才处理。
+- 不要提交 `.env`、`agent_config.yaml`、API key、真实 room id、真实 agent key、日志里的敏感标识或本地私密数据。
+
+## 网页调研规则
+
+- 如果需要详细读取网页内容，尤其是动态页面、登录态页面、需要截图/视觉确认的页面，优先使用 `@Chrome` / Chrome 插件真实打开页面读取。
+- 不要只依赖 `curl`、静态 HTML、搜索摘要或搜索索引来判断页面细节；这些只能作为初筛。
+- 如果 Chrome 插件无法连接或页面无法完整读取，要在结论里明确说明信息不完整，并标出哪些内容需要后续用 Chrome 或官方页面重新确认。
+- 对比赛时间、规则、奖项、提交要求、赞助资源、评审标准等会变动的信息，必须以官方页面或官方文档为准，并记录读取日期。
+
+## 参赛材料规则
+
+- 评委材料要优先展示真实产品主路径：问题、Agent 角色、Band 协作、任务交接、审查/反驳、human approval、最终决策。
+- 每个 demo 都要准备 live path 和 replay fallback；replay 不能伪装成 live。
+- README、提交文案、视频讲稿和 demo 文档都必须保留 no-overclaim 边界：可以说 hackathon demo / working prototype，不能说生产部署、长期稳定运行或企业级合规已完成。
+- 参考飞书 AI 挑战赛经验：尽早准备 `judge-10-minute-experience.md`、`demo-runbook.md`、证据报告、readiness check 和 replay 文件，不要最后一天才补。
+
+## Git 规则
+
+- 修改前先确认当前目录和分支，并执行 `git pull --ff-only`。
+- 修改完成后执行必要检查，至少跑 `git diff --check`。
+- 提交前确认 `pilotdeck/`、secret、日志和本地报告没有被误加入。
+- 提交并推送当前分支；提交信息要简洁说明改动。
+
+## 默认入口
+
+- 先读 `README.md`。
+- 官方信息和调研：`docs/official-research.md`。
+- 作战计划：`docs/competition-plan.md`。
+- 项目概念：`docs/project-concept.md`。
+- 提交清单：`docs/submission-checklist.md`。
+- 飞书经验迁移：`docs/feishu-lessons-for-band.md`。
