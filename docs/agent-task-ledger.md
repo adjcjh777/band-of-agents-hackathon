@@ -9,6 +9,7 @@
 - 只有 Codex controller 可以新增、关闭或修改 active locks。
 - `planned` 行只是建议，不代表可以动手。
 - `active`、`review`、`ready-to-merge` 行会被 `scripts/check_dual_agent_protocol.py` 校验。
+- Agent 返回后必须用 `scripts/check_dual_agent_changes.py --task "<Task>"` 校验包括未跟踪文件在内的 changed paths。
 - `Locked paths` 必须写精确文件或目录，多个路径用逗号分隔。
 - 共享入口文件默认 Codex controller 锁定。
 - 每个任务完成后，把状态改为 `complete`，记录实际测试命令和集成结论。
@@ -43,4 +44,5 @@
 
 | Date | Branch | Owner | Integrated by | Result | Evidence |
 |---|---|---|---|---|---|
+| 2026-05-31 | `feature/claude-p-write-smoke` | Claude Code | Codex | write smoke exposed need for changed-file validator | Claude wrote a locked untracked file; follow-up adds `scripts/check_dual_agent_changes.py` so untracked paths are checked against active locks. |
 | 2026-05-30 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | validated locally | `uv run pytest tests/test_dual_agent_protocol.py -v`; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |

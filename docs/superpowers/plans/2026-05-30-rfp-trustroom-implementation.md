@@ -19,6 +19,7 @@
 - Do not read, edit, stage, commit or cite `pilotdeck/` unless the user explicitly asks for it.
 - Before edits: `git status --short --branch && git pull --ff-only`.
 - Before dispatching or integrating dual-agent work: `uv run python scripts/check_dual_agent_protocol.py`.
+- After a Claude Code write-capable task returns and before closing its lock: `uv run python scripts/check_dual_agent_changes.py --task "<Task>"`.
 - After edits: run the task verification plus `git diff --check`.
 - Commit and push the current branch. Do not assume the branch is `main`.
 - Every commit must include only files for the completed task.
@@ -26,6 +27,7 @@
 - Never commit `.env`, `agent_config.yaml`, API keys, true room ids, true agent keys, private logs or customer data.
 - Claude Code uses MiMo v2.5 Pro in this setup and has no multimodal ability. Assign it bounded text/code/test/doc tasks, not Chrome, screenshot, dashboard visual QA or live Band account tasks.
 - Codex controller owns file locks, shared entry files, final integration and any Chrome / multimodal / live Band validation.
+- Claude Code dispatch should use `claude -p --no-session-persistence --strict-mcp-config --mcp-config '{"mcpServers":{}}'` unless the task explicitly requires configured MCP access.
 
 ## Dual-Agent Execution Overlay
 
@@ -34,12 +36,15 @@ Coordination reset artifacts:
 - `docs/dual-agent-operating-protocol.md`: canonical collaboration rules.
 - `docs/agent-task-ledger.md`: active file locks, owner, branch, status and required checks.
 - `scripts/check_dual_agent_protocol.py`: machine check for active lock conflicts and forbidden paths.
+- `scripts/check_dual_agent_changes.py`: machine check that changed files, including untracked files, stay within active locked paths.
 - `tests/test_dual_agent_protocol.py`: regression tests for the coordination guardrail.
 
 Parallel execution rule:
 
 - A task can start only after Codex controller adds it to the ledger as `active`.
 - Two active rows cannot lock the same file or parent/child path.
+- A Claude Code write-capable task is not accepted until `scripts/check_dual_agent_changes.py --task "<Task>"` confirms all changed paths are covered by that task's lock.
+- Sensitive Claude Code calls should use strict empty MCP config; the verified empty config shape is `{"mcpServers":{}}`, not `{}`.
 - Shared files such as `README.md`, `pyproject.toml`, `uv.lock`, `AGENTS.md` and public submission docs stay controller-owned unless the ledger explicitly assigns them.
 - Claude Code can draft independent docs or code, but Codex controller integrates shared docs and final submission surfaces.
 - Every agent branch must return modified files, commands run, risks and status before controller merge.

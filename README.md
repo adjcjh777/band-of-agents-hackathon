@@ -42,6 +42,11 @@ uv run python scripts/check_dual_agent_protocol.py
 ```
 
 ```bash
+# Claude Code 写入任务返回后检查：确保所有改动都落在该任务 locked paths 内
+uv run python scripts/check_dual_agent_changes.py --task "<Task>"
+```
+
+```bash
 # 启动本地服务
 uv run uvicorn trustroom.web.app:app --reload
 ```
