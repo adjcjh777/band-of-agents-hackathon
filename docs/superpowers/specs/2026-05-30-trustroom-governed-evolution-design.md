@@ -1,10 +1,10 @@
-# RFP TrustRoom Governed Evolution Design Spec
+# RFP TrustRoom Enterprise Governed Evolution Design Spec
 
 更新日期：2026-05-30
 
 ## 1. Purpose
 
-RFP TrustRoom 的主线仍然是 Band of Agents Hackathon 的参赛项目：用 Band 协调多个专职 Agent，完成 RFP、安全问卷和 vendor due diligence 的证据同源响应流程。
+RFP TrustRoom 的主线仍然是 Band of Agents Hackathon 的参赛项目：用 Band 协调多个专职 Agent，帮助企业售前、安全、产品和 SME 团队完成 RFP、安全问卷和 vendor due diligence 的证据同源响应流程。
 
 本 spec 将项目从一个可行但偏薄的 MVP 升级为 **RFP TrustRoom with Governed Evolution**：系统不仅让 Agent 在 Band 中协作生成回答包，还会在每次 run 结束后分析协作 trace、review 结果和人工反馈，提出可审计、可评估、可回滚、必须经人工批准的流程改进建议。
 
@@ -24,6 +24,7 @@ RFP TrustRoom 的主线仍然是 Band of Agents Hackathon 的参赛项目：用 
 - 再展示系统如何从一次协作 trace 中提出下一轮流程改进，这是原创亮点。
 - 所有改进都以 proposal 形式出现，必须有人审、可评估、可回滚。
 - live、mock、replay 使用同一种事件和经验模型，防止演示路径割裂。
+- 第一屏优先回答企业用户关心的问题：哪些问题能提交、哪些缺证据、哪些需要人审、为什么可以信。
 
 ### 1.2 Source Material Triage
 
@@ -35,6 +36,41 @@ RFP TrustRoom 的主线仍然是 Band of Agents Hackathon 的参赛项目：用 
 | OpenAI Cookbook | Strong inspiration | 借鉴产出、反馈、meta prompting、评估、部署的工程闭环 | 不做真实生产自动重训 |
 | StuLife / ELL | Light inspiration | 借鉴 experience-driven lifelong learning，落成 ExperienceLedger | 不接入 benchmark 或模拟长期人生环境 |
 | XMUDeepLIT survey | Framing | 用作分类与叙事框架：model-centric 到 environment-driven | 不把项目转成研究综述或 benchmark 项目 |
+
+### 1.3 Enterprise User Frame
+
+RFP TrustRoom 的真实用户不是“想看 Agent 很聪明的人”，而是正在被客户截止日期追着走的企业团队。产品体验必须围绕他们的工作对象、风险和决策来设计。
+
+| Persona | Job To Be Done | Pain Today | TrustRoom Must Provide |
+|---|---|---|---|
+| Sales Engineer / Solutions Consultant | 在截止日前完成可信 RFP / 安全问卷回答 | 信息散落、反复问人、复制旧答案容易出错 | 问题清单、证据匹配、可提交草稿、阻塞项 |
+| Security / Compliance Reviewer | 阻止过度承诺、过期证据和错误合规表述进入客户材料 | 审查太晚介入，缺少来源，风险隐藏在长文档里 | 风险队列、证据新鲜度、overclaim 标红、审批记录 |
+| Product / SME Owner | 只处理真正需要专业判断的问题 | 被拉进整份问卷，无法快速定位需要自己拍板的项 | 精准 request changes / approve / reject，带上下文和证据 |
+| Revenue / Proposal Lead | 知道这份包能不能按时提交 | 无法统一看进度、风险、责任人和最终材料状态 | Deal brief、进度、open blockers、final pack readiness |
+| Enterprise IT / Security Buyer | 判断这个工具是否可控、可审计、不会泄露敏感信息 | 对 AI 自动写客户承诺不放心 | 人审 gate、审计 trail、脱敏、replay/live 区分、no-overclaim |
+
+### 1.4 Enterprise Value Criteria
+
+Demo 和实现都应当围绕下面的企业价值来取舍：
+
+- **Time to first credible draft**：从 RFP / questionnaire 进入系统到得到带证据草稿的时间。
+- **Evidence coverage**：有当前证据、过期证据、缺证据和需要 SME 判断的比例。
+- **Risk containment**：高风险承诺、SLA、认证、合规声明是否全部进入人审或阻塞。
+- **SME focus**：SME 只看到需要判断的 item，而不是整份问卷。
+- **Auditability**：每个最终回答能追溯到问题、证据、审查、审批和 Agent handoff。
+- **Workflow learning**：一次 run 暴露的问题能沉淀为受控经验，减少下一轮返工。
+
+### 1.5 Enterprise Product Surface
+
+第一屏不应先展示内部 Agent 日志，而应展示一个企业用户能立刻判断状态的工作台：
+
+1. **Case Brief**：客户/样例名、截止时间、材料类型、当前模式 `mock | replay | live`。
+2. **Submission Readiness**：ready / needs review / blocked 的 item 数量。
+3. **Evidence Coverage**：current / stale / missing / conflicting evidence 的覆盖情况。
+4. **Approval Queue**：等待 SME、安全或 evolution reviewer 处理的决策。
+5. **Risk Flags**：overclaim、unsupported certification、SLA commitment、stale policy。
+6. **Final Pack Preview**：可提交回答包、证据索引和未解决阻塞项。
+7. **Collaboration Proof**：Band handoff / review / request changes 的可见摘要，而不是原始 UUID。
 
 ## 2. Hackathon Fit
 
@@ -52,6 +88,7 @@ Governed Evolution 对四个评审维度的强化如下：
 ## 3. Design Principles
 
 - **Band-first collaboration**：所有关键任务交接、review、veto、approval 和 evolution proposal 都必须能映射到 Band room 或 mirror event。
+- **Enterprise-first surface**：UI、样本和文案先服务企业用户的提交判断，再服务评委的技术观察。
 - **Governed, not autonomous mutation**：系统不允许 Agent 直接修改生产代码、secret、live Band 配置或公开提交材料。所有演化以 proposal 形式产生，必须经过 human approval。
 - **Evidence before optimization**：任何改进建议必须引用具体 run event、question item、draft answer、review decision 或 human feedback。
 - **Replay parity**：live、mock、replay 三种模式必须渲染同一种核心 timeline 和 evolution record，replay 不能伪装成 live。
@@ -132,7 +169,7 @@ ExperienceLedger 记录：
 
 ```mermaid
 flowchart LR
-  A["Sample RFP / Questionnaire / Knowledge"] --> B["Intake API"]
+  A["Enterprise Case: RFP / Questionnaire / Knowledge"] --> B["Intake API"]
   B --> C["Run State Machine"]
   C --> D["Band Collaboration Adapter"]
   D --> E["Requirement Decomposer"]
@@ -154,7 +191,7 @@ flowchart LR
   Q --> R["Self-Generated Stress Tests"]
   R --> C
 
-  C --> S["Dashboard"]
+  C --> S["Enterprise Dashboard"]
   K --> S
   J --> S
   N --> S
@@ -172,7 +209,7 @@ flowchart LR
 | Event Log / Replay Store | Append-only mirror of collaboration, decision and evolution events | Domain Core |
 | Experience Ledger | Approved lessons and governance history | Event Log, Human Approval |
 | Evaluation Harness | Readiness checks, stress tests, proposal validation | Domain Core, Replay Store |
-| Dashboard | Judge-facing view of business flow, Band collaboration, evolution and evidence | API, Replay Store |
+| Dashboard | Enterprise-facing view of readiness, risk, approvals, final pack, Band collaboration and evolution | API, Replay Store |
 
 ### 5.2 Execution Modes
 
@@ -195,7 +232,7 @@ All three modes must write `TimelineEvent` records. Dashboard rendering must dep
 | `replay_store` | event records | ordered replay timeline | replay always labeled replay |
 | `experience_ledger` | reviewed proposals | active/rejected lessons | no unreviewed lesson becomes active |
 | `evaluation_harness` | run artifacts, proposals, stress tests | pass/fail report with reasons | never changes workflow state by itself |
-| `dashboard` | API/read models | judge-facing pages | no secret, true room id, true agent key, or raw private trace |
+| `dashboard` | API/read models | enterprise-facing pages and judge route | no secret, true room id, true agent key, or raw private trace |
 
 ### 5.4 Architecture Options Considered
 
@@ -215,7 +252,7 @@ This is the selected option. It keeps RFP response as the concrete enterprise wo
 
 ### 6.1 Normal RFP Run
 
-1. User selects a fictional sample pack.
+1. Sales engineer selects a fictional enterprise case pack.
 2. Orchestrator creates run and Band room label.
 3. Orchestrator posts task context and @mentions Requirement Decomposer.
 4. Requirement Decomposer outputs structured `QuestionItem` records.
@@ -223,7 +260,7 @@ This is the selected option. It keeps RFP response as the concrete enterprise wo
 6. Answer Drafter generates draft answers with evidence ids.
 7. Compliance Reviewer checks evidence gaps, stale evidence, overclaim language and high-risk promises.
 8. Human SME Approver approves, rejects or requests changes for high-risk items.
-9. Orchestrator builds final answer pack, evidence index and audit timeline.
+9. Orchestrator builds final answer pack, evidence index, readiness summary and audit timeline.
 10. Run enters `post_run_review`.
 
 ### 6.2 Governed Evolution Loop
@@ -274,20 +311,64 @@ Human roles are not disguised as autonomous agents. The UI must clearly mark hum
 
 ## 8. Domain Model
 
+### 8.0 CustomerCase
+
+```yaml
+CustomerCase:
+  case_id: string
+  case_name: string
+  customer_profile: string
+  deadline_label: string
+  material_types: list[rfp | security_questionnaire | policy_snippets | prior_answers]
+  business_goal: string
+  submission_owner: string
+  mode: live | mock | replay
+```
+
 ### 8.1 Run
 
 ```yaml
 Run:
   run_id: string
+  case_id: string
   mode: live | mock | replay
-  state: intake | decomposition | evidence | drafting | review | approval | submission_pack | post_run_review | evolution_review
+  state: intake | triage | decomposition | evidence | drafting | review | approval | submission_pack | post_run_review | evolution_review
   created_at: datetime
   band_room_label: string
   active_lessons: list[string]
   current_blockers: list[string]
+  readiness_summary: ready | needs_review | blocked
 ```
 
-### 8.2 TimelineEvent
+### 8.2 QuestionItem
+
+```yaml
+QuestionItem:
+  item_id: string
+  case_id: string
+  source_ref: string
+  question_text: string
+  category: security | privacy | product | legal | support | commercial
+  risk_level: low | medium | high
+  required_evidence_type: policy | control | architecture | prior_answer | sme_attestation
+  business_owner: sales | security | product | legal | sme
+  status: open | evidence_ready | needs_review | blocked | approved
+```
+
+### 8.3 ApprovalDecision
+
+```yaml
+ApprovalDecision:
+  decision_id: string
+  item_id: string
+  reviewer_role: sme-approver | security-reviewer | legal-reviewer | evolution-reviewer
+  decision: approve | request_changes | reject | defer
+  reason: string
+  required_follow_up: string | null
+  created_at: datetime
+```
+
+### 8.4 TimelineEvent
 
 ```yaml
 TimelineEvent:
@@ -304,7 +385,7 @@ TimelineEvent:
   visibility: judge_view | technical_appendix
 ```
 
-### 8.3 EvolutionProposal
+### 8.5 EvolutionProposal
 
 ```yaml
 EvolutionProposal:
@@ -323,7 +404,7 @@ EvolutionProposal:
   reviewer_notes: string
 ```
 
-### 8.4 ExperienceLesson
+### 8.6 ExperienceLesson
 
 ```yaml
 ExperienceLesson:
@@ -339,7 +420,7 @@ ExperienceLesson:
   rollback_note: string
 ```
 
-### 8.5 StressTestCase
+### 8.7 StressTestCase
 
 ```yaml
 StressTestCase:
@@ -369,13 +450,17 @@ StressTestCase:
 
 The readiness script should verify:
 
-- two fictional sample packs load successfully
-- each sample pack has at least 8 question items
+- one primary fictional enterprise sample pack loads successfully
+- optional secondary sample packs are skipped unless present and valid
+- the primary sample pack has at least 8 question items
+- every item has category, risk level, required evidence type and business owner
 - replay loads under 5 seconds
 - at least 3 distinct agent roles appear in timeline
 - at least one handoff crosses Agent boundaries
+- at least one review loop routes an item back to evidence or drafting
 - at least one high-risk item reaches human approval
 - final pack excludes unapproved high-risk items
+- dashboard data can render readiness, evidence coverage, risk queue and final pack preview
 - at least one `EvolutionProposal` cites concrete timeline event ids
 - approved lessons appear in ExperienceLedger
 - stress tests cover at least 4 trap types
@@ -393,40 +478,43 @@ Before a proposal can become an active lesson, it must pass:
 
 ## 11. Dashboard Requirements
 
-The dashboard should show six judge-facing sections:
+The dashboard should be enterprise-first, judge-readable. It should show seven sections:
 
-1. **Case Intake**：sample RFP / questionnaire summary and mode badge.
-2. **Band Collaboration Timeline**：Agent sender, receiver, event type, handoff and state.
-3. **Answer Pack**：draft answer, evidence id, review status and approval status.
-4. **Risk & Approval Board**：high-risk items, missing evidence, stale evidence and human decisions.
-5. **Governed Evolution**：proposals, supporting events, reviewer decision and active lessons.
-6. **Replay / Live Evidence**：clear label showing whether the run is live, mock or replay.
+1. **Case Brief**：sample customer, deadline, material summary, mode badge and submission owner.
+2. **Submission Readiness**：ready / needs review / blocked item counts, plus top blockers.
+3. **Evidence Coverage**：current, stale, missing and conflicting evidence grouped by question category.
+4. **Risk & Approval Queue**：high-risk items, reviewer role, decision state and request-changes reason.
+5. **Answer Pack**：draft answer, evidence id, review status, approval status and final-pack inclusion.
+6. **Band Collaboration Timeline**：Agent sender, receiver, event type, handoff, review loop and state.
+7. **Governed Evolution**：proposals, supporting events, reviewer decision, active lessons and stress tests.
 
-The first viewport should make it obvious that the product is an RFP / security questionnaire workflow, not a generic Agent dashboard.
+The first viewport should make it obvious that the product is an RFP / security questionnaire workflow for enterprise teams, not a generic Agent dashboard. Raw room ids, agent keys, internal UUIDs and private logs belong only in a redacted technical appendix, not in the primary page.
 
 ## 12. Demo Story
 
 The recommended 5-minute demo flow:
 
-1. Show the business problem: RFP and security questionnaire answers often require sales, security, legal and SME coordination.
-2. Start a TrustRoom run from fictional sample materials.
-3. Show at least 3 Agents collaborating through Band-style handoffs.
-4. Show Evidence Retriever passing evidence to Answer Drafter.
-5. Show Compliance Reviewer blocking an unsupported or overclaiming draft.
-6. Show Human SME approving or rejecting high-risk items.
-7. Show final answer pack and evidence index.
-8. Show Governed Evolution: the system notices a recurring weakness and proposes an approved improvement.
-9. Show the next synthetic stress test generated from that lesson.
-10. End with boundaries: hackathon prototype, replay fallback available, no production or legal/compliance claim.
+1. Show the enterprise problem: a sales team has a customer deadline, but evidence, reviewers and risk decisions are scattered.
+2. Open the Case Brief and Submission Readiness view.
+3. Start a TrustRoom run from the primary fictional sample materials.
+4. Show at least 3 Agents collaborating through Band-style handoffs.
+5. Show Evidence Retriever passing evidence to Answer Drafter and a stale/missing evidence item staying out of the final pack.
+6. Show Compliance Reviewer blocking an unsupported or overclaiming draft and routing it back for rework.
+7. Show Human SME approving or rejecting high-risk items from the approval queue.
+8. Show final answer pack, evidence index, blockers and audit timeline.
+9. Show Governed Evolution: the system notices a recurring weakness and proposes an approved playbook improvement.
+10. Show the next synthetic stress test generated from that lesson.
+11. End with boundaries: hackathon prototype, replay fallback available, no production or legal/compliance claim.
 
 ## 13. Implementation Scope
 
 ### 13.1 Must Have Before Kickoff
 
-- Domain models for run, item, evidence, draft, review, final pack, timeline event, proposal, lesson and stress test.
-- Mock collaboration path with at least 5 Agent roles and human approval.
-- Replay JSONL with full normal workflow and one governed evolution proposal.
-- Dashboard view for normal workflow and evolution section.
+- Domain models for customer case, run, item, evidence, draft, review, approval, final pack, timeline event, proposal, lesson and stress test.
+- One primary enterprise sample pack with realistic RFP / security questionnaire questions and evidence gaps.
+- Mock collaboration path with at least 5 Agent roles, one review loop and human approval.
+- Replay JSONL with full normal workflow, one blocked or reworked item, one governed evolution proposal and one accepted lesson.
+- Dashboard view for readiness, evidence coverage, risk queue, final pack and evolution section.
 - Readiness check for high-risk gating, proposal support and no-overclaim phrases.
 - Secret-safe `.env.example` and no-secret check.
 
@@ -462,8 +550,8 @@ The current implementation plan should be revised before coding beyond T0:
    - Update README/PRD references to describe Governed Evolution as a controlled post-run loop, not autonomous self-modification.
 
 2. Split current `T1: Core contracts and state machine`.
-   - `T1a: Domain contracts` for existing RFP objects plus `EvolutionProposal`, `ExperienceLesson`, `StressTestCase`, `TaskEnvelope`.
-   - `T1b: Workflow state machine` with `post_run_review` and `evolution_review`.
+   - `T1a: Enterprise domain contracts` for `CustomerCase`, RFP objects, approvals, `EvolutionProposal`, `ExperienceLesson`, `StressTestCase`, `TaskEnvelope`.
+   - `T1b: Workflow state machine` with `triage`, `post_run_review` and `evolution_review`.
    - `T1c: Collaboration event schema` with mode-independent `TimelineEvent`.
 
 3. Move Band adapter boundary earlier.
@@ -471,11 +559,13 @@ The current implementation plan should be revised before coding beyond T0:
    - Delay only real `LiveBandAdapter` until official access is confirmed.
 
 4. Expand sample/replay fixture requirements.
-   - Replay must include normal RFP workflow plus at least one evolution proposal, one human decision and one accepted lesson.
+   - Primary sample pack should be a realistic enterprise case, not just toy rows.
+   - Replay must include normal RFP workflow plus at least one rework loop, one evolution proposal, one human decision and one accepted lesson.
    - Stress test fixture must include at least four trap types.
 
 5. Expand dashboard MVP.
-   - Initial dashboard must include a Governed Evolution section, not only final answer pack.
+   - Initial dashboard must lead with Case Brief, Submission Readiness, Evidence Coverage and Approval Queue.
+   - It must include a Governed Evolution section, not only final answer pack.
    - Mode badges and replay honesty are required in the first dashboard version.
 
 6. Move public/secret safety earlier.
@@ -491,6 +581,7 @@ The current implementation plan should be revised before coding beyond T0:
 This architecture is ready for implementation planning when all of the following are true:
 
 - The main demo can still be explained as RFP / security questionnaire response in one sentence.
+- An enterprise user can tell within 60 seconds which answers are ready, which are risky and who must approve them.
 - At least 3 agent roles collaborate through Band or Band-compatible event mirrors.
 - Governed Evolution is visible in the timeline and dashboard.
 - No proposal becomes active without human approval.
@@ -511,6 +602,7 @@ This architecture is ready for implementation planning when all of the following
 
 - **Placeholder scan**：本 spec 不包含未决实现占位或空白章节。
 - **Scope check**：本 spec 聚焦 RFP TrustRoom 的受治理自进化层，不扩展成通用自进化 Agent 平台。
+- **Enterprise fit**：本 spec 以售前、安全、产品、SME 和企业 IT 的提交判断、证据信任和人审控制为核心。
 - **Safety check**：所有自进化能力均通过 proposal、human approval、evaluation 和 rollback 边界约束。
 - **Hackathon fit**：设计保持 Band 作为核心协作层，并让协作 trace 成为演化依据。
 - **No-overclaim check**：本 spec 明确限定为 hackathon demo / working prototype，不声称生产级合规或长期稳定运行。

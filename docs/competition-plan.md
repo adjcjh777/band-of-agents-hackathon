@@ -77,7 +77,7 @@
 - 完成 Band 账号、Discord、lablab、AI/ML API 访问。
 - 读完 Band SDK setup、Connect Any Agent、Agent API、Testing Agents。
 - 本地建 repo skeleton，不接真实 Band key 也能跑 mock demo。
-- 准备 2 个企业案例脚本：RFP response、安全问卷 / vendor due diligence。
+- 准备 1 个高质量企业主案例脚本：RFP response + 安全问卷 + 证据缺口 + 人审队列。第二个 vendor due diligence 案例只作为可选扩展或 stress-test seed，不进入赛前关键路径。
 - 准备封面视觉草图和 5 分钟 demo 大纲。
 
 2026-06-12：Kick-off

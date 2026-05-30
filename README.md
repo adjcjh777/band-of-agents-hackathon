@@ -17,6 +17,7 @@
 - [提交清单](docs/submission-checklist.md)
 - [推荐项目概念：RFP TrustRoom](docs/project-concept.md)
 - [RFP TrustRoom PRD](docs/rfp-trustroom-prd.md)
+- [RFP TrustRoom Enterprise Governed Evolution Spec](docs/superpowers/specs/2026-05-30-trustroom-governed-evolution-design.md)
 - [RFP TrustRoom 实现任务计划](docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md)
 - [飞书 AI 挑战赛经验迁移](docs/feishu-lessons-for-band.md)
 
@@ -52,5 +53,6 @@ uv run uvicorn trustroom.web.app:app --reload
 1. 注册并确认 lablab.ai、Band、Band Discord、lablab Discord、AI/ML API 访问。
 2. 开赛前先跑通 Band SDK 的最小远程 Agent：创建 Remote Agent、拿 Agent UUID/API key、`uv add "band-sdk[langgraph]"`、本地验证连接。
 3. 用 `RFP TrustRoom` 先做 15 分钟 demo 剧本，而不是先写大系统：一个客户 RFP + 安全问卷进入，3-4 个 Agent 协作产出可提交回答包和证据索引。
-4. 开赛后第一天必须把 Band room 里的端到端协作录下来，后面所有功能都围绕这条演示链路增强。
-5. 参考飞书项目的做法，第一天就补 replay fallback、评委 10 分钟体验包和 no-overclaim 边界，不等最后一天再补材料。
+4. Dashboard 第一屏优先展示企业用户关心的 Submission Readiness、Evidence Coverage、Approval Queue 和 Final Pack 状态，再展示 Agent timeline。
+5. 开赛后第一天必须把 Band room 里的端到端协作录下来，后面所有功能都围绕这条演示链路增强。
+6. 参考飞书项目的做法，第一天就补 replay fallback、评委 10 分钟体验包和 no-overclaim 边界，不等最后一天再补材料。

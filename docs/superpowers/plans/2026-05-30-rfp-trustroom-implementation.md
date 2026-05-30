@@ -1,291 +1,395 @@
-# RFP TrustRoom Implementation Plan
+# RFP TrustRoom Enterprise Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Update this document after every task attempt.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` for implementation work, or `superpowers:executing-plans` for single-agent execution. Complete one unchecked task at a time, update this file after each task attempt, and keep commits scoped.
 
-**Goal:** Build the RFP TrustRoom hackathon MVP: sample RFP/questionnaire intake, mock/replay multi-agent workflow, dashboard, evaluation checks, Band live adapter, and submission-ready demo evidence.
+**Goal:** Build an enterprise-user-first RFP TrustRoom working prototype: a Band-coordinated RFP / security questionnaire response workspace where sales, security, product and SME reviewers can see readiness, evidence coverage, risk, approvals, final pack status and governed workflow improvements.
 
-**Architecture:** Start with a deterministic local mock/replay path so the demo works before Band access is finalized. Keep Band live integration behind an adapter; the dashboard renders the same run state from live, mock, or replay events.
+**Architecture:** Start with deterministic local mock/replay so the enterprise workflow is demoable before live Band access is finalized. Keep Band integration behind an adapter. The dashboard renders the same business objects from mock, replay or live events.
 
-**Tech Stack:** Python 3.11, uv, FastAPI, Jinja2 templates, Pydantic models, pytest, JSONL replay store, Band SDK after kickoff access is confirmed.
+**North Star:** In the first 60 seconds, an enterprise user should understand which answers are ready, which are risky, which evidence is missing or stale, who must approve, and why the final pack can or cannot be sent.
+
+**Tech Stack:** Python 3.11, uv, FastAPI, Jinja2 templates, Pydantic models, pytest, JSONL replay store, Band SDK after official access is confirmed.
 
 ---
 
 ## Goal Execution Contract
 
-- The long-running `codex goal` should read this file first, complete the next unchecked task, update the checkboxes, run the listed verification, commit, and push.
-- Do not read, edit, stage, or commit `pilotdeck/`.
+- Read `README.md`, `docs/rfp-trustroom-prd.md`, `docs/competition-plan.md`, and `docs/superpowers/specs/2026-05-30-trustroom-governed-evolution-design.md` before starting implementation tasks.
+- Do not read, edit, stage, commit or cite `pilotdeck/` unless the user explicitly asks for it.
 - Before edits: `git status --short --branch && git pull --ff-only`.
 - After edits: run the task verification plus `git diff --check`.
+- Commit and push the current branch. Do not assume the branch is `main`.
 - Every commit must include only files for the completed task.
 - If a task is blocked, write the blocker under that task and continue only if the next task is independent.
-- Never commit `.env`, `agent_config.yaml`, API keys, true room IDs, true agent keys, or private customer data.
+- Never commit `.env`, `agent_config.yaml`, API keys, true room ids, true agent keys, private logs or customer data.
+
+## Enterprise Product Rules
+
+- The UI should lead with business readiness, not raw agent traces.
+- The primary sample must feel like a real enterprise RFP / security questionnaire, while remaining fictional.
+- Every answer must preserve source evidence, freshness and review state.
+- High-risk commitments, missing evidence, stale evidence and unsupported certification claims fail closed.
+- Human approval is a product feature, not an implementation afterthought.
+- Governed Evolution is a controlled playbook improvement loop, not autonomous code mutation.
+- Replay is an honest fallback and must be labeled as replay.
 
 ## Model Routing Rules
 
 | Work type | Default model | Why | Escalate when |
 |---|---|---|---|
-| Sample RFP/questionnaire/knowledge fixtures, submission copy, runbook prose | 5.3codex spark | Cheap, creative/document-heavy, low architectural risk | Output contradicts PRD or needs security/compliance judgment |
-| Isolated modules, schema tests, fixture evals, prompt templates, small scripts | 5.4 | Good balance for code with bounded files | Cross-module state or flaky tests appear |
-| Main Codex implementation: scaffold, state machine, API, dashboard integration, deployment | 5.5 中 | Needs repo context and implementation judgment | Architecture has to change or debugging repeats twice |
-| Band live integration, final security/no-secret review, public repo conversion, hard blockers | 5.5 超高 | Highest risk, external dependencies, expensive mistakes | Use sparingly; do not use for docs or fixture drafting |
-
-Target split: Codex Pro handles about 60% of main implementation and final review. Claude Code + mimo token plan handles about 40% of sample data, long-context prompts, fixture evals, local debugging support, and docs. All auxiliary outputs entering this repo must be reviewed by Codex before final submission.
+| Fictional sample material, judge copy, runbook prose | 5.3codex spark | Cheap, creative, document-heavy | Output contradicts enterprise safety or PRD |
+| Isolated models, schema tests, fixture evals, prompt files, small scripts | 5.4 | Good for bounded code with tests | Cross-module state or flaky behavior appears |
+| Main implementation: state machine, mock runner, dashboard, adapter integration | 5.5 中 | Needs repo context and product judgment | Architecture has to change or debugging repeats twice |
+| Band live integration, public repo conversion, final no-secret/security review | 5.5 超高 | External dependencies and high blast radius | Use sparingly |
 
 ## Todo Board
 
 - [x] T0: Repo scaffold and dependency baseline
-- [ ] T1: Core contracts and state machine
-- [ ] T2: Sample packs and replay fixture
-- [ ] T3: Mock agent runner
-- [ ] T4: Evaluation and readiness checks
-- [ ] T5: FastAPI dashboard MVP
-- [ ] T6: Agent prompts and task envelopes
-- [ ] T7: Band adapter interface and live integration
-- [ ] T8: Judge docs, demo runbook, and evidence report
-- [ ] T9: Deployment and public submission hardening
-- [ ] T10: Final end-to-end rehearsal
+- [x] T0.5: Enterprise architecture and plan alignment
+- [ ] T1: Enterprise domain contracts and state machine
+- [ ] T2: Band-compatible adapter and event mirror
+- [ ] T3: Primary enterprise sample pack and replay fixture
+- [ ] T4: Deterministic mock agent runner with review loop
+- [ ] T5: Governed evolution engine and experience ledger
+- [ ] T6: Readiness, safety and no-secret gates
+- [ ] T7: Enterprise dashboard MVP
+- [ ] T8: Agent prompts and task envelopes
+- [ ] T9: Band live integration
+- [ ] T10: Judge docs, demo runbook and evidence report
+- [ ] T11: Deployment and public submission hardening
+- [ ] T12: Final end-to-end rehearsal
 
 ## File Map
 
-- Create `pyproject.toml`: uv project metadata and dependencies.
-- Create `src/trustroom/models.py`: Pydantic data contracts for runs, items, evidence, drafts, reviews, and timeline events.
-- Create `src/trustroom/state_machine.py`: allowed state transitions and final pack gating.
-- Create `src/trustroom/sample_loader.py`: loads local sample packs.
-- Create `src/trustroom/replay.py`: reads/writes replay JSONL.
-- Create `src/trustroom/agents/mock_runner.py`: deterministic local multi-agent workflow.
-- Create `src/trustroom/agents/prompts/*.md`: agent role prompts and output schemas.
-- Create `src/trustroom/band/adapter.py`: live/mock Band boundary.
-- Create `src/trustroom/web/app.py`: FastAPI app.
-- Create `src/trustroom/web/templates/*.html`: dashboard pages.
-- Create `samples/acme-security-rfp/*`: first fictional sample pack.
-- Create `samples/fintech-vendor-ddq/*`: second fictional sample pack.
-- Create `reports/trustroom_replay.example.jsonl`: committed replay fixture.
-- Create `scripts/check_trustroom_readiness.py`: local readiness gate.
-- Create `scripts/run_trustroom_replay.py`: CLI replay runner.
-- Create `tests/**`: focused unit and integration tests.
-- Modify `.gitignore`: keep secrets ignored, but allow committed example replay files.
-- Modify `README.md`: add setup, run, replay, and demo commands.
+- `src/trustroom/models.py`: enterprise domain contracts.
+- `src/trustroom/state_machine.py`: workflow transitions and final pack gating.
+- `src/trustroom/band/adapter.py`: mock/replay/live Band boundary.
+- `src/trustroom/replay.py`: JSONL replay read/write.
+- `src/trustroom/sample_loader.py`: fictional sample pack loader.
+- `src/trustroom/agents/mock_runner.py`: deterministic multi-agent workflow.
+- `src/trustroom/evolution.py`: proposal validation, lesson activation and rollback.
+- `src/trustroom/readiness.py`: business readiness checks.
+- `src/trustroom/web/app.py`: FastAPI routes.
+- `src/trustroom/web/templates/*.html`: enterprise dashboard.
+- `src/trustroom/agents/prompts/*.md`: agent prompts and output schemas.
+- `samples/acme-security-rfp/*`: primary fictional enterprise case.
+- `samples/fintech-vendor-ddq/*`: optional later sample, not on the critical path.
+- `reports/trustroom_replay.example.jsonl`: committed replay fixture.
+- `scripts/run_trustroom_replay.py`: CLI replay runner.
+- `scripts/check_trustroom_readiness.py`: local readiness gate.
+- `scripts/check_no_secrets.py`: public submission safety gate.
+- `docs/judge-10-minute-experience.md`, `docs/demo-runbook.md`, `docs/demo-evidence-report.md`: submission support.
 
 ## T0: Repo Scaffold And Dependency Baseline
 
-Recommended model: 5.5 中. Do not delegate unless only drafting README text, which can use 5.3codex spark.
+Recommended model: 5.5 中.
 
-Boundary:
-
-- Create the Python project skeleton and allow committed example replay files.
-- Do not implement agents, Band live calls, or UI behavior yet.
-
-Todo:
-
-- [x] Create directories: `src/trustroom/`, `src/trustroom/agents/`, `src/trustroom/band/`, `src/trustroom/web/templates/`, `samples/`, `reports/`, `scripts/`, `tests/`.
-- [x] Add empty `__init__.py` files under Python packages.
-- [x] Add `pyproject.toml` with Python `>=3.11`, dependencies `fastapi`, `uvicorn`, `jinja2`, `pydantic`, and dev dependency `pytest`.
-- [x] Modify `.gitignore` so `reports/*.example.jsonl` and `reports/.gitkeep` can be committed while other reports remain ignored.
-- [x] Add `reports/.gitkeep`.
-- [x] Update `README.md` with setup command `uv sync`, replay command placeholder `uv run python scripts/run_trustroom_replay.py --replay reports/trustroom_replay.example.jsonl`, and local web command `uv run uvicorn trustroom.web.app:app --reload`.
-
-Verification:
-
-- [x] `uv sync` succeeds.
-- [x] `uv run python -c "import fastapi, pydantic, jinja2"` exits 0.
-- [x] `git status --short` shows no `pilotdeck/` files.
-- [x] `git diff --check` exits 0.
-
-Commit:
-
-- [x] `git add pyproject.toml README.md .gitignore reports/.gitkeep src tests samples scripts`
-- [x] `git commit -m "chore: scaffold TrustRoom project"`
-- [x] `git push origin main`
+Status: complete in commit `4199ed7`.
 
 Done when:
 
 - Fresh checkout can install dependencies with `uv sync`.
-- Repo contains the intended directories and no secret-like files.
+- Repo contains project directories and no secret-like files.
 
-## T1: Core Contracts And State Machine
+## T0.5: Enterprise Architecture And Plan Alignment
 
-Recommended model: 5.5 中. Use 5.4 for a subagent writing isolated tests after contracts are defined.
+Recommended model: 5.5 中.
+
+Status: complete when this plan and the governed evolution spec are committed.
 
 Boundary:
 
-- Implement data models and state transitions only.
-- Do not call LLMs, Band, or render dashboard pages.
+- Documentation only.
+- Do not implement code or create sample data.
 
 Todo:
 
-- [ ] Create `src/trustroom/models.py` with Pydantic models: `Run`, `QuestionItem`, `EvidenceCandidate`, `AnswerDraft`, `ReviewDecision`, `TimelineEvent`, `FinalSubmissionPack`.
-- [ ] Create `src/trustroom/state_machine.py` with allowed states: `intake`, `decomposition`, `evidence`, `drafting`, `review`, `approval`, `submission_pack`.
-- [ ] Enforce rule: high-risk items or items with no current evidence cannot enter final pack unless review status is `approved`.
-- [ ] Create `tests/test_models.py` for model validation.
-- [ ] Create `tests/test_state_machine.py` for valid transitions and blocked finalization.
+- [x] Read the project directory except `pilotdeck/`.
+- [x] Update the governed evolution spec with enterprise user frame, value criteria, business-facing dashboard requirements and domain additions.
+- [x] Rewrite this implementation plan so tasks build the enterprise workflow before polish.
+- [x] Keep the scope to RFP TrustRoom, not a generic self-evolving agent platform.
+
+Verification:
+
+- [x] `git diff --check` exits 0.
+- [x] Spec and plan both mention enterprise readiness, evidence coverage, approval queue and no-overclaim boundaries.
+
+Commit:
+
+- [x] `git add docs/superpowers/specs/2026-05-30-trustroom-governed-evolution-design.md docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md`
+- [x] `git commit -m "docs: align TrustRoom plan with enterprise workflow"`
+- [x] `git push origin current_branch`
+
+Done when:
+
+- A future agent can implement from this plan without relying on chat history.
+
+## T1: Enterprise Domain Contracts And State Machine
+
+Recommended model: 5.5 中. Use 5.4 for isolated tests after contracts are defined.
+
+Boundary:
+
+- Implement data contracts and state transitions only.
+- Do not call LLMs, Band or render dashboard pages.
+
+Todo:
+
+- [ ] Create `src/trustroom/models.py`.
+- [ ] Add models: `CustomerCase`, `Run`, `QuestionItem`, `EvidenceCandidate`, `AnswerDraft`, `ReviewDecision`, `ApprovalDecision`, `FinalSubmissionPack`, `TimelineEvent`, `TaskEnvelope`, `EvolutionProposal`, `ExperienceLesson`, `StressTestCase`.
+- [ ] Add enums for mode, run state, risk level, evidence freshness, review status, approval decision, proposal status and event type.
+- [ ] Create `src/trustroom/state_machine.py` with allowed states: `intake`, `triage`, `decomposition`, `evidence`, `drafting`, `review`, `approval`, `submission_pack`, `post_run_review`, `evolution_review`.
+- [ ] Enforce rule: high-risk, missing-evidence, stale-evidence or unsupported-certification items cannot enter final pack unless explicitly approved or resolved.
+- [ ] Create `tests/test_models.py`.
+- [ ] Create `tests/test_state_machine.py`.
 
 Verification:
 
 - [ ] `uv run pytest tests/test_models.py tests/test_state_machine.py -v` passes.
-- [ ] Test includes a high-risk unapproved answer and expects finalization to fail.
-- [ ] Test includes a low-risk answer with current evidence and expects finalization to pass.
+- [ ] Tests include a high-risk unapproved answer and expect finalization to fail.
+- [ ] Tests include a low-risk answer with current evidence and expect finalization to pass.
+- [ ] Tests include a stale evidence answer and expect `needs_review` or blocked behavior.
 - [ ] `git diff --check` exits 0.
 
 Commit:
 
 - [ ] `git add src/trustroom/models.py src/trustroom/state_machine.py tests/test_models.py tests/test_state_machine.py`
-- [ ] `git commit -m "feat: add TrustRoom core contracts"`
-- [ ] `git push origin main`
+- [ ] `git commit -m "feat: add TrustRoom enterprise contracts"`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
-- Core schema covers all PRD data objects.
-- Final pack gating is enforced by tests, not just documented.
+- Enterprise workflow objects are typed and final-pack gating is enforced by tests.
 
-## T2: Sample Packs And Replay Fixture
+## T2: Band-Compatible Adapter And Event Mirror
 
-Recommended model: 5.3codex spark for draft fixtures, then 5.4 for schema validation and cleanup.
+Recommended model: 5.5 中 for adapter design, 5.4 for tests.
 
 Boundary:
 
-- Create fictional data only.
-- Do not use real customer names, true policies, copied vendor questionnaire data, or private company docs.
+- Build the mock/replay/live boundary.
+- Do not implement real Band API calls yet.
 
 Todo:
 
-- [ ] Create `samples/acme-security-rfp/rfp.md` with at least 8 fictional customer requirements.
-- [ ] Create `samples/acme-security-rfp/questionnaire.csv` with at least 8 rows and columns `id,question,category,risk_hint`.
-- [ ] Create `samples/acme-security-rfp/knowledge.json` with at least 12 evidence snippets, including 2 stale snippets.
-- [ ] Create `samples/fintech-vendor-ddq/` with the same three-file structure.
-- [ ] Create `src/trustroom/sample_loader.py` to load a sample pack into typed models or plain validated dictionaries.
-- [ ] Create `tests/test_sample_loader.py` to verify both packs load and each has at least 8 question items.
-- [ ] Create `reports/trustroom_replay.example.jsonl` with one complete replay containing intake, 3+ agent handoffs, review, approval, and final pack events.
+- [ ] Create `src/trustroom/band/adapter.py`.
+- [ ] Define adapter methods: `create_room`, `send_message`, `mention_agent`, `record_event`, `get_room_timeline`, `redact_ref`.
+- [ ] Implement `MockBandAdapter` using in-memory or JSONL-backed timeline events.
+- [ ] Ensure adapter emits mode-independent `TimelineEvent` records.
+- [ ] Create `tests/test_band_adapter.py`.
+- [ ] Add `.env.example` with non-secret variable names only: `BAND_API_BASE`, `BAND_AGENT_ID`, `BAND_AGENT_KEY`.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_sample_loader.py -v` passes.
-- [ ] `wc -l reports/trustroom_replay.example.jsonl` is at least 12.
-- [ ] `rg -n "real customer|API key|room_" samples reports` returns no sensitive-looking placeholder that could be mistaken for live data.
+- [ ] `uv run pytest tests/test_band_adapter.py -v` passes.
+- [ ] Tests prove sender, receiver, event type, task state and redacted Band reference are preserved.
+- [ ] `rg -n "BAND_.*=.+[A-Za-z0-9]{12,}" .env.example README.md src tests` returns no real-looking secret.
 - [ ] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add samples reports/trustroom_replay.example.jsonl src/trustroom/sample_loader.py tests/test_sample_loader.py`
-- [ ] `git commit -m "feat: add TrustRoom sample packs"`
-- [ ] `git push origin main`
+- [ ] `git add src/trustroom/band/adapter.py tests/test_band_adapter.py .env.example`
+- [ ] `git commit -m "feat: add Band adapter boundary"`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
-- Two fictional sample packs can load locally.
-- Example replay is committed despite `reports/` being generally ignored.
+- Mock and replay can share the same event boundary that live Band will later use.
 
-## T3: Mock Agent Runner
+## T3: Primary Enterprise Sample Pack And Replay Fixture
 
-Recommended model: 5.5 中 for orchestration. 5.4 can handle individual deterministic agent functions.
+Recommended model: 5.3codex spark for draft fixture text, then 5.4 for validation.
 
 Boundary:
 
-- Build deterministic mock behavior to prove workflow shape.
-- Do not connect to real Band or external LLMs.
+- Fictional data only.
+- Do not use real customer names, copied questionnaires, true policies or private company docs.
+- Do not build the optional second sample yet unless the primary path is complete.
+
+Todo:
+
+- [ ] Create `samples/acme-security-rfp/case.json` with customer profile, deadline, submission owner and business goal.
+- [ ] Create `samples/acme-security-rfp/rfp.md` with at least 8 realistic fictional customer requirements.
+- [ ] Create `samples/acme-security-rfp/questionnaire.csv` with at least 8 rows and columns `id,question,category,risk_hint,required_evidence_type,business_owner`.
+- [ ] Create `samples/acme-security-rfp/knowledge.json` with at least 12 evidence snippets, including current, stale, missing and conflicting cases.
+- [ ] Create `src/trustroom/sample_loader.py`.
+- [ ] Create `tests/test_sample_loader.py`.
+- [ ] Create `reports/trustroom_replay.example.jsonl` with a complete business workflow: intake, triage, 3+ agent handoffs, one review loop, human approval, final pack, evolution proposal and accepted lesson.
+
+Verification:
+
+- [ ] `uv run pytest tests/test_sample_loader.py -v` passes.
+- [ ] `wc -l reports/trustroom_replay.example.jsonl` is at least 18.
+- [ ] `rg -n "real customer|API key|room_|agent_key|secret" samples reports` returns no sensitive-looking placeholder.
+- [ ] Replay includes `REPLAY` mode, evidence coverage, approval queue and final pack events.
+- [ ] `git diff --check` exits 0.
+
+Commit:
+
+- [ ] `git add samples/acme-security-rfp reports/trustroom_replay.example.jsonl src/trustroom/sample_loader.py tests/test_sample_loader.py`
+- [ ] `git commit -m "feat: add TrustRoom enterprise sample"`
+- [ ] `git push origin $(git branch --show-current)`
+
+Done when:
+
+- One strong enterprise sample is better than two thin samples.
+
+## T4: Deterministic Mock Agent Runner With Review Loop
+
+Recommended model: 5.5 中.
+
+Boundary:
+
+- Deterministic local workflow only.
+- Do not call real Band, external LLMs or internet APIs.
 
 Todo:
 
 - [ ] Create `src/trustroom/agents/mock_runner.py`.
 - [ ] Implement deterministic roles: orchestrator, requirement decomposer, evidence retriever, answer drafter, compliance reviewer, SME approver.
-- [ ] Make runner output typed `TimelineEvent` records and a `FinalSubmissionPack`.
-- [ ] Include at least one blocked or human-approval item in each run.
+- [ ] Include one non-linear loop: reviewer sends item back to retriever or drafter.
+- [ ] Include one escalation scenario for high-risk SLA, unsupported certification or stale policy.
+- [ ] Make runner output typed `TimelineEvent` records and `FinalSubmissionPack`.
 - [ ] Create `tests/test_mock_runner.py`.
 
 Verification:
 
 - [ ] `uv run pytest tests/test_mock_runner.py -v` passes.
 - [ ] Test confirms at least 3 distinct agent senders.
-- [ ] Test confirms at least one handoff from decomposer to retriever and one handoff from drafter to reviewer.
-- [ ] Test confirms high-risk item requires SME approval before final pack.
+- [ ] Test confirms a reviewer-to-retriever or reviewer-to-drafter loop.
+- [ ] Test confirms high-risk item requires SME approval before final pack inclusion.
+- [ ] Test confirms final pack has evidence index and blockers.
 - [ ] `git diff --check` exits 0.
 
 Commit:
 
 - [ ] `git add src/trustroom/agents/mock_runner.py tests/test_mock_runner.py`
-- [ ] `git commit -m "feat: add mock TrustRoom agent runner"`
-- [ ] `git push origin main`
+- [ ] `git commit -m "feat: add TrustRoom mock agent workflow"`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
-- `uv run pytest tests/test_mock_runner.py -v` proves the core multi-agent collaboration without external services.
+- The enterprise collaboration path is visible without external services.
 
-## T4: Evaluation And Readiness Checks
+## T5: Governed Evolution Engine And Experience Ledger
 
-Recommended model: 5.4. Escalate to 5.5 中 only if eval design changes data contracts.
+Recommended model: 5.5 中 for design, 5.4 for unit tests.
 
 Boundary:
 
-- Create local checks that guard demo quality.
-- Do not add production monitoring or heavyweight benchmark tooling.
+- Implement proposal and lesson logic only.
+- Do not implement source-code rewriting, model training or automatic deployment.
 
 Todo:
 
-- [ ] Create `scripts/check_trustroom_readiness.py`.
-- [ ] Check sample packs load.
-- [ ] Check replay loads in under 5 seconds.
-- [ ] Check evidence coverage is at least 80% or items are explicitly marked `needs_review`.
-- [ ] Check 100% high-risk items are `needs_human_approval`, `approved`, or `blocked`.
-- [ ] Check no-overclaim words are caught: `production-ready`, `certified`, `fully compliant`, `guaranteed`.
-- [ ] Create `tests/test_readiness.py`.
+- [ ] Create `src/trustroom/evolution.py`.
+- [ ] Generate or validate `EvolutionProposal` records from completed run artifacts.
+- [ ] Require supporting timeline event ids for every proposal.
+- [ ] Implement proposal status transitions: `pending_review`, `approved`, `rejected`, `request_changes`, `deferred`.
+- [ ] Implement `ExperienceLesson` activation only after human approval.
+- [ ] Implement lesson rollback by marking inactive and preserving `rollback_note`.
+- [ ] Create `tests/test_evolution.py`.
 
 Verification:
 
-- [ ] `uv run python scripts/check_trustroom_readiness.py` exits 0.
-- [ ] `uv run pytest tests/test_readiness.py -v` passes.
-- [ ] Temporarily injecting an unapproved high-risk item makes the readiness test fail; do not commit the injected failure.
+- [ ] `uv run pytest tests/test_evolution.py -v` passes.
+- [ ] Proposal without supporting events cannot become active.
+- [ ] Proposal that weakens human approval or no-overclaim gate is rejected.
+- [ ] Approved lesson can be loaded into the next run context.
 - [ ] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add scripts/check_trustroom_readiness.py tests/test_readiness.py`
-- [ ] `git commit -m "feat: add TrustRoom readiness checks"`
-- [ ] `git push origin main`
+- [ ] `git add src/trustroom/evolution.py tests/test_evolution.py`
+- [ ] `git commit -m "feat: add governed evolution ledger"`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
-- One command can tell whether the demo data and replay are safe to present.
+- Governed Evolution is a tested product loop, not just copy in the spec.
 
-## T5: FastAPI Dashboard MVP
+## T6: Readiness, Safety And No-Secret Gates
 
-Recommended model: 5.5 中. Use 5.3codex spark for copy polish only after the page renders.
+Recommended model: 5.4.
 
 Boundary:
 
-- Render local mock/replay data in a useful dashboard.
-- Do not chase a rich frontend stack or custom build system.
+- Local checks only.
+- Do not add production monitoring or heavyweight benchmark tooling.
+
+Todo:
+
+- [ ] Create `src/trustroom/readiness.py`.
+- [ ] Create `scripts/check_trustroom_readiness.py`.
+- [ ] Check primary sample loads and has 8+ question items.
+- [ ] Check replay loads in under 5 seconds.
+- [ ] Check evidence coverage is at least 80% or items are explicitly `needs_review` / `blocked`.
+- [ ] Check 100% high-risk items are `needs_human_approval`, `approved`, `request_changes` or `blocked`.
+- [ ] Check no-overclaim words are caught: `production-ready`, `certified`, `fully compliant`, `guaranteed`, `enterprise-grade compliance`.
+- [ ] Create `scripts/check_no_secrets.py`.
+- [ ] Create `tests/test_readiness.py` and `tests/test_no_secrets.py`.
+
+Verification:
+
+- [ ] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [ ] `uv run python scripts/check_no_secrets.py` exits 0.
+- [ ] `uv run pytest tests/test_readiness.py tests/test_no_secrets.py -v` passes.
+- [ ] Temporarily injecting an unapproved high-risk item makes readiness fail; do not commit the injected failure.
+- [ ] `git diff --check` exits 0.
+
+Commit:
+
+- [ ] `git add src/trustroom/readiness.py scripts/check_trustroom_readiness.py scripts/check_no_secrets.py tests/test_readiness.py tests/test_no_secrets.py`
+- [ ] `git commit -m "feat: add TrustRoom readiness gates"`
+- [ ] `git push origin $(git branch --show-current)`
+
+Done when:
+
+- One command can protect the enterprise demo from unsafe claims and broken workflow state.
+
+## T7: Enterprise Dashboard MVP
+
+Recommended model: 5.5 中. Use 5.3codex spark only for copy after rendering works.
+
+Boundary:
+
+- Render local mock/replay data in an enterprise-useful dashboard.
+- Do not introduce a new frontend build system unless unavoidable.
 
 Todo:
 
 - [ ] Create `src/trustroom/web/app.py` with routes `/`, `/runs/demo`, `/runs/demo/replay`, `/health`.
 - [ ] Create `src/trustroom/web/templates/base.html`, `index.html`, `run.html`.
-- [ ] Dashboard sections: input summary, agent status, timeline, draft answers, evidence index, review state, final submission pack.
-- [ ] Add clear `MOCK` or `REPLAY` badge on non-live paths.
+- [ ] First viewport: Case Brief, Submission Readiness, Evidence Coverage, Approval Queue.
+- [ ] Secondary sections: Answer Pack, Band Collaboration Timeline, Governed Evolution, Replay / Live Evidence.
+- [ ] Add clear `MOCK`, `REPLAY` or `LIVE` badge.
 - [ ] Create `tests/test_web_app.py` using FastAPI TestClient.
 
 Verification:
 
 - [ ] `uv run pytest tests/test_web_app.py -v` passes.
 - [ ] `uv run uvicorn trustroom.web.app:app --reload` starts without import errors.
-- [ ] Browser or curl check: `/health` returns OK; `/runs/demo/replay` includes "RFP TrustRoom", "Evidence", "Human approval", and "REPLAY".
+- [ ] Browser or curl check: `/health` returns OK.
+- [ ] `/runs/demo/replay` includes "RFP TrustRoom", "Submission Readiness", "Evidence Coverage", "Approval Queue", "Human approval", "Governed Evolution" and "REPLAY".
 - [ ] `git diff --check` exits 0.
 
 Commit:
 
 - [ ] `git add src/trustroom/web tests/test_web_app.py README.md`
-- [ ] `git commit -m "feat: add TrustRoom dashboard MVP"`
-- [ ] `git push origin main`
+- [ ] `git commit -m "feat: add TrustRoom enterprise dashboard"`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
-- A judge can open one local URL and understand the workflow without reading raw JSON.
+- A sales or security reviewer can understand the case status before reading raw timeline events.
 
-## T6: Agent Prompts And Task Envelopes
+## T8: Agent Prompts And Task Envelopes
 
 Recommended model: 5.4 for prompt structure; 5.3codex spark for wording variants.
 
 Boundary:
 
-- Define prompts, output schemas, and task envelopes for each agent.
+- Define prompts, output schemas and Band task envelopes.
 - Do not call external LLMs yet.
 
 Todo:
@@ -295,98 +399,101 @@ Todo:
 - [ ] Create `src/trustroom/agents/prompts/evidence_retriever.md`.
 - [ ] Create `src/trustroom/agents/prompts/answer_drafter.md`.
 - [ ] Create `src/trustroom/agents/prompts/compliance_reviewer.md`.
-- [ ] Each prompt must include role, input contract, output JSON schema, refusal/no-overclaim boundary, and Band handoff instruction.
-- [ ] Create `docs/agent-task-envelopes.md` explaining the message payload each agent sends through Band.
+- [ ] Create `src/trustroom/agents/prompts/workflow_improvement.md`.
+- [ ] Create `src/trustroom/agents/prompts/challenge_generator.md`.
+- [ ] Each prompt must include role, enterprise job, input contract, output JSON schema, refusal/no-overclaim boundary and Band handoff instruction.
+- [ ] Create `docs/agent-task-envelopes.md`.
 
 Verification:
 
-- [ ] `rg -n "production deployment|legal advice|certification" src/trustroom/agents/prompts docs/agent-task-envelopes.md` shows these are forbidden, not promised.
-- [ ] `rg -n "@mention|handoff|evidence|human approval" src/trustroom/agents/prompts` returns hits in each prompt.
+- [ ] `rg -n "production deployment|legal advice|certification|fully compliant" src/trustroom/agents/prompts docs/agent-task-envelopes.md` shows these are forbidden, not promised.
+- [ ] `rg -n "@mention|handoff|evidence|human approval|request_changes" src/trustroom/agents/prompts` returns hits in each prompt.
 - [ ] `git diff --check` exits 0.
 
 Commit:
 
 - [ ] `git add src/trustroom/agents/prompts docs/agent-task-envelopes.md`
 - [ ] `git commit -m "docs: add TrustRoom agent prompts"`
-- [ ] `git push origin main`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
-- Another agent can implement live or LLM-backed agents by reading the prompt files without inventing roles.
+- Another agent can implement live or LLM-backed agents without inventing roles or weakening enterprise gates.
 
-## T7: Band Adapter Interface And Live Integration
+## T9: Band Live Integration
 
-Recommended model: 5.5 超高 for live integration. Use 5.5 中 for mock adapter before kickoff. Do not use 5.3 for this task.
+Recommended model: 5.5 超高 for live integration.
 
 Boundary:
 
-- Build a narrow adapter that can be backed by mock/replay now and Band live after credentials exist.
-- Do not commit credentials or true room identifiers.
+- Implement live adapter only after official access is confirmed.
+- Do not commit credentials, true room ids or true agent keys.
 
 Todo:
 
-- [ ] Create `src/trustroom/band/adapter.py` with interface methods: `create_room`, `send_message`, `mention_agent`, `record_event`, `get_room_timeline`.
-- [ ] Create `MockBandAdapter` that records timeline events locally.
-- [ ] Create `tests/test_band_adapter.py` for mock adapter behavior.
-- [ ] After kickoff, add `LiveBandAdapter` only after reading official Band docs in Chrome or official docs.
-- [ ] Add `.env.example` with non-secret variable names: `BAND_API_BASE`, `BAND_AGENT_ID`, `BAND_AGENT_KEY`.
-- [ ] Document live setup in README without exposing real keys.
+- [ ] Re-read official Band docs with Chrome if live API details may have changed.
+- [ ] Create `LiveBandAdapter` behind the same interface as `MockBandAdapter`.
+- [ ] Create at least 3 Band Remote Agents for orchestrator, evidence/retrieval or drafting, and reviewer roles.
+- [ ] Record a redacted live evidence packet showing room creation, @mention handoff and reviewer decision.
+- [ ] Document setup in README without exposing secrets.
+- [ ] Create `tests/test_live_adapter_contract.py` using mock/stubbed responses only.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_band_adapter.py -v` passes.
-- [ ] `rg -n "BAND_.*=.+[A-Za-z0-9]{12,}" .env.example README.md src tests` returns no real-looking secret.
-- [ ] Mock path still passes: `uv run python scripts/check_trustroom_readiness.py`.
+- [ ] `uv run pytest tests/test_live_adapter_contract.py -v` passes.
+- [ ] Mock/replay path still passes readiness.
+- [ ] Live evidence packet is redacted.
+- [ ] `rg -n "agent_key|BAND_AGENT_KEY=.+|room_[A-Za-z0-9]{8,}|sk-" README.md docs reports src tests .env.example` returns no real secret.
 - [ ] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add src/trustroom/band/adapter.py tests/test_band_adapter.py .env.example README.md`
-- [ ] `git commit -m "feat: add Band adapter boundary"`
-- [ ] `git push origin main`
+- [ ] `git add src/trustroom/band README.md tests/test_live_adapter_contract.py reports`
+- [ ] `git commit -m "feat: add Band live adapter"`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
-- Mock adapter is tested.
-- Live Band work has a safe boundary and cannot leak credentials by design.
+- Live Band is a narrow optional path, and the demo remains safe if live access fails.
 
-## T8: Judge Docs, Demo Runbook, And Evidence Report
+## T10: Judge Docs, Demo Runbook And Evidence Report
 
-Recommended model: 5.3codex spark for draft, 5.4 for consistency review, Codex final review before commit.
+Recommended model: 5.3codex spark for drafts, 5.4 for consistency review, Codex final review before commit.
 
 Boundary:
 
-- Write judge-facing documentation for the exact MVP.
-- Do not invent features not present in dashboard or replay.
+- Write judge-facing docs for the exact implemented MVP.
+- Do not invent features that are absent from dashboard, replay or live evidence.
 
 Todo:
 
 - [ ] Create `docs/judge-10-minute-experience.md`.
 - [ ] Create `docs/demo-runbook.md`.
 - [ ] Create `docs/demo-evidence-report.md`.
+- [ ] Include enterprise route: Case Brief -> Readiness -> Evidence -> Approval -> Final Pack -> Evolution.
 - [ ] Include live path and replay fallback, clearly labeled.
 - [ ] Include no-overclaim language: hackathon demo / working prototype only.
-- [ ] Include a 5-minute video structure aligned with RFP TrustRoom.
+- [ ] Include 5-minute video structure aligned with RFP TrustRoom.
 
 Verification:
 
 - [ ] `rg -n "production|enterprise-ready deployment|fully automated compliance|legal advice|certified" docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md` returns no overclaim unless listed as forbidden wording.
-- [ ] `rg -n "replay|fallback|Band|human approval|evidence" docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md` returns useful hits.
+- [ ] `rg -n "Submission Readiness|Evidence Coverage|Approval Queue|replay|fallback|Band|human approval|Governed Evolution" docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md` returns useful hits.
 - [ ] `git diff --check` exits 0.
 
 Commit:
 
 - [ ] `git add docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md`
 - [ ] `git commit -m "docs: add TrustRoom judge materials"`
-- [ ] `git push origin main`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
-- A fresh evaluator can run the demo path from docs without asking for chat context.
+- A fresh evaluator can run the demo route from docs without chat context.
 
-## T9: Deployment And Public Submission Hardening
+## T11: Deployment And Public Submission Hardening
 
-Recommended model: 5.5 中 for deployment. 5.5 超高 for final public repo and secret audit.
+Recommended model: 5.5 中 for deployment; 5.5 超高 for final public repo and secret audit.
 
 Boundary:
 
@@ -395,11 +502,11 @@ Boundary:
 
 Todo:
 
-- [ ] Add a production-ish run command to README.
+- [ ] Add a public-safe run command to README.
 - [ ] Add `LICENSE` with MIT license if not already present.
-- [ ] Add `scripts/check_no_secrets.py` to scan staged files for `.env`, API-key-like strings, true room ids, and agent keys.
 - [ ] Add deployment notes for the chosen platform.
 - [ ] Decide with user: make current repo public or create a separate sanitized public submission repo.
+- [ ] Run no-secret checks against staged files and submission docs.
 
 Verification:
 
@@ -410,15 +517,15 @@ Verification:
 
 Commit:
 
-- [ ] `git add README.md LICENSE scripts/check_no_secrets.py`
+- [ ] `git add README.md LICENSE docs/submission-checklist.md`
 - [ ] `git commit -m "chore: harden TrustRoom submission"`
-- [ ] `git push origin main`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
 - Repo can be shared safely after the user chooses the public repo strategy.
 
-## T10: Final End-To-End Rehearsal
+## T12: Final End-To-End Rehearsal
 
 Recommended model: 5.5 超高 for final review, with 5.3codex spark only for caption/copy tweaks.
 
@@ -431,17 +538,19 @@ Todo:
 
 - [ ] Run all tests.
 - [ ] Run readiness check.
+- [ ] Run no-secret check.
 - [ ] Start dashboard and open the demo path.
+- [ ] Verify first viewport answers enterprise readiness questions.
 - [ ] Verify replay fallback loads and is labeled as replay.
 - [ ] Verify Band live path if credentials and official access exist.
-- [ ] Verify README, judge route, runbook, and submission checklist match the actual app.
+- [ ] Verify README, judge route, runbook and submission checklist match the actual app.
 - [ ] Record unresolved issues in `docs/submission-checklist.md` rather than hiding them.
 
 Verification:
 
 - [ ] `uv run pytest -v` passes.
 - [ ] `uv run python scripts/check_trustroom_readiness.py` passes.
-- [ ] `uv run python scripts/check_no_secrets.py` passes if T9 is complete.
+- [ ] `uv run python scripts/check_no_secrets.py` passes.
 - [ ] Manual demo completes in under 10 minutes using either live path or replay fallback.
 - [ ] `git diff --check` exits 0.
 
@@ -449,7 +558,7 @@ Commit:
 
 - [ ] `git add README.md docs/submission-checklist.md docs/demo-runbook.md`
 - [ ] `git commit -m "docs: record TrustRoom final rehearsal"`
-- [ ] `git push origin main`
+- [ ] `git push origin $(git branch --show-current)`
 
 Done when:
 
@@ -461,13 +570,15 @@ Done when:
 Use this when launching a long-running `codex goal`:
 
 ```text
-在 /Users/junhaocheng/working-dir/Band of Agents Hackathon 中执行 docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md。每次只完成下一个未勾选任务，先 git pull --ff-only，不碰 pilotdeck/，按任务建议模型派子代理，完成后更新该任务 checkbox、运行验证、git diff --check、提交并推送。遇到 Band live access、公开 repo、真实 secret、任务边界不清时停止并记录 blocker。
+在 /Users/junhaocheng/working-dir/Band of Agents Hackathon 执行 docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md。每次只完成下一个未勾选任务，先 git pull --ff-only，不碰 pilotdeck/，优先做企业用户第一屏能看懂的主路径：readiness、evidence、approval、final pack、Band 协作、governed evolution。完成后更新 checkbox、运行验证、git diff --check、提交并推送当前分支。遇到 Band live access、公开 repo、真实 secret、任务边界不清时停止并记录 blocker。
 ```
 
 ## Self-Review Checklist
 
 - [x] Every PRD success criterion maps to at least one task.
-- [x] Every task has boundary, todo, verification, commit, and done conditions.
-- [x] Model routing is explicit and avoids 5.5 超高 for low-risk docs/fixtures.
+- [x] The plan leads with enterprise readiness, evidence, approval and final pack before judge polish.
+- [x] Every task has boundary, todo, verification, commit and done conditions.
+- [x] Model routing avoids 5.5 超高 for low-risk docs/fixtures.
 - [x] Plan protects `pilotdeck/` and secrets.
 - [x] Plan keeps replay fallback separate from live Band path.
+- [x] Governed Evolution is planned as a tested, human-approved loop.
