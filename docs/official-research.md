@@ -2,20 +2,28 @@
 
 调研日期：2026-05-29
 
+Chrome 复核：2026-05-30，用 Chrome 打开官方页面正文重新核对比赛要求。
+
 ## 关键事实
 
 - 比赛名称：Band of Agents Hackathon
 - 主题：Build enterprise multi-agent systems with Band and Codeband
 - 时间：2026-06-12 至 2026-06-19
 - 赛程：
-  - 2026-06-12：Kick-off Stream
+  - 2026-06-12 23:00 CST：Hackathon Kick-off
+  - 2026-06-12 23:10 CST：lablab.ai opening words
+  - 2026-06-12 23:15 CST：Band opening words
+  - 2026-06-12 23:20 CST：Introduction to the Challenge
+  - 2026-06-12 23:30 CST：Hackathon Guide
+  - 2026-06-13 00:00 CST：Discord Q&A session
   - 2026-06-12 至 2026-06-19：Online Build Phase
-  - 2026-06-19：Project Submissions Ends
+  - 2026-06-19 23:00 CST：End of Submissions
 - 形式：完全线上，可从任何地方参加。
-- 奖池：总计 9,500 美元。
+- 奖池：总计 9,500 美元。Main prizes 为 1st $3,500、2nd $2,500、3rd $1,500；AI/ML API partner prize 为 $1,000 cash + $1,000 credits。
 - 主要技术：Band、Band Documentation、Connect Any Agent、Band Agent API、Codeband、Band SDK。
 - 技术伙伴：AI/ML API。
 - AI/ML API 资源：页面写明每人 10 美元 credits，最多 500 名参与者，promo code 在 kickoff 公布，有效期至比赛结束。
+- Partner access 注意事项：credits/promo code 由 AI/ML API 提供，可能受资格、可用性、平台条款影响；AI/ML API 可能要求 billing/subscription setup，不继续使用时要取消服务，避免赛后收费。
 
 ## Challenge 的真实含义
 
@@ -96,6 +104,8 @@ App Hosting & Code Repository
 - Demo Application Platform
 - Application URL
 
+注意：官方页面写的是 Public GitHub Repository。当前本地准备仓库是 private，适合赛前准备；正式提交前要么切成 public，要么准备一个脱敏公开提交仓库。
+
 ## 官方资源读法
 
 Band 文档显示，Band 的定位是给已有 Agent 增加 persistent identity、multi-agent coordination、structured memory、unified audit trail，而不替换 Agent 自己的运行框架、prompt、tools 或 LLM provider。
@@ -125,19 +135,18 @@ Codeband 参考价值：
 
 ## 页面疑似矛盾/污染
 
-官方页面在 Track 3 后面出现了一段 X402 Payments / Launch & Fund Your Startup 的文字，并列出了 agent-to-agent payments、consumer AI payments、B2B FinOps、on-chain commerce primitives 等内容。
+Chrome 复核时，页面 DOM headings 中仍能看到一段 X402 Payments / Launch & Fund Your Startup 相关内容，包括 agent-to-agent payments、consumer AI payments、B2B FinOps、on-chain commerce primitives 等标题。
 
-判断：这段与页面标题、Challenge、技术资源、评审标准不一致，极可能是页面模板/内容混入。参赛准备时不把 X402 当作主赛道，除非 Kick-off Stream 或官方 Discord 后续确认。
+判断：这段与页面标题、Challenge、技术资源、评审标准不一致，极可能是页面模板/内容混入或隐藏/错配内容。参赛准备时不把 X402 当作主赛道，除非 Kick-off Stream 或官方 Discord 后续确认。
 
 ## 竞品/队伍粗看
 
-页面和搜索索引能看到已有队伍，但大多数尚未提交。已有队伍想法偏泛：
+Chrome 复核时页面可见部分显示已有队伍，但大多数尚未提交。已有队伍描述偏泛：
 
-- wereadthedocs：初学者探索 agentic systems。
-- The Band of Hawk：交易/投研风格，多 Agent 争论与 veto。
-- HumanLoop AI：human-centered multi-agent，强调透明、可控、enterprise-ready。
-- Fovea：把复杂 workflow 变简单的 AI 工具。
-- AK Agents / EVOLUTICS / Invictus 等描述较泛。
+- Invictus：Pushing the frontiers of technology with creativity.
+- The Blos：A team of people who do not take themselves too seriously.
+- inslot2525：builds AI applications, workflows and agents to solve real life problems.
+- SoloRun：Build by the people for the people.
 
 机会：不要做“泛 AI 工具”或“我们很创新”的口号型项目。用一个真实企业流程、清楚的状态机、可视化审计链和 Band room 证据打穿。
 

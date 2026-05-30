@@ -79,7 +79,9 @@
 
 2026-06-12：Kick-off
 
-- 记录 kickoff 中公布的 access code、限制、提交细则、准确 deadline/timezone。
+- 参加 23:00 CST Hackathon Kick-off；记录 kickoff 中公布的 access code、限制、提交细则、准确 deadline/timezone。
+- 23:10-23:30 CST 重点听 lablab.ai opening words、Band opening words、Challenge introduction、Hackathon Guide。
+- 2026-06-13 00:00 CST 参加 Discord Q&A，确认页面里 X402 段落是否与本赛事有关。
 - 立即确认页面中 X402 文字是否只是污染。
 - 建 3-5 个 Band Remote Agents，拿到 credentials，写入本机 secret 文件。
 - 跑通一个 Agent 收消息并回复。
@@ -161,6 +163,7 @@ Originality
 - X402 文字疑似页面污染，不能误选赛道。
 - AI/ML API credits 可能涉及 billing/subscription，领取后要留意取消续费。
 - 公开 GitHub 必须确认没有 `.env`、`agent_config.yaml`、API key、私有日志。
+- 官方提交要求 Public GitHub Repository；当前准备仓库是 private，提交前必须切 public 或创建公开脱敏提交仓库。
 
 ## no-overclaim 边界
 

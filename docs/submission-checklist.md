@@ -45,7 +45,7 @@
 - [ ] Cover Image，建议 16:9。
 - [ ] Video Presentation，官方指南建议 5 分钟以内。
 - [ ] Slide Presentation。
-- [ ] Public GitHub Repository。
+- [ ] Public GitHub Repository。当前准备仓库是 private，正式提交前需要切 public 或准备脱敏公开提交仓库。
 - [ ] Demo Application Platform。
 - [ ] Application URL。
 - [ ] README 包含 setup、architecture、demo script、known limitations。
@@ -90,3 +90,4 @@ Band, Band SDK, multi-agent systems, enterprise workflow, release management, AI
 - [ ] 录屏前确认所有 secret、真实用户 ID、真实 room id 已脱敏或不展示。
 - [ ] 如果 live demo 卡住，视频里切 replay fallback，并口头说明 replay / live 的区别。
 - [ ] 最终长描述里避免 production、enterprise-ready deployment、fully automated compliance 这类过度承诺词。
+- [ ] 提交前再次用 Chrome 打开官方页面确认 deadline、提交字段、奖项和 partner access 没有变化。
