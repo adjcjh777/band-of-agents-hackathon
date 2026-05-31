@@ -80,7 +80,7 @@ Parallel execution rule:
 - [x] T3: Primary enterprise sample pack and replay fixture
 - [x] T4: Deterministic mock agent runner with review loop
 - [ ] T5: Governed evolution engine and experience ledger
-- [ ] T6: Readiness, safety and no-secret gates
+- [x] T6: Readiness, safety and no-secret gates
 - [x] T7: Enterprise dashboard MVP
 - [ ] T8: Agent prompts and task envelopes
 - [ ] T9: Band live integration
@@ -348,29 +348,29 @@ Boundary:
 
 Todo:
 
-- [ ] Create `src/trustroom/readiness.py`.
-- [ ] Create `scripts/check_trustroom_readiness.py`.
-- [ ] Check primary sample loads and has 8+ question items.
-- [ ] Check replay loads in under 5 seconds.
-- [ ] Check evidence coverage is at least 80% or items are explicitly `needs_review` / `blocked`.
-- [ ] Check 100% high-risk items are `needs_human_approval`, `approved`, `request_changes` or `blocked`.
-- [ ] Check no-overclaim words are caught: `production-ready`, `certified`, `fully compliant`, `guaranteed`, `enterprise-grade compliance`.
-- [ ] Create `scripts/check_no_secrets.py`.
-- [ ] Create `tests/test_readiness.py` and `tests/test_no_secrets.py`.
+- [x] Create `src/trustroom/readiness.py`.
+- [x] Create `scripts/check_trustroom_readiness.py`.
+- [x] Check primary sample loads and has 8+ question items.
+- [x] Check replay loads in under 5 seconds.
+- [x] Check evidence coverage is at least 80% or items are explicitly `needs_review` / `blocked`.
+- [x] Check 100% high-risk items are `needs_human_approval`, `approved`, `request_changes` or `blocked`.
+- [x] Check no-overclaim words are caught: `production-ready`, `certified`, `fully compliant`, `guaranteed`, `enterprise-grade compliance`.
+- [x] Create `scripts/check_no_secrets.py`.
+- [x] Create `tests/test_readiness.py` and `tests/test_no_secrets.py`.
 
 Verification:
 
-- [ ] `uv run python scripts/check_trustroom_readiness.py` exits 0.
-- [ ] `uv run python scripts/check_no_secrets.py` exits 0.
-- [ ] `uv run pytest tests/test_readiness.py tests/test_no_secrets.py -v` passes.
-- [ ] Temporarily injecting an unapproved high-risk item makes readiness fail; do not commit the injected failure.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run pytest tests/test_readiness.py tests/test_no_secrets.py -v` passes.
+- [x] Temporarily injecting an unapproved high-risk item makes readiness fail; do not commit the injected failure.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add src/trustroom/readiness.py scripts/check_trustroom_readiness.py scripts/check_no_secrets.py tests/test_readiness.py tests/test_no_secrets.py`
-- [ ] `git commit -m "feat: add TrustRoom readiness gates"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add src/trustroom/readiness.py scripts/check_trustroom_readiness.py scripts/check_no_secrets.py tests/test_readiness.py tests/test_no_secrets.py`
+- [x] `git commit -m "feat: add TrustRoom readiness gates"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 
