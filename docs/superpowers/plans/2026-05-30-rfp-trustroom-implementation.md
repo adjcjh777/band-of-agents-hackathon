@@ -75,7 +75,7 @@ Parallel execution rule:
 
 - [x] T0: Repo scaffold and dependency baseline
 - [x] T0.5: Enterprise architecture and plan alignment
-- [ ] T1: Enterprise domain contracts and state machine
+- [x] T1: Enterprise domain contracts and state machine
 - [ ] T2: Band-compatible adapter and event mirror
 - [ ] T3: Primary enterprise sample pack and replay fixture
 - [ ] T4: Deterministic mock agent runner with review loop
@@ -164,27 +164,27 @@ Boundary:
 
 Todo:
 
-- [ ] Create `src/trustroom/models.py`.
-- [ ] Add models: `CustomerCase`, `Run`, `QuestionItem`, `EvidenceCandidate`, `AnswerDraft`, `ReviewDecision`, `ApprovalDecision`, `FinalSubmissionPack`, `TimelineEvent`, `TaskEnvelope`, `EvolutionProposal`, `ExperienceLesson`, `StressTestCase`.
-- [ ] Add enums for mode, run state, risk level, evidence freshness, review status, approval decision, proposal status and event type.
-- [ ] Create `src/trustroom/state_machine.py` with allowed states: `intake`, `triage`, `decomposition`, `evidence`, `drafting`, `review`, `approval`, `submission_pack`, `post_run_review`, `evolution_review`.
-- [ ] Enforce rule: high-risk, missing-evidence, stale-evidence or unsupported-certification items cannot enter final pack unless explicitly approved or resolved.
-- [ ] Create `tests/test_models.py`.
-- [ ] Create `tests/test_state_machine.py`.
+- [x] Create `src/trustroom/models.py`.
+- [x] Add models: `CustomerCase`, `Run`, `QuestionItem`, `EvidenceCandidate`, `AnswerDraft`, `ReviewDecision`, `ApprovalDecision`, `FinalSubmissionPack`, `TimelineEvent`, `TaskEnvelope`, `EvolutionProposal`, `ExperienceLesson`, `StressTestCase`.
+- [x] Add enums for mode, run state, risk level, evidence freshness, review status, approval decision, proposal status and event type.
+- [x] Create `src/trustroom/state_machine.py` with allowed states: `intake`, `triage`, `decomposition`, `evidence`, `drafting`, `review`, `approval`, `submission_pack`, `post_run_review`, `evolution_review`.
+- [x] Enforce rule: high-risk, missing-evidence, stale-evidence or unsupported-certification items cannot enter final pack unless explicitly approved or resolved.
+- [x] Create `tests/test_models.py`.
+- [x] Create `tests/test_state_machine.py`.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_models.py tests/test_state_machine.py -v` passes.
-- [ ] Tests include a high-risk unapproved answer and expect finalization to fail.
-- [ ] Tests include a low-risk answer with current evidence and expect finalization to pass.
-- [ ] Tests include a stale evidence answer and expect `needs_review` or blocked behavior.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest tests/test_models.py tests/test_state_machine.py -v` passes.
+- [x] Tests include a high-risk unapproved answer and expect finalization to fail.
+- [x] Tests include a low-risk answer with current evidence and expect finalization to pass.
+- [x] Tests include a stale evidence answer and expect `needs_review` or blocked behavior.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add src/trustroom/models.py src/trustroom/state_machine.py tests/test_models.py tests/test_state_machine.py`
-- [ ] `git commit -m "feat: add TrustRoom enterprise contracts"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add src/trustroom/models.py src/trustroom/state_machine.py tests/test_models.py tests/test_state_machine.py`
+- [x] `git commit -m "feat: add TrustRoom enterprise contracts"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 

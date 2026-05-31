@@ -1,6 +1,6 @@
 # Agent Task Ledger
 
-最后更新：2026-05-30
+最后更新：2026-05-31
 
 本台账是 Codex + Claude Code 并行执行的单一事实来源。任何 agent 开始写文件前，必须先在 Active File Locks 表中拥有一条 `active` 锁。
 
@@ -18,6 +18,7 @@
 
 | Task | Owner | Branch | Status | Locked paths | Review owner | Required checks |
 |---|---|---|---|---|---|---|
+| T1 Enterprise domain contracts and state machine | Codex | `feature/trustroom-governed-evolution-spec` | complete | `src/trustroom/models.py`, `src/trustroom/state_machine.py`, `tests/test_models.py`, `tests/test_state_machine.py`, `docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md` | Codex | `uv run pytest tests/test_models.py tests/test_state_machine.py -v`; `uv run pytest -v`; `git diff --check` |
 
 当前没有 active locks。开始下一个任务前，Codex controller 必须先在本表添加 `active` 行并运行 `uv run python scripts/check_dual_agent_protocol.py`。
 
@@ -44,6 +45,7 @@
 
 | Date | Branch | Owner | Integrated by | Result | Evidence |
 |---|---|---|---|---|---|
+| 2026-05-31 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | T1 enterprise contracts and state machine completed | `uv run pytest tests/test_models.py tests/test_state_machine.py -v`; `uv run pytest -v`; `git diff --check` |
 | 2026-05-31 | `feature/claude-runner-wrapper-smoke` | Claude Code | Codex | live wrapper smoke validated | Real `scripts/run_claude_task.py` call used strict empty MCP and Claude tools `Read,Write`; Claude wrote only `docs/claude-runner-wrapper-smoke.md`; controller postflight passed; branch pushed at `b4f03a7`. |
 | 2026-05-31 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | safe Claude dispatch wrapper added | `scripts/run_claude_task.py` enforces active lock, branch, strict MCP, budgeted `claude -p`, and postflight changed-file checks; tests use fake Claude for locked and out-of-lock writes. |
 | 2026-05-31 | `feature/claude-p-write-smoke` | Claude Code | Codex | write smoke exposed need for changed-file validator | Claude wrote a locked untracked file; follow-up adds `scripts/check_dual_agent_changes.py` so untracked paths are checked against active locks. |
