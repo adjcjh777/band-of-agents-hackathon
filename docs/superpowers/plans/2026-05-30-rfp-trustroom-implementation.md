@@ -77,7 +77,7 @@ Parallel execution rule:
 - [x] T0.5: Enterprise architecture and plan alignment
 - [x] T1: Enterprise domain contracts and state machine
 - [ ] T2: Band-compatible adapter and event mirror
-- [ ] T3: Primary enterprise sample pack and replay fixture
+- [x] T3: Primary enterprise sample pack and replay fixture
 - [ ] T4: Deterministic mock agent runner with review loop
 - [ ] T5: Governed evolution engine and experience ledger
 - [ ] T6: Readiness, safety and no-secret gates
@@ -237,27 +237,27 @@ Boundary:
 
 Todo:
 
-- [ ] Create `samples/acme-security-rfp/case.json` with customer profile, deadline, submission owner and business goal.
-- [ ] Create `samples/acme-security-rfp/rfp.md` with at least 8 realistic fictional customer requirements.
-- [ ] Create `samples/acme-security-rfp/questionnaire.csv` with at least 8 rows and columns `id,question,category,risk_hint,required_evidence_type,business_owner`.
-- [ ] Create `samples/acme-security-rfp/knowledge.json` with at least 12 evidence snippets, including current, stale, missing and conflicting cases.
-- [ ] Create `src/trustroom/sample_loader.py`.
-- [ ] Create `tests/test_sample_loader.py`.
-- [ ] Create `reports/trustroom_replay.example.jsonl` with a complete business workflow: intake, triage, 3+ agent handoffs, one review loop, human approval, final pack, evolution proposal and accepted lesson.
+- [x] Create `samples/acme-security-rfp/case.json` with customer profile, deadline, submission owner and business goal.
+- [x] Create `samples/acme-security-rfp/rfp.md` with at least 8 realistic fictional customer requirements.
+- [x] Create `samples/acme-security-rfp/questionnaire.csv` with at least 8 rows and columns `id,question,category,risk_hint,required_evidence_type,business_owner`.
+- [x] Create `samples/acme-security-rfp/knowledge.json` with at least 12 evidence snippets, including current, stale, missing and conflicting cases.
+- [x] Create `src/trustroom/sample_loader.py`.
+- [x] Create `tests/test_sample_loader.py`.
+- [x] Create `reports/trustroom_replay.example.jsonl` with a complete business workflow: intake, triage, 3+ agent handoffs, one review loop, human approval, final pack, evolution proposal and accepted lesson.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_sample_loader.py -v` passes.
-- [ ] `wc -l reports/trustroom_replay.example.jsonl` is at least 18.
-- [ ] `rg -n "real customer|API key|room_|agent_key|secret" samples reports` returns no sensitive-looking placeholder.
-- [ ] Replay includes `REPLAY` mode, evidence coverage, approval queue and final pack events.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest tests/test_sample_loader.py -v` passes.
+- [x] `wc -l reports/trustroom_replay.example.jsonl` is at least 18.
+- [x] `rg -n "real customer|API key|room_|agent_key|secret" samples reports` returns no sensitive-looking placeholder.
+- [x] Replay includes `REPLAY` mode, evidence coverage, approval queue and final pack events.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add samples/acme-security-rfp reports/trustroom_replay.example.jsonl src/trustroom/sample_loader.py tests/test_sample_loader.py`
-- [ ] `git commit -m "feat: add TrustRoom enterprise sample"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add samples/acme-security-rfp reports/trustroom_replay.example.jsonl src/trustroom/sample_loader.py tests/test_sample_loader.py`
+- [x] `git commit -m "feat: add TrustRoom enterprise sample"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 

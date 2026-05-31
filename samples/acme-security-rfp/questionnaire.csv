@@ -1,0 +1,9 @@
+id,question,category,risk_hint,required_evidence_type,business_owner
+Q-001,Do you encrypt customer documents in transit and at rest?,security,low,architecture,security
+Q-002,Can you provide current SOC 2 evidence and a bridge letter?,security,high,certification,security
+Q-003,What data retention windows can customers configure?,privacy,medium,policy,legal
+Q-004,Can EU documents stay in a region-restricted workflow?,legal,high,architecture,legal
+Q-005,Can the product generate PDF risk summaries for reviewer approval?,product,low,control,product
+Q-006,What incident response notification target do you commit to?,support,high,policy,security
+Q-007,How are subprocessors reviewed and disclosed to customers?,privacy,medium,policy,legal
+Q-008,What implementation timeline is realistic for a controlled pilot?,commercial,low,prior_answer,sales

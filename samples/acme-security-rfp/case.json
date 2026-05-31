@@ -1,0 +1,15 @@
+{
+  "case_id": "acme-security-rfp",
+  "case_name": "Acme Financial Services Security RFP",
+  "customer_profile": "Fictional regional financial services buyer evaluating an AI-assisted document workflow for regulated teams.",
+  "deadline_label": "48 hours",
+  "material_types": [
+    "rfp",
+    "security_questionnaire",
+    "policy_snippets",
+    "prior_answers"
+  ],
+  "business_goal": "Create an evidence-backed RFP and security questionnaire response pack with clear approval gates.",
+  "submission_owner": "Maya Chen, Sales Engineering Lead",
+  "mode": "replay"
+}
