@@ -81,7 +81,7 @@ Parallel execution rule:
 - [x] T4: Deterministic mock agent runner with review loop
 - [ ] T5: Governed evolution engine and experience ledger
 - [ ] T6: Readiness, safety and no-secret gates
-- [ ] T7: Enterprise dashboard MVP
+- [x] T7: Enterprise dashboard MVP
 - [ ] T8: Agent prompts and task envelopes
 - [ ] T9: Band live integration
 - [ ] T10: Judge docs, demo runbook and evidence report
@@ -387,26 +387,26 @@ Boundary:
 
 Todo:
 
-- [ ] Create `src/trustroom/web/app.py` with routes `/`, `/runs/demo`, `/runs/demo/replay`, `/health`.
-- [ ] Create `src/trustroom/web/templates/base.html`, `index.html`, `run.html`.
-- [ ] First viewport: Case Brief, Submission Readiness, Evidence Coverage, Approval Queue.
-- [ ] Secondary sections: Answer Pack, Band Collaboration Timeline, Governed Evolution, Replay / Live Evidence.
-- [ ] Add clear `MOCK`, `REPLAY` or `LIVE` badge.
-- [ ] Create `tests/test_web_app.py` using FastAPI TestClient.
+- [x] Create `src/trustroom/web/app.py` with routes `/`, `/runs/demo`, `/runs/demo/replay`, `/health`.
+- [x] Create `src/trustroom/web/templates/base.html`, `index.html`, `run.html`.
+- [x] First viewport: Case Brief, Submission Readiness, Evidence Coverage, Approval Queue, Risk Flags and Final Pack.
+- [x] Secondary sections: Answer Pack, Band Collaboration Timeline, Governed Evolution, Replay / Live Evidence.
+- [x] Add clear `MOCK`, `REPLAY` or `LIVE` badge.
+- [x] Create `tests/test_web_app.py` using FastAPI TestClient.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_web_app.py -v` passes.
-- [ ] `uv run uvicorn trustroom.web.app:app --reload` starts without import errors.
-- [ ] Browser or curl check: `/health` returns OK.
-- [ ] `/runs/demo/replay` includes "RFP TrustRoom", "Submission Readiness", "Evidence Coverage", "Approval Queue", "Human approval", "Governed Evolution" and "REPLAY".
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest tests/test_web_app.py -v` passes.
+- [x] `uv run uvicorn trustroom.web.app:app --reload` starts without import errors.
+- [x] Browser or curl check: `/health` returns OK.
+- [x] `/runs/demo/replay` includes "RFP TrustRoom", "Submission Readiness", "Evidence Coverage", "Approval Queue", "Human approval", "Governed Evolution" and "REPLAY".
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add src/trustroom/web tests/test_web_app.py README.md`
-- [ ] `git commit -m "feat: add TrustRoom enterprise dashboard"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add src/trustroom/web tests/test_web_app.py pyproject.toml uv.lock`
+- [x] `git commit -m "feat: add TrustRoom enterprise dashboard"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 

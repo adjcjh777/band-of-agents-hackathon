@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="hero run-hero">
+    <div>
+      <span class="mode {% if is_replay %}replay{% endif %}">{{ mode_label }}</span>
+      <h1>RFP TrustRoom</h1>
+      <p class="subcopy">
+        {{ case_name }} is being prepared as an evidence-backed answer pack with visible agent handoffs, reviewer challenge and human approval.
+      </p>
+    </div>
+  </section>
+
+  <section class="first-grid" aria-label="First viewport dashboard">
+    <div class="metric">
+      <h2>Submission Readiness</h2>
+      <strong>{{ readiness.ready }}/{{ readiness.ready + readiness.needs_review + readiness.blocked }}</strong>
+      <span>{{ readiness.blocked }} blocked, {{ readiness.needs_review }} needs review</span>
+    </div>
+    <div class="metric">
+      <h2>Evidence Coverage</h2>
+      <strong>{{ evidence_coverage.current }}</strong>
+      <span>{{ evidence_coverage.stale }} stale, {{ evidence_coverage.missing }} missing, {{ evidence_coverage.conflicting }} conflicting</span>
+    </div>
+    <div class="metric">
+      <h2>Approval Queue</h2>
+      <strong>{{ approval_queue|length }}</strong>
+      <span>Human approval gates for high-risk or stale commitments</span>
+    </div>
+    <div class="metric">
+      <h2>Risk Flags</h2>
+      <strong>{{ risk_flags|length }}</strong>
+      <span>{{ risk_flags[0] }}</span>
+    </div>
+    <div class="metric">
+      <h2>Final Pack</h2>
+      <strong>{{ final_pack.included_answer_ids|length }}</strong>
+      <span>{{ final_pack.blocked_item_ids|length }} blocker kept outside the submission pack</span>
+    </div>
+  </section>
+
+  <section class="section panel stack">
+    <h2>Case Brief</h2>
+    <p><strong>{{ case_name }}</strong></p>
+    <p class="small">Deadline: {{ deadline }} · Owner: {{ submission_owner }} · Mode: {{ mode_label }}{% if is_replay %} fallback, not live Band{% endif %}</p>
+  </section>
+
+  <section class="section two-col">
+    <div class="panel">
+      <h2>Answer Pack</h2>
+      {% for answer in answers %}
+        <article class="row">
+          <div>
+            <span class="status {% if answer.status == 'ready' %}ready{% elif answer.status == 'blocked' %}blocked{% else %}review{% endif %}">{{ answer.status }}</span>
+          </div>
+          <h3>{{ answer.item_id }} · {{ answer.question }}</h3>
+          <p class="small">Risk: {{ answer.risk }} · Owner: {{ answer.owner }} · Evidence: {{ answer.evidence_ids|join(", ") }}</p>
+        </article>
+      {% endfor %}
+    </div>
+
+    <div class="panel">
+      <h2>Approval Queue</h2>
+      {% for item in approval_queue %}
+        <article class="row">
+          <span class="status {% if item.decision == 'approved' %}ready{% else %}blocked{% endif %}">{{ item.decision }}</span>
+          <h3>{{ item.item_id }} · Human approval</h3>
+          <p class="small">{{ item.question }}</p>
+          <p class="small">{{ item.reason }}</p>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="section two-col">
+    <div class="panel">
+      <h2>Band Collaboration Timeline</h2>
+      <div class="timeline">
+        {% for event in timeline %}
+          <article class="event">
+            <strong>{{ event.sender }} → {{ event.receiver }}</strong>
+            <p class="small">{{ event.event_type }} · {{ event.task_state }}</p>
+            <p>{{ event.payload_summary }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="stack">
+      <section class="panel">
+        <h2>Governed Evolution</h2>
+        {% for event in evolution_events %}
+          <article class="row">
+            <h3>{{ event.event_type }}</h3>
+            <p class="small">{{ event.payload_summary }}</p>
+          </article>
+        {% else %}
+          <p class="small">No evolution proposal in this local mock view yet.</p>
+        {% endfor %}
+      </section>
+
+      <section class="panel">
+        <h2>Replay / Live Evidence</h2>
+        <p class="small">
+          {{ mode_label }} view uses redacted event references and preserves the same readiness, evidence, approval and final pack shape expected from the live Band path.
+        </p>
+      </section>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    Hackathon demo / working prototype only. No production deployment, legal advice, compliance certification or automatic bid decision is claimed.
+  </p>
+{% endblock %}
