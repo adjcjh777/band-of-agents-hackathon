@@ -79,7 +79,7 @@ Parallel execution rule:
 - [x] T2: Band-compatible adapter and event mirror
 - [x] T3: Primary enterprise sample pack and replay fixture
 - [x] T4: Deterministic mock agent runner with review loop
-- [ ] T5: Governed evolution engine and experience ledger
+- [x] T5: Governed evolution engine and experience ledger
 - [x] T6: Readiness, safety and no-secret gates
 - [x] T7: Enterprise dashboard MVP
 - [x] T8: Agent prompts and task envelopes
@@ -311,27 +311,27 @@ Boundary:
 
 Todo:
 
-- [ ] Create `src/trustroom/evolution.py`.
-- [ ] Generate or validate `EvolutionProposal` records from completed run artifacts.
-- [ ] Require supporting timeline event ids for every proposal.
-- [ ] Implement proposal status transitions: `pending_review`, `approved`, `rejected`, `request_changes`, `deferred`.
-- [ ] Implement `ExperienceLesson` activation only after human approval.
-- [ ] Implement lesson rollback by marking inactive and preserving `rollback_note`.
-- [ ] Create `tests/test_evolution.py`.
+- [x] Create `src/trustroom/evolution.py`.
+- [x] Generate or validate `EvolutionProposal` records from completed run artifacts.
+- [x] Require supporting timeline event ids for every proposal.
+- [x] Implement proposal status transitions: `pending_review`, `approved`, `rejected`, `request_changes`, `deferred`.
+- [x] Implement `ExperienceLesson` activation only after human approval.
+- [x] Implement lesson rollback by marking inactive and preserving `rollback_note`.
+- [x] Create `tests/test_evolution.py`.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_evolution.py -v` passes.
-- [ ] Proposal without supporting events cannot become active.
-- [ ] Proposal that weakens human approval or no-overclaim gate is rejected.
-- [ ] Approved lesson can be loaded into the next run context.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest tests/test_evolution.py -v` passes.
+- [x] Proposal without supporting events cannot become active.
+- [x] Proposal that weakens human approval or no-overclaim gate is rejected.
+- [x] Approved lesson can be loaded into the next run context.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add src/trustroom/evolution.py tests/test_evolution.py`
-- [ ] `git commit -m "feat: add governed evolution ledger"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add src/trustroom/evolution.py tests/test_evolution.py`
+- [x] `git commit -m "feat: add governed evolution ledger"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 
