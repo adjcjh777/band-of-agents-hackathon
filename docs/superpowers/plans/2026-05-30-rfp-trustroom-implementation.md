@@ -84,7 +84,7 @@ Parallel execution rule:
 - [x] T7: Enterprise dashboard MVP
 - [x] T8: Agent prompts and task envelopes
 - [ ] T9: Band live integration
-- [ ] T10: Judge docs, demo runbook and evidence report
+- [x] T10: Judge docs, demo runbook and evidence report
 - [ ] T11: Deployment and public submission hardening
 - [ ] T12: Final end-to-end rehearsal
 
@@ -497,25 +497,25 @@ Boundary:
 
 Todo:
 
-- [ ] Create `docs/judge-10-minute-experience.md`.
-- [ ] Create `docs/demo-runbook.md`.
-- [ ] Create `docs/demo-evidence-report.md`.
-- [ ] Include enterprise route: Case Brief -> Readiness -> Evidence -> Approval -> Final Pack -> Evolution.
-- [ ] Include live path and replay fallback, clearly labeled.
-- [ ] Include no-overclaim language: hackathon demo / working prototype only.
-- [ ] Include 5-minute video structure aligned with RFP TrustRoom.
+- [x] Create `docs/judge-10-minute-experience.md`.
+- [x] Create `docs/demo-runbook.md`.
+- [x] Create `docs/demo-evidence-report.md`.
+- [x] Include enterprise route: Case Brief -> Readiness -> Evidence -> Approval -> Final Pack -> Evolution.
+- [x] Include live path and replay fallback, clearly labeled.
+- [x] Include no-overclaim language: hackathon demo / working prototype only.
+- [x] Include 5-minute video structure aligned with RFP TrustRoom.
 
 Verification:
 
-- [ ] `rg -n "production|enterprise-ready deployment|fully automated compliance|legal advice|certified" docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md` returns no overclaim unless listed as forbidden wording.
-- [ ] `rg -n "Submission Readiness|Evidence Coverage|Approval Queue|replay|fallback|Band|human approval|Governed Evolution" docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md` returns useful hits.
-- [ ] `git diff --check` exits 0.
+- [x] `rg -n "production|enterprise-ready deployment|fully automated compliance|legal advice|certified" docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md` returns no overclaim unless listed as forbidden wording.
+- [x] `rg -n "Submission Readiness|Evidence Coverage|Approval Queue|replay|fallback|Band|human approval|Governed Evolution" docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md` returns useful hits.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md`
-- [ ] `git commit -m "docs: add TrustRoom judge materials"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add docs/judge-10-minute-experience.md docs/demo-runbook.md docs/demo-evidence-report.md`
+- [x] `git commit -m "docs: add TrustRoom judge materials"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 
