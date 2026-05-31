@@ -76,7 +76,7 @@ Parallel execution rule:
 - [x] T0: Repo scaffold and dependency baseline
 - [x] T0.5: Enterprise architecture and plan alignment
 - [x] T1: Enterprise domain contracts and state machine
-- [ ] T2: Band-compatible adapter and event mirror
+- [x] T2: Band-compatible adapter and event mirror
 - [x] T3: Primary enterprise sample pack and replay fixture
 - [ ] T4: Deterministic mock agent runner with review loop
 - [ ] T5: Governed evolution engine and experience ledger
@@ -201,25 +201,25 @@ Boundary:
 
 Todo:
 
-- [ ] Create `src/trustroom/band/adapter.py`.
-- [ ] Define adapter methods: `create_room`, `send_message`, `mention_agent`, `record_event`, `get_room_timeline`, `redact_ref`.
-- [ ] Implement `MockBandAdapter` using in-memory or JSONL-backed timeline events.
-- [ ] Ensure adapter emits mode-independent `TimelineEvent` records.
-- [ ] Create `tests/test_band_adapter.py`.
-- [ ] Add `.env.example` with non-secret variable names only: `BAND_API_BASE`, `BAND_AGENT_ID`, `BAND_AGENT_KEY`.
+- [x] Create `src/trustroom/band/adapter.py`.
+- [x] Define adapter methods: `create_room`, `send_message`, `mention_agent`, `record_event`, `get_room_timeline`, `redact_ref`.
+- [x] Implement `MockBandAdapter` using in-memory or JSONL-backed timeline events.
+- [x] Ensure adapter emits mode-independent `TimelineEvent` records.
+- [x] Create `tests/test_band_adapter.py`.
+- [x] Add `.env.example` with non-secret variable names only: `BAND_API_BASE`, `BAND_AGENT_ID`, `BAND_AGENT_KEY`.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_band_adapter.py -v` passes.
-- [ ] Tests prove sender, receiver, event type, task state and redacted Band reference are preserved.
-- [ ] `rg -n "BAND_.*=.+[A-Za-z0-9]{12,}" .env.example README.md src tests` returns no real-looking secret.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest tests/test_band_adapter.py -v` passes.
+- [x] Tests prove sender, receiver, event type, task state and redacted Band reference are preserved.
+- [x] `rg -n "BAND_.*=.+[A-Za-z0-9]{12,}" .env.example README.md src tests` returns no real-looking secret.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add src/trustroom/band/adapter.py tests/test_band_adapter.py .env.example`
-- [ ] `git commit -m "feat: add Band adapter boundary"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add src/trustroom/band/adapter.py tests/test_band_adapter.py .env.example`
+- [x] `git commit -m "feat: add Band adapter boundary"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 

@@ -20,6 +20,7 @@
 |---|---|---|---|---|---|---|
 | T1 Enterprise domain contracts and state machine | Codex | `feature/trustroom-governed-evolution-spec` | complete | `src/trustroom/models.py`, `src/trustroom/state_machine.py`, `tests/test_models.py`, `tests/test_state_machine.py`, `docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md` | Codex | `uv run pytest tests/test_models.py tests/test_state_machine.py -v`; `uv run pytest -v`; `git diff --check` |
 | T3 Primary enterprise sample pack and replay fixture | Codex | `feature/trustroom-governed-evolution-spec` | complete | `samples/acme-security-rfp/`, `reports/trustroom_replay.example.jsonl`, `src/trustroom/sample_loader.py`, `tests/test_sample_loader.py`, `docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md` | Codex | `uv run pytest tests/test_sample_loader.py -v`; `uv run pytest -v`; `git diff --check` |
+| T2 Band-compatible adapter and event mirror | Codex | `feature/trustroom-governed-evolution-spec` | complete | `src/trustroom/band/adapter.py`, `tests/test_band_adapter.py`, `docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md` | Codex | `uv run pytest tests/test_band_adapter.py -v`; `.env.example` non-secret template handled by Codex controller; `rg -n "BAND_.*=.+[A-Za-z0-9]{12,}" .env.example README.md src tests`; `uv run pytest -v`; `git diff --check` |
 
 当前没有 active locks。开始下一个任务前，Codex controller 必须先在本表添加 `active` 行并运行 `uv run python scripts/check_dual_agent_protocol.py`。
 
@@ -46,6 +47,7 @@
 
 | Date | Branch | Owner | Integrated by | Result | Evidence |
 |---|---|---|---|---|---|
+| 2026-05-31 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | T2 Band-compatible adapter boundary completed | `uv run pytest tests/test_band_adapter.py -v`; no real-looking BAND secret hits; `uv run pytest -v`; `git diff --check` |
 | 2026-05-31 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | T3 primary sample pack and replay fixture completed | `uv run pytest tests/test_sample_loader.py -v`; `wc -l reports/trustroom_replay.example.jsonl`; no sensitive placeholder hits; `uv run pytest -v`; `git diff --check` |
 | 2026-05-31 | `feature/trustroom-governed-evolution-spec` | Codex | Codex | T1 enterprise contracts and state machine completed | `uv run pytest tests/test_models.py tests/test_state_machine.py -v`; `uv run pytest -v`; `git diff --check` |
 | 2026-05-31 | `feature/claude-runner-wrapper-smoke` | Claude Code | Codex | live wrapper smoke validated | Real `scripts/run_claude_task.py` call used strict empty MCP and Claude tools `Read,Write`; Claude wrote only `docs/claude-runner-wrapper-smoke.md`; controller postflight passed; branch pushed at `b4f03a7`. |
