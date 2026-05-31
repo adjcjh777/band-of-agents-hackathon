@@ -82,7 +82,7 @@ Parallel execution rule:
 - [ ] T5: Governed evolution engine and experience ledger
 - [x] T6: Readiness, safety and no-secret gates
 - [x] T7: Enterprise dashboard MVP
-- [ ] T8: Agent prompts and task envelopes
+- [x] T8: Agent prompts and task envelopes
 - [ ] T9: Band live integration
 - [ ] T10: Judge docs, demo runbook and evidence report
 - [ ] T11: Deployment and public submission hardening
@@ -423,27 +423,28 @@ Boundary:
 
 Todo:
 
-- [ ] Create `src/trustroom/agents/prompts/orchestrator.md`.
-- [ ] Create `src/trustroom/agents/prompts/requirement_decomposer.md`.
-- [ ] Create `src/trustroom/agents/prompts/evidence_retriever.md`.
-- [ ] Create `src/trustroom/agents/prompts/answer_drafter.md`.
-- [ ] Create `src/trustroom/agents/prompts/compliance_reviewer.md`.
-- [ ] Create `src/trustroom/agents/prompts/workflow_improvement.md`.
-- [ ] Create `src/trustroom/agents/prompts/challenge_generator.md`.
-- [ ] Each prompt must include role, enterprise job, input contract, output JSON schema, refusal/no-overclaim boundary and Band handoff instruction.
-- [ ] Create `docs/agent-task-envelopes.md`.
+- [x] Create `src/trustroom/agents/prompts/orchestrator.md`.
+- [x] Create `src/trustroom/agents/prompts/requirement_decomposer.md`.
+- [x] Create `src/trustroom/agents/prompts/evidence_retriever.md`.
+- [x] Create `src/trustroom/agents/prompts/answer_drafter.md`.
+- [x] Create `src/trustroom/agents/prompts/compliance_reviewer.md`.
+- [x] Create `src/trustroom/agents/prompts/workflow_improvement.md`.
+- [x] Create `src/trustroom/agents/prompts/challenge_generator.md`.
+- [x] Each prompt must include role, enterprise job, input contract, output JSON schema, refusal/no-overclaim boundary and Band handoff instruction.
+- [x] Create `docs/agent-task-envelopes.md`.
 
 Verification:
 
-- [ ] `rg -n "production deployment|legal advice|certification|fully compliant" src/trustroom/agents/prompts docs/agent-task-envelopes.md` shows these are forbidden, not promised.
-- [ ] `rg -n "@mention|handoff|evidence|human approval|request_changes" src/trustroom/agents/prompts` returns hits in each prompt.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest tests/test_agent_prompts.py -v` passes.
+- [x] `rg -n "production deployment|legal advice|certification|fully compliant" src/trustroom/agents/prompts docs/agent-task-envelopes.md` shows these are forbidden, not promised.
+- [x] `rg -n "@mention|handoff|evidence|human approval|request_changes" src/trustroom/agents/prompts` returns hits in each prompt.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add src/trustroom/agents/prompts docs/agent-task-envelopes.md`
-- [ ] `git commit -m "docs: add TrustRoom agent prompts"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add src/trustroom/agents/prompts docs/agent-task-envelopes.md tests/test_agent_prompts.py`
+- [x] `git commit -m "docs: add TrustRoom agent prompts"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 
