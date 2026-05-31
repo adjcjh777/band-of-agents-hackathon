@@ -17,6 +17,7 @@
 ## 网页调研规则
 
 - 如果需要详细读取网页内容，尤其是动态页面、登录态页面、需要截图/视觉确认的页面，优先使用 `@Chrome` / Chrome 插件真实打开页面读取。
+- 我已经创建了 band 账号 如果你要执行操作 用 chrome 访问就行  https://app.band.ai/dashboard
 - 不要只依赖 `curl`、静态 HTML、搜索摘要或搜索索引来判断页面细节；这些只能作为初筛。
 - 如果 Chrome 插件无法连接或页面无法完整读取，要在结论里明确说明信息不完整，并标出哪些内容需要后续用 Chrome 或官方页面重新确认。
 - 对比赛时间、规则、奖项、提交要求、赞助资源、评审标准等会变动的信息，必须以官方页面或官方文档为准，并记录读取日期。
@@ -34,6 +35,13 @@
 - 修改完成后执行必要检查，至少跑 `git diff --check`。
 - 提交前确认 `pilotdeck/`、secret、日志和本地报告没有被误加入。
 - 提交并推送当前分支；提交信息要简洁说明改动。
+
+## 双 Agent 协作规则
+
+- 涉及 Codex + Claude Code 协作、Claude 派发、worktree、文件锁、任务台账、postflight 检查或避免并行写冲突时，必须先使用 `dual-agent-coordination` skill。
+- 本仓库的协作事实来源是 `docs/dual-agent-operating-protocol.md` 和 `docs/agent-task-ledger.md`；不要只依赖聊天上下文判断文件锁。
+- 写入型 Claude Code 任务优先通过 `scripts/run_claude_task.py` 派发；Codex controller 负责最终检查、集成、提交和推送。
+- 派发或集成前运行 `uv run python scripts/check_dual_agent_protocol.py`；Claude Code 写入任务返回后运行 `uv run python scripts/check_dual_agent_changes.py --task "<Task>"`。
 
 ## 默认入口
 
