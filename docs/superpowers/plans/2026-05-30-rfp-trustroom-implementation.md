@@ -78,7 +78,7 @@ Parallel execution rule:
 - [x] T1: Enterprise domain contracts and state machine
 - [x] T2: Band-compatible adapter and event mirror
 - [x] T3: Primary enterprise sample pack and replay fixture
-- [ ] T4: Deterministic mock agent runner with review loop
+- [x] T4: Deterministic mock agent runner with review loop
 - [ ] T5: Governed evolution engine and experience ledger
 - [ ] T6: Readiness, safety and no-secret gates
 - [ ] T7: Enterprise dashboard MVP
@@ -274,27 +274,27 @@ Boundary:
 
 Todo:
 
-- [ ] Create `src/trustroom/agents/mock_runner.py`.
-- [ ] Implement deterministic roles: orchestrator, requirement decomposer, evidence retriever, answer drafter, compliance reviewer, SME approver.
-- [ ] Include one non-linear loop: reviewer sends item back to retriever or drafter.
-- [ ] Include one escalation scenario for high-risk SLA, unsupported certification or stale policy.
-- [ ] Make runner output typed `TimelineEvent` records and `FinalSubmissionPack`.
-- [ ] Create `tests/test_mock_runner.py`.
+- [x] Create `src/trustroom/agents/mock_runner.py`.
+- [x] Implement deterministic roles: orchestrator, requirement decomposer, evidence retriever, answer drafter, compliance reviewer, SME approver.
+- [x] Include one non-linear loop: reviewer sends item back to retriever or drafter.
+- [x] Include one escalation scenario for high-risk SLA, unsupported certification or stale policy.
+- [x] Make runner output typed `TimelineEvent` records and `FinalSubmissionPack`.
+- [x] Create `tests/test_mock_runner.py`.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_mock_runner.py -v` passes.
-- [ ] Test confirms at least 3 distinct agent senders.
-- [ ] Test confirms a reviewer-to-retriever or reviewer-to-drafter loop.
-- [ ] Test confirms high-risk item requires SME approval before final pack inclusion.
-- [ ] Test confirms final pack has evidence index and blockers.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest tests/test_mock_runner.py -v` passes.
+- [x] Test confirms at least 3 distinct agent senders.
+- [x] Test confirms a reviewer-to-retriever or reviewer-to-drafter loop.
+- [x] Test confirms high-risk item requires SME approval before final pack inclusion.
+- [x] Test confirms final pack has evidence index and blockers.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
-- [ ] `git add src/trustroom/agents/mock_runner.py tests/test_mock_runner.py`
-- [ ] `git commit -m "feat: add TrustRoom mock agent workflow"`
-- [ ] `git push origin $(git branch --show-current)`
+- [x] `git add src/trustroom/agents/mock_runner.py tests/test_mock_runner.py`
+- [x] `git commit -m "feat: add TrustRoom mock agent workflow"`
+- [x] `git push origin $(git branch --show-current)`
 
 Done when:
 
