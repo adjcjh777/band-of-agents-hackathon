@@ -1021,6 +1021,48 @@ Done when:
 
 - The repo is ready for a public-safe Render deployment path without exposing live credentials, while the actual Public GitHub Repository and Application URL remain explicitly blocked until the user chooses and authorizes the public repo / deployment route.
 
+## T23: Submission Asset Pack
+
+Recommended model: 5.5 中 for controller-owned asset generation and visual QA.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Source:
+
+- GitHub Product Research / Submission Scout thread `019ec159-c870-71d3-bbb2-65d1f086014a` recommended route-map assets using real `/runs/demo/replay` screenshots, not generic AI art.
+
+Boundary:
+
+- Allowed locked paths are `README.md`, `docs/demo-runbook.md`, `docs/demo-evidence-report.md`, `docs/submission-checklist.md`, `docs/submission-assets/`, `scripts/build_submission_assets.mjs`, this plan and `docs/agent-task-ledger.md`.
+- Do not create a public repo, deploy Render, upload a public video, read secrets/private reports, touch `pilotdeck/`, show raw Band IDs, or claim public deployment exists.
+- Assets must remain route-map proof: cover, slide deck, video script, public-safe replay screenshots and no-overclaim copy.
+
+Todo:
+
+- [x] Generate 16:9 cover image from real replay dashboard proof and workflow path.
+- [x] Generate 8-slide submission deck as PDF and editable PPTX.
+- [x] Generate 5-minute video script / shot list aligned to Executive Decision -> Run Trace -> Agent Handoff Chain -> Representative Item Traces -> Q-006 Blocked Impact Path -> Final Pack -> replay/live boundary.
+- [x] Generate finalized submission copy and tags without unimplemented partner-tech claims.
+- [x] Update README, runbook, evidence report and submission checklist to point at the asset pack.
+- [ ] Record/upload final video URL after public route is chosen.
+
+Verification:
+
+- [x] `uv run python scripts/check_dual_agent_changes.py --task "T23 Submission asset pack"` passes.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] Visual review confirms cover is 1920x1080 and deck has 8 readable slides.
+- [x] Chrome screenshot after changes is captured for the user.
+- [x] `uv run python scripts/check_dual_agent_protocol.py` exits 0.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- Cover image, slide deck PDF/PPTX, video script / shot list and submission copy exist in `docs/submission-assets/`, while actual public video URL remains explicitly open until recorded and uploaded.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:

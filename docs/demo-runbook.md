@@ -76,6 +76,12 @@ uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requireme
 
 ## Five-Minute Video Structure
 
+资产入口：
+
+- Cover image: `docs/submission-assets/rfp-trustroom-cover.png`
+- Slide deck: `docs/submission-assets/rfp-trustroom-submission-deck.pdf` / `.pptx`
+- Recording script: `docs/submission-assets/video-script-shot-list.md`
+
 0:00-0:25 Pain: RFP / security questionnaire 需要 sales、security、product、legal、SME 反复协调，容易证据过期和过度承诺。
 
 0:25-0:55 Solution: RFP TrustRoom 用 Band 做协作层，让 orchestrator、decomposer、retriever、drafter、reviewer 和 human approver 共享同一条审计链。

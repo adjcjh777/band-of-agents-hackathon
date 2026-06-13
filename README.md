@@ -16,8 +16,9 @@
 - 官方奖池当前写为 `$10,000+`，除 AI/ML API partner prize 外，页面新增 Featherless AI partner resources/prize；Band Pro promo code `BANDHACK26`、Featherless promo code `BOA26` 已在页面可见。
 - 本仓库已有 mock/replay 主路径、enterprise reviewer cockpit、T20 Run Trace / Agent Handoff Chain、readiness/no-secret gates、T13 REST live smoke harness、T15 autonomous reply smoke harness 和 Chrome live verification 记录。dashboard 已把 case brief、go/no-go decision、Run Trace proof strip、Business Milestones、Representative Item Traces、Q-006 Blocked Impact Path、evidence freshness、human approval basis 和 final-pack exclusions 放到企业 reviewer / judge 可操作的视图里。
 - T22 已补上 public-safe Render Blueprint：`render.yaml` 默认只部署 mock/replay FastAPI dashboard，使用 `/health` 作为 health check，不需要、也不保存 Band live credentials。实际 Public GitHub / Render URL 仍需用户明确选择公开仓库策略后创建。
+- T23 已产出提交资产包：cover image、8 页 slide deck PDF/PPTX、5 分钟 video script / shot list 和提交文案，位于 `docs/submission-assets/`。
 - 当前不能宣称完整 autonomous live Band workflow：真实 REST room / participants / @mention / event smoke 已验证，但 SDK/WebSocket Remote Agent 自动接收并回复仍未用 connected peer 跑通；新 harness 当前 dry-run 返回 `BLOCKED`。
-- 提交前最大未决项：public repo 策略、demo URL、cover image、5 分钟视频、slide deck、live autonomous replies 或明确 replay fallback 叙事。
+- 提交前最大未决项：public repo 策略、demo URL、公开视频上传、final official page gate、live autonomous replies 或明确 replay fallback 叙事。
 
 ## 本地文档
 
@@ -32,6 +33,7 @@
 - [双 Agent 任务台账](docs/agent-task-ledger.md)
 - [双 Agent 协调重置计划](docs/superpowers/plans/2026-05-30-dual-agent-coordination-reset.md)
 - [飞书 AI 挑战赛经验迁移](docs/feishu-lessons-for-band.md)
+- [提交资产包](docs/submission-assets/)
 
 ## 本地运行
 
@@ -123,6 +125,6 @@ uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requireme
 1. 用 connected peer 跑通 `scripts/run_live_band_autonomous_smoke.py`，或把 REST smoke + replay fallback 的边界写进最终提交叙事。
 2. 决定 public GitHub strategy：切当前仓库 public，或创建脱敏 public submission repo。若无法完整审计历史，推荐脱敏 public submission repo。
 3. 用 `render.yaml` 部署 public-safe demo URL，默认只启用 mock/replay；live credentials 只放 secret store，且不作为提交主 claim。
-4. 产出 cover image、5 分钟 video presentation 和 slide deck。
+4. 用 `docs/submission-assets/video-script-shot-list.md` 录制并上传 5 分钟 video presentation；cover image 和 slide deck 已在 `docs/submission-assets/`。
 5. 录屏主线固定为：business pain -> role map / Band room evidence -> Executive Decision -> Run Trace proof strip -> Agent Handoff Chain -> Q-006 Blocked Impact Path -> Representative Item Traces -> Final Pack -> replay/live boundary。
 6. 提交前重跑 `uv run pytest -v`、`uv run python scripts/check_trustroom_readiness.py`、`uv run python scripts/check_no_secrets.py`、Chrome 官方页复核和 `git diff --check`。

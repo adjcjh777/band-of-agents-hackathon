@@ -17,6 +17,7 @@
 | Task envelopes | `docs/agent-task-envelopes.md` defines @mention handoff shape and request_changes / human approval status contract | Ready |
 | Live REST smoke | `scripts/run_live_band_smoke.py` can create a real Band room, add participants, send @mention handoff messages, and record a live event with redacted refs | Partial |
 | Live autonomous reply smoke | `scripts/run_live_band_autonomous_smoke.py` probes for a challenge-token Remote Agent reply and separates REST smoke, room evidence and autonomous replies | Blocked until runtime peer config is ready |
+| Submission assets | `docs/submission-assets/` includes cover image, PDF/PPTX slide deck, video shot list, submission copy and public-safe UI screenshot crops | Ready |
 
 ## Main Demo Chain
 
@@ -91,7 +92,7 @@ Current status:
 - Official deadline, exact submission fields, partner access details and submitted-competitor context must be rechecked on the official page immediately before final submission.
 - Public GitHub strategy is unresolved: make this repo public or create a sanitized public submission repo.
 - Live autonomous SDK/WebSocket replies remain pending; the smoke harness is ready, but needs runtime `BAND_REST_URL` / `BAND_API_BASE` plus `TRUSTROOM_BAND_PEERS_JSON` for a connected peer.
-- Deployment URL, cover image, video and slide deck are not yet final.
+- Deployment URL and uploaded video are not yet final; cover image, slide deck and video script are ready in `docs/submission-assets/`.
 - Final submission must rerun no-secret checks and review wording.
 
 ## No-Overclaim Boundary

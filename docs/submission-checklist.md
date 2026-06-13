@@ -45,13 +45,13 @@
 
 ## 提交材料
 
-- [ ] Project Title，不超过 50 字符更稳。
-- [ ] Short Description，不超过 255 字符。
-- [ ] Long Description，至少 100 words。
-- [ ] Technology & Category Tags。
-- [ ] Cover Image，建议 16:9。
-- [ ] Video Presentation，官方指南建议 5 分钟以内。
-- [ ] Slide Presentation。
+- [x] Project Title，不超过 50 字符更稳。见 `docs/submission-assets/submission-copy.md`。
+- [x] Short Description，不超过 255 字符。见 `docs/submission-assets/submission-copy.md`。
+- [x] Long Description，至少 100 words。见 `docs/submission-assets/submission-copy.md`。
+- [x] Technology & Category Tags。见 `docs/submission-assets/submission-copy.md`。
+- [x] Cover Image，建议 16:9。`docs/submission-assets/rfp-trustroom-cover.png` 为 1920x1080。
+- [ ] Video Presentation，官方指南建议 5 分钟以内。脚本和 shot list 已完成：`docs/submission-assets/video-script-shot-list.md`；公开视频 URL 尚未上传。
+- [x] Slide Presentation。`docs/submission-assets/rfp-trustroom-submission-deck.pdf` 和 `.pptx` 已生成。
 - [ ] Public GitHub Repository。当前准备仓库是 private，正式提交前需要切 public 或准备脱敏公开提交仓库。
 - [ ] Demo Application Platform。当前推荐 Render Web Service，`render.yaml` 已准备，但尚未创建服务。
 - [ ] Application URL。尚未创建 public URL。
@@ -66,7 +66,7 @@
 - Public GitHub Repository：需要用户决定切当前仓库 public，还是创建脱敏公开提交仓库。
 - Demo Application Platform / Application URL：`render.yaml` 已准备，尚未部署；必须等用户授权 public repo 策略和 Render / 其他平台账号操作。
 - Live Band autonomous replies：真实 Band REST smoke 已完成并生成 redacted evidence；autonomous reply smoke harness 已完成，但当前 dry-run 缺少 `BAND_REST_URL` / `BAND_API_BASE` 和 `TRUSTROOM_BAND_PEERS_JSON`，提交前仍需用 connected peer 跑通 SDK/WebSocket 远程 Agent 自动处理与回复。
-- Cover Image / Video Presentation / Slide Presentation：尚未最终产出。
+- Video Presentation：脚本已完成，但公开视频尚未录制、上传或生成 URL。
 - Partner prize strategy：AI/ML API / Featherless AI 可以作为加分项，但不要牺牲 Band 协作主线；只有真实接入并能演示时才写入主 claims。
 - Final official page gate：提交前再次用 Chrome 打开官方页确认 deadline、奖项、提交字段、partner terms 和已提交作品竞争态。
 
