@@ -1,6 +1,6 @@
 # Band of Agents Hackathon 参赛准备包
 
-最后更新：2026-05-30
+最后更新：2026-06-13
 
 官方入口：https://lablab.ai/ai-hackathons/band-of-agents-hackathon
 
@@ -9,6 +9,14 @@
 这个比赛的核心不是“做一个 Agent 应用”，而是证明 Band 真正承担了多 Agent 协作层：Agent 之间需要通过 Band 沟通、共享结构化上下文、招募/邀请其他 Agent、移交任务、协调状态，并在 demo 中让这些行为可见。
 
 已选主线：`RFP TrustRoom`，一个面向 B2B 售前团队的 RFP / 安全问卷 / 证据同源协作室。它把客户 RFP、security questionnaire、公司知识库、合规证据放进同一个 Band room，让需求拆解、证据检索、答案起草、合规审查和人工 SME reviewer 通过 Band 完成一次可回放的提交包生成流程。
+
+## 2026-06-13 状态
+
+- 官方页已用 Chrome 重新复核：比赛截止时间为 2026-06-19 23:00 CST，提交项仍是 Public GitHub Repository、Demo Application Platform、Application URL、Video Presentation、Slide Presentation、Cover Image、short/long description 和 tags。
+- 官方奖池当前写为 `$10,000+`，除 AI/ML API partner prize 外，页面新增 Featherless AI partner resources/prize；Band Pro promo code `BANDHACK26`、Featherless promo code `BOA26` 已在页面可见。
+- 本仓库已有 mock/replay 主路径、enterprise dashboard、readiness/no-secret gates、T13 REST live smoke harness 和 Chrome live verification 记录。
+- 当前不能宣称完整 autonomous live Band workflow：真实 REST room / participants / @mention / event smoke 已验证，但 SDK/WebSocket Remote Agent 自动接收并回复仍是下一个 gate。
+- 提交前最大未决项：public repo 策略、demo URL、cover image、5 分钟视频、slide deck、live autonomous replies 或明确 replay fallback 叙事。
 
 ## 本地文档
 
@@ -94,9 +102,9 @@ export TRUSTROOM_BAND_PEERS_JSON='{"requirement-decomposer-agent":"@owner/requir
 
 ## 近期动作
 
-1. 注册并确认 lablab.ai、Band、Band Discord、lablab Discord、AI/ML API 访问。
-2. 开赛前先跑通 Band SDK 的最小远程 Agent：创建 Remote Agent、拿 Agent UUID/API key、`uv add "band-sdk[langgraph]"`、本地验证连接。
-3. 用 `RFP TrustRoom` 先做 15 分钟 demo 剧本，而不是先写大系统：一个客户 RFP + 安全问卷进入，3-4 个 Agent 协作产出可提交回答包和证据索引。
-4. Dashboard 第一屏优先展示企业用户关心的 Submission Readiness、Evidence Coverage、Approval Queue 和 Final Pack 状态，再展示 Agent timeline。
-5. 开赛后第一天必须把 Band room 里的端到端协作录下来，后面所有功能都围绕这条演示链路增强。
-6. 参考飞书项目的做法，第一天就补 replay fallback、评委 10 分钟体验包和 no-overclaim 边界，不等最后一天再补材料。
+1. 跑通 Band SDK/WebSocket Remote Agent 自动回复，或把 REST smoke + replay fallback 的边界写进最终提交叙事。
+2. 决定 public GitHub strategy：切当前仓库 public，或创建脱敏 public submission repo。
+3. 部署 public-safe demo URL，默认只启用 mock/replay；live credentials 只放 secret store。
+4. 产出 cover image、5 分钟 video presentation 和 slide deck。
+5. 录屏主线固定为：business pain -> Band room / @mention evidence -> dashboard readiness -> risk/human approval -> final pack -> replay/live boundary。
+6. 提交前重跑 `uv run pytest -v`、`uv run python scripts/check_trustroom_readiness.py`、`uv run python scripts/check_no_secrets.py`、Chrome 官方页复核和 `git diff --check`。

@@ -87,6 +87,8 @@ Parallel execution rule:
 - [x] T10: Judge docs, demo runbook and evidence report
 - [ ] T11: Deployment and public submission hardening
 - [ ] T12: Final end-to-end rehearsal
+- [ ] T14: Official page refresh and multi-agent execution alignment
+- [ ] T15: Live autonomous reply smoke harness
 
 ## File Map
 
@@ -463,20 +465,23 @@ Todo:
 
 - [x] Re-read official Band docs with Chrome if live API details may have changed.
 - [x] Create `LiveBandAdapter` behind the same interface as `MockBandAdapter`.
-- [ ] Create at least 3 Band Remote Agents for orchestrator, evidence/retrieval or drafting, and reviewer roles.
-- [ ] Record a redacted live evidence packet showing room creation, @mention handoff and reviewer decision.
+- [x] Create at least 3 Band Remote Agents for orchestrator, evidence/retrieval or drafting, and reviewer roles.
+- [x] Record a redacted live REST evidence packet showing room creation, @mention handoff and reviewer decision.
+- [ ] Verify SDK/WebSocket Remote Agents autonomously receive @mentions and reply.
 - [x] Document setup in README without exposing secrets.
 - [x] Create `tests/test_live_adapter_contract.py` using mock/stubbed responses only.
 
 Current note:
 
 - 2026-06-13: Codex completed the credential-free live REST adapter contract and official API doc refresh. The real Band Remote Agent creation and redacted live evidence packet are intentionally still unchecked because they require runtime credentials / one-time API keys and must not be copied into repo files.
+- 2026-06-13 later: real Band REST smoke and Chrome live verification passed. Evidence remains redacted/ignored outside Git. Peer agents still showed Disconnected, so complete autonomous SDK/WebSocket replies remain unchecked.
 
 Verification:
 
 - [x] `uv run pytest tests/test_live_adapter_contract.py -v` passes.
 - [x] Mock/replay path still passes readiness.
-- [ ] Live evidence packet is redacted.
+- [x] Live REST evidence packet is redacted.
+- [ ] SDK/WebSocket autonomous reply path is verified.
 - [x] `uv run python scripts/check_no_secrets.py` exits 0.
 - [x] `git diff --check` exits 0.
 
@@ -582,7 +587,7 @@ Todo:
 
 Current note:
 
-- 2026-06-13: Replay rehearsal passed in Browser at `/runs/demo/replay`; mock route passed at `/runs/demo`; `/health` returned 200 via curl and tests. Live Band path remains unchecked because runtime credentials and one-time Agent API keys must stay outside repo-visible workflows.
+- 2026-06-13: Replay rehearsal passed in Browser at `/runs/demo/replay`; mock route passed at `/runs/demo`; `/health` returned 200 via curl and tests. REST live smoke and Chrome live verification later passed, but autonomous SDK/WebSocket replies are not yet verified. Final rehearsal must present replay fallback honestly unless that gate passes.
 
 Verification:
 
@@ -602,6 +607,70 @@ Done when:
 
 - The demo can be shown to a judge without relying on chat memory.
 - Known gaps are explicit and do not contradict no-overclaim boundaries.
+
+## T14: Official Page Refresh And Multi-Agent Execution Alignment
+
+Recommended model: 5.5 中.
+
+Boundary:
+
+- Documentation and coordination only.
+- Do not change application code, credentials, dependency locks, live room ids, true agent keys or `pilotdeck/`.
+- Use Chrome for official page facts, because competition terms can change.
+
+Todo:
+
+- [x] Re-read the official lablab Band of Agents page with Chrome on 2026-06-13.
+- [x] Update official facts: `$10,000+` prize pool, AI/ML API + Featherless AI partners, Band Pro `BANDHACK26`, Featherless `BOA26`, submission deadline and schedule.
+- [x] Align README, official research, competition plan, submission checklist, judge route, runbook, evidence report, deployment notes and project concept with current evidence.
+- [x] Keep live REST smoke, replay fallback and autonomous SDK/WebSocket replies separate in public claims.
+- [ ] Dispatch next tasks to executor and tester through Agent Bus visible thread messages.
+- [ ] Close this ledger task after checks pass and task dispatch is complete.
+
+Verification:
+
+- [x] Chrome official page reread completed.
+- [x] `uv run python scripts/check_dual_agent_protocol.py` passes after adding T14 active lock.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- Future agents can pick up from docs without relying on chat.
+- Executor has a bounded live/autonomous reply task.
+- Tester has a bounded fresh-checkout/readiness/browser/submission audit task.
+
+## T15: Live Autonomous Reply Smoke Harness
+
+Recommended model: 5.5 超高 for live integration.
+
+Owner:
+
+- Agent Bus executor thread `019ec04e-8a30-7430-af1c-a192ed9c14f4`.
+
+Boundary:
+
+- Allowed locked paths are `scripts/run_live_band_autonomous_smoke.py`, `tests/test_live_band_autonomous_smoke.py`, `src/trustroom/band/live_adapter.py`, and `tests/test_live_adapter_contract.py`.
+- Do not edit docs, README, `.env`, `agent_config.yaml`, true room ids, true agent keys, API keys, live logs or `pilotdeck/`.
+- Real credentials may only be read from the user-controlled ignored environment, never printed or committed.
+
+Todo:
+
+- [ ] Create a narrow autonomous live smoke harness that verifies Remote Agents can receive @mentions through SDK/WebSocket and send replies, or returns a precise blocked status if the platform/account is not ready.
+- [ ] Keep REST smoke, Band room evidence and autonomous replies as separate result fields.
+- [ ] Add tests with stubs/fakes only; tests must not require real Band credentials.
+- [ ] Preserve existing REST live smoke behavior.
+
+Verification:
+
+- [ ] `uv run pytest tests/test_live_band_autonomous_smoke.py tests/test_live_adapter_contract.py -v` passes.
+- [ ] `uv run python scripts/check_no_secrets.py` exits 0.
+- [ ] `git diff --check` exits 0.
+
+Done when:
+
+- Executor returns either `DONE` with redacted evidence path / summary, or `BLOCKED` with exact missing Band/SDK/WebSocket condition.
 
 ## Suggested Short Goal Prompt
 

@@ -15,6 +15,7 @@
 | No-secret gate | `scripts/check_no_secrets.py` scans for secret-like values while excluding local secret files and `pilotdeck/` | Ready |
 | Agent prompts | `src/trustroom/agents/prompts/` defines role, input contract, output schema, no-overclaim boundary and Band handoff instructions | Ready |
 | Task envelopes | `docs/agent-task-envelopes.md` defines @mention handoff shape and request_changes / human approval status contract | Ready |
+| Live REST smoke | `scripts/run_live_band_smoke.py` can create a real Band room, add participants, send @mention handoff messages, and record a live event with redacted refs | Partial |
 
 ## Main Demo Chain
 
@@ -65,13 +66,17 @@ Live evidence target:
 - Reviewer request_changes and human approval visible in Band.
 - Redacted room references and agent references only.
 
-Current status: live evidence is not claimed yet. It requires real Band credentials, kickoff access details and user-controlled secret handling.
+Current status:
+
+- Verified: real Band REST smoke has produced a redacted evidence packet outside Git, and Chrome live verification showed the Band chat, three participants, two @mention handoff messages and a live event.
+- Not verified: SDK/WebSocket Remote Agents autonomously receiving @mentions and replying. Peer agents were still shown as Disconnected during the latest Chrome verification.
+- Submission wording must keep these separate: REST live boundary is verified; replay fallback is stable; complete autonomous live Band workflow remains a gate.
 
 ## Known Gaps Before Final Submission
 
-- Official deadline, exact submission fields, and partner access details must be rechecked on the official page after kickoff.
+- Official deadline, exact submission fields, partner access details and submitted-competitor context must be rechecked on the official page immediately before final submission.
 - Public GitHub strategy is unresolved: make this repo public or create a sanitized public submission repo.
-- Live Band integration remains pending until credentials and access rules are available.
+- Live autonomous SDK/WebSocket replies remain pending.
 - Deployment URL, cover image, video and slide deck are not yet final.
 - Final submission must rerun no-secret checks and review wording.
 

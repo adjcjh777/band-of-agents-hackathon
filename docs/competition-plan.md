@@ -16,6 +16,23 @@
 - 避开 Codeband / coding agent 工具拥挤区，也避开安全处置、金融审批、医疗协调这类高风险 live 决策。
 - 能同时拿 Application of Technology、Presentation、Business Value、Originality 四项分。
 
+## 2026-06-13 官方页复核后的计划改进
+
+Chrome 重新读取官方比赛页后，当前执行计划需要从“等待 kickoff 信息”切换成“提交倒计时执行”：
+
+- 官方页当前奖池为 `$10,000+`，新增 Featherless AI partner / prize；提交材料和公开页应同步写入 AI/ML API + Featherless AI，而不是只写 AI/ML API。
+- Band Pro promo code `BANDHACK26`、Featherless promo code `BOA26` 已在页面可见；账号/资源清单不再写“等待 kickoff promo code”。
+- 页面可见日程已明确：2026-06-19 23:00 CST End of Submissions；最终提交日前一天要完成视频、slide、cover、demo URL 和 public repo 策略。
+- 已提交作品里 high-stakes / incident / finance / medical / decision desk 很多；RFP TrustRoom 的差异化要更强落在 `sales-security-proposal` 交付流程，以及 evidence coverage / approval queue / final pack / replay-live honesty。
+- 本仓库已有 mock/replay、REST live smoke、dashboard、readiness/no-secret gate；最大改进空间不是再扩功能，而是补齐 SDK/WebSocket autonomous replies、公开视频/slide/cover、部署 URL、public repo 策略和最终 10 分钟评委路线。
+
+新的执行优先级：
+
+1. **Live credibility gate**：executor 继续攻 SDK/WebSocket Remote Agent 自动接收与回复；若失败，提交材料明确区分 REST smoke、Band room 证据和 replay fallback。
+2. **Submission package gate**：补 public GitHub 策略、demo URL、cover image、5 分钟视频、slide deck、short/long description，并避免生产/合规过度承诺。
+3. **Judge experience gate**：tester 每轮从 fresh checkout / browser route 复核 README -> `/runs/demo/replay` -> Band evidence -> submission docs，抓断链和过度承诺。
+4. **Partner prize optional gate**：只在主线稳定后考虑把 AI/ML API 或 Featherless 写入真实可演示 path；不要为了 partner prize 牺牲 Band 主线。
+
 ## 从飞书项目继承的打法
 
 这次不要只做“功能清单”，要沿用飞书 AI 挑战赛后期最有效的参赛结构：
@@ -67,6 +84,7 @@
 可选加分：
 
 - 用 AI/ML API 或 mimo token plan 驱动长文档理解、证据匹配、回答起草，争取 Best Use of AI/ML API partner prize。
+- 用 Featherless AI 做开源模型推理的受控补充，例如 evidence extraction / review summarization；仅在能留下真实、可解释、可复现证据时才放进提交主叙事。
 - 支持 XLSX 安全问卷导入和导出。
 - 支持“风险升级”：Compliance Reviewer 触发 Human approval，需要人工点 approve 才能进入 final submission pack。
 
@@ -82,7 +100,7 @@
 
 2026-06-12：Kick-off
 
-- 参加 23:00 CST Hackathon Kick-off；记录 kickoff 中公布的 access code、限制、提交细则、准确 deadline/timezone。
+- 参加 23:00 CST Hackathon Kick-off；记录 access、限制、提交细则、准确 deadline/timezone。
 - 23:10-23:30 CST 重点听 lablab.ai opening words、Band opening words、Challenge introduction、Hackathon Guide。
 - 2026-06-13 00:00 CST 参加 Discord Q&A，确认页面里 X402 段落是否与本赛事有关。
 - 立即确认页面中 X402 文字是否只是污染。
@@ -96,6 +114,7 @@
 - 写最小 README 和 setup。
 - 导出一份 `reports/trustroom_replay.jsonl`，保证没有 live 环境也能演示同一条协作链路。
 - 起草 `docs/judge-10-minute-experience.md` 和 `docs/demo-runbook.md`。
+- 当前进度补充：mock/replay、dashboard、readiness/no-secret gate、REST live smoke 和 Chrome live verification 已有证据；SDK/WebSocket autonomous replies 仍是 live credibility 的下一个 gate。
 
 2026-06-14 至 2026-06-15：做成产品
 
@@ -161,10 +180,11 @@ Originality
 
 ## 当前最大风险
 
-- Band access / promo code kickoff 才公布，开赛前不能假设所有 API 都可用。
-- 页面 schedule 仍写 To be announced，必须在 kickoff 重新确认具体时间。
-- X402 文字疑似页面污染，不能误选赛道。
+- Live Band autonomous replies 尚未跑通；当前只能说 REST room / participants / @mention / event smoke 已验证，不能说完整 autonomous live agent workflow 已完成。
+- 部署 URL、public GitHub strategy、视频、slide、cover image 还没最终完成；这些是 2026-06-19 23:00 CST 前的提交硬门槛。
+- 页面曾出现 X402 相关隐藏/污染内容；2026-06-13 官方可见正文仍是 Band enterprise multi-agent，不把 X402 当主赛道。
 - AI/ML API credits 可能涉及 billing/subscription，领取后要留意取消续费。
+- Band Pro `BANDHACK26` 和 Featherless `BOA26` 也可能涉及 checkout / activation / partner terms；领取后要记录取消/到期提醒，不把 billing 状态写进 repo。
 - 公开 GitHub 必须确认没有 `.env`、`agent_config.yaml`、API key、私有日志。
 - 官方提交要求 Public GitHub Repository；当前准备仓库是 private，提交前必须切 public 或创建公开脱敏提交仓库。
 

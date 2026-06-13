@@ -572,9 +572,10 @@ The current implementation plan should be revised before coding beyond T0:
    - Add `.env.example`, no-secret scan and public repo strategy before live Band work.
    - Do not push secrets, true room ids, true agent keys or private logs.
 
-7. Add kickoff and submission-day Chrome review gates.
-   - Kickoff gate: confirm official access, promo code, live Band constraints and X402 page ambiguity.
-   - Submission gate: re-check deadline, required fields, prize/partner terms and submission format.
+7. Add official-page and submission-day Chrome review gates.
+   - Official-page refresh gate: confirm current deadline, prize pool, partner resources, promo codes, live Band constraints, submitted-competitor context and any page ambiguity.
+   - Current 2026-06-13 facts: deadline is 2026-06-19 23:00 CST; official prize pool is `$10,000+`; partners include AI/ML API and Featherless AI; Band Pro code `BANDHACK26` and Featherless code `BOA26` are visible.
+   - Submission gate: re-check deadline, required fields, prize/partner terms and submission format immediately before final submission.
 
 ### 13.6 Acceptance Criteria For This Spec
 

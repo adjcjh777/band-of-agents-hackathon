@@ -40,4 +40,5 @@ BAND_AGENT_KEY=<runtime agent key>
 
 - Public GitHub strategy 仍需用户决定：切当前仓库 public，或创建脱敏 public submission repo。
 - Application URL 尚未创建。
-- Redacted live Band evidence packet 尚未生成；若赛时 live path 不稳定，演示必须明确使用 replay fallback。
+- Redacted live Band REST evidence packet 已在本机 ignored reports 中生成过；提交前仍需决定是否重新生成一份最新 evidence packet 并只引用脱敏摘要。
+- SDK/WebSocket Remote Agent 自动接收并回复尚未验证；若赛时 live path 不稳定，演示必须明确使用 replay fallback。

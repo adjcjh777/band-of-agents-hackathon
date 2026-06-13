@@ -6,8 +6,10 @@
 - [ ] 已加入 lablab.ai Discord。
 - [x] Band 账号已创建。
 - [ ] 已加入 Band Discord。
-- [ ] 已关注 kickoff 公告。
-- [ ] AI/ML API 账号准备好，等待 kickoff promo code。
+- [x] 已用 Chrome 复核官方页面当前 kickoff / schedule / submit / prize / partner 信息。
+- [ ] AI/ML API coupon 已领取并记录 billing/subscription 取消提醒。官方页当前写明每人 $10 credits，最多 500 名参与者，有效期至比赛结束。
+- [ ] Featherless AI coupon 已领取并记录到期/取消提醒。官方页当前写明 promo code `BOA26`，每人 $25 credits，最多 1,000 名参与者，激活后 1 个月有效。
+- [ ] Band Pro promo code `BANDHACK26` 已按需兑换，并确认 100% off 与取消提醒。
 
 ## 技术准备
 
@@ -21,6 +23,7 @@
 - [ ] 能在 Band room 中 @mention 一个 Agent 并收到回复。
 - [ ] 能完成 3 个 Agent 的端到端自主协作。当前已验证真实 Band room、3 participants、2 条 @mention handoff 和 live event；peer agents 仍显示 Disconnected，尚未验证 SDK/WebSocket 自动回复。
 - [x] 有 mock mode，防止现场 Band/API 波动。
+- [x] 有 replay fallback，且 dashboard 明确标注 `REPLAY`。
 
 ## Demo 验收
 
@@ -59,6 +62,9 @@
 - Public GitHub Repository：需要用户决定切当前仓库 public，还是创建脱敏公开提交仓库。
 - Demo Application Platform / Application URL：尚未部署；当前建议见 `docs/deployment-notes.md`。
 - Live Band autonomous replies：真实 Band REST smoke 已完成并生成 redacted evidence，但 peer agents 仍显示 Disconnected；提交前仍需跑通 SDK/WebSocket 远程 Agent 自动处理与回复。
+- Cover Image / Video Presentation / Slide Presentation：尚未最终产出。
+- Partner prize strategy：AI/ML API / Featherless AI 可以作为加分项，但不要牺牲 Band 协作主线；只有真实接入并能演示时才写入主 claims。
+- Final official page gate：提交前再次用 Chrome 打开官方页确认 deadline、奖项、提交字段、partner terms 和已提交作品竞争态。
 
 ## 2026-06-13 Final Rehearsal Record
 
@@ -90,7 +96,7 @@ RFP TrustRoom turns a messy B2B RFP and security questionnaire response into a c
 
 Technology tags:
 
-Band, Band SDK, multi-agent systems, enterprise workflow, RFP response, security questionnaire, evidence management, AI agents, audit trail, human-in-the-loop, Python, FastAPI, AI/ML API
+Band, Band SDK, multi-agent systems, enterprise workflow, RFP response, security questionnaire, evidence management, AI agents, audit trail, human-in-the-loop, Python, FastAPI, AI/ML API, Featherless AI
 
 ## 视频结构
 

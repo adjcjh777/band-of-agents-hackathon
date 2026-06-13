@@ -78,7 +78,7 @@ Final Pack 应展示：
 
 ## 9:00-10:00 Live Path Versus Replay Fallback
 
-当前可独立验收的是 mock/replay 主路径。Band live path 在获得真实 credentials、kickoff access code 和官方提交细则后接入。
+当前可独立验收的是 mock/replay 主路径。Band live path 已验证 REST room / participants / @mention / event boundary，但 SDK/WebSocket Remote Agent 自动接收并回复仍需单独通过后，才能把它作为完整 live autonomous workflow 演示。
 
 Live path 目标：
 
@@ -86,6 +86,7 @@ Live path 目标：
 - 至少 3 个 Remote Agents。
 - @mention handoff 和 reviewer loop。
 - 脱敏 live evidence packet。
+- SDK/WebSocket autonomous replies，不能只靠手动或 REST smoke 替代。
 
 Replay fallback 目标：
 
@@ -97,4 +98,4 @@ Replay fallback 目标：
 
 禁止把当前 demo 描述为：production、enterprise-ready deployment、fully automated compliance、legal advice、certified security product。
 
-可以准确描述为：hackathon demo / working prototype，展示了 RFP TrustRoom 的 mock/replay 主链路、证据同源、review loop、human approval、Final Pack 和 Governed Evolution。
+可以准确描述为：hackathon demo / working prototype，展示了 RFP TrustRoom 的 mock/replay 主链路、证据同源、review loop、human approval、Final Pack 和 Governed Evolution；Band REST live boundary 已验证，但完整 autonomous live replies 仍是 live gate。

@@ -385,10 +385,10 @@
   <main class="shell">
     <section class="hero">
       <div class="hero-main">
-        <p class="eyebrow">Chrome 实读备忘 | 2026-05-30 | Asia/Shanghai</p>
+        <p class="eyebrow">Chrome 实读备忘 | 更新 2026-06-13 | Asia/Shanghai</p>
         <h1>Band of Agents Hackathon 官方信息与产品设计约束</h1>
         <p class="lead">
-          本页用于防止上下文压缩后丢失关键信息。内容来自 Chrome 真实打开的官方比赛页、Band 官网、Band 文档、Codeband GitHub 渲染页、lablab 提交指南和 AI/ML API 官网。
+          本页用于防止上下文压缩后丢失关键信息。内容来自 Chrome 真实打开的官方比赛页、Band 官网、Band 文档、Codeband GitHub 渲染页、lablab 提交指南、AI/ML API 和 Featherless AI 资源。
         </p>
         <div class="meta-grid">
           <div class="mini">
@@ -401,7 +401,7 @@
           </div>
           <div class="mini">
             <span>奖池</span>
-            <strong>总计 $9,500</strong>
+            <strong>总计 $10,000+</strong>
           </div>
           <div class="mini">
             <span>提交硬点</span>
@@ -418,8 +418,8 @@
         </div>
         <div class="metric warn">
           <span>页面异常</span>
-          <strong>X402 赛道是隐藏污染块</strong>
-          <p class="note">DOM 中存在但可见尺寸为 0，不作为本赛主线。</p>
+          <strong>X402 不作为主线</strong>
+          <p class="note">2026-06-13 官方可见正文仍聚焦 Band enterprise multi-agent。</p>
         </div>
         <div class="metric risk">
           <span>提交风险</span>
@@ -468,10 +468,18 @@
           </div>
           <div class="event">
             <time>2026-06-12 23:20</time>
-            <strong>Introduction to the Challenge</strong>
+            <strong>AI/ML API opening words</strong>
+          </div>
+          <div class="event">
+            <time>2026-06-12 23:25</time>
+            <strong>Featherless opening words</strong>
           </div>
           <div class="event">
             <time>2026-06-12 23:30</time>
+            <strong>Introduction to the Challenge</strong>
+          </div>
+          <div class="event">
+            <time>2026-06-12 23:35</time>
             <strong>Hackathon Guide</strong>
           </div>
           <div class="event">
@@ -564,6 +572,7 @@
           <li>每个 Remote Agent 在 Band 平台创建后会得到 Agent UUID 和 API key，API key 只显示一次。</li>
           <li><code>.env</code> 和 <code>agent_config.yaml</code> 必须进 <code>.gitignore</code>。</li>
           <li>平台 URL 示例：<code>THENVOI_REST_URL=https://app.band.ai/</code>，<code>THENVOI_WS_URL=wss://app.band.ai/api/v1/socket/websocket</code>。</li>
+          <li>官方页当前给出 Band Pro promo code <code>BANDHACK26</code>，可用于 1 个月 100% off；如不继续使用需在下一 billing cycle 前取消。</li>
         </ul>
       </article>
 
@@ -624,7 +633,7 @@
         <h2>AI/ML API 合作资源</h2>
         <ul>
           <li>官方页写明每人 $10 credits，最多 500 名参与者。</li>
-          <li>Promo code 会在 kickoff 公布，有效期到比赛结束。</li>
+          <li>通过 lablab.ai coupon 领取，有效期到比赛结束。</li>
           <li>Partner prize: $1,000 cash + $1,000 AI/ML API credits。</li>
           <li>AI/ML API 官网定位是 one API for 500+ models，OpenAI 和 Anthropic compatible。</li>
           <li>可能需要 billing 或 subscription setup，不使用时要取消以避免后续费用。</li>
@@ -635,9 +644,22 @@
       </article>
 
       <article class="panel">
+        <h2>Featherless AI 合作资源</h2>
+        <ul>
+          <li>官方页写明每人 $25 credits，最多 1,000 名参与者，先到先得。</li>
+          <li>Promo code: <code>BOA26</code>，按官方 setup guide 激活，激活后 1 个月有效。</li>
+          <li>Partner prize: 1st 500 inference credits + Claw Pro plan valued at $200；2nd 300 inference credits + Claw Pro plan valued at $200；3rd 100 inference credits + Claw Pro plan valued at $200。</li>
+          <li>适合作为开源模型推理补充，例如 evidence extraction、review summarization 或 specialized model use cases。</li>
+        </ul>
+        <div class="callout warn">
+          只有真实接入并能在演示中解释其作用时，才把 Featherless 写进主提交 claims。
+        </div>
+      </article>
+
+      <article class="panel">
         <h2>页面异常与可信度处理</h2>
         <div class="callout risk">
-          Chrome DOM 中发现隐藏的 X402 Payments / Launch &amp; Fund Your Startup 内容块，包括 Agent-to-Agent Payments、Consumer AI Payments、B2B FinOps、On-chain Commerce Primitives。该块尺寸为 0，和 Band of Agents 页面标题、评审标准、资源区不一致。
+          2026-05-30 Chrome DOM 中发现隐藏的 X402 Payments / Launch &amp; Fund Your Startup 内容块，包括 Agent-to-Agent Payments、Consumer AI Payments、B2B FinOps、On-chain Commerce Primitives。该块尺寸为 0，和 Band of Agents 页面标题、评审标准、资源区不一致。2026-06-13 官方可见正文复核仍聚焦 Band / Codeband / AI/ML API / Featherless AI。
         </div>
         <ul>
           <li>判断：页面模板或隐藏内容污染。</li>
@@ -741,11 +763,11 @@
       <article class="panel full">
         <h2>下一步工作顺序</h2>
         <ol>
-          <li>继续完成所有赛题方向的市场稀缺性调研，不在完成前综合 7 个候选。</li>
-          <li>失败的 release war room 和 multi-agent software development 子代理用更短 prompt 重派。</li>
-          <li>新增 RFP、procurement、legal contract、finance close、security incident、HR access、insurance claims 等方向调研。</li>
-          <li>完成后按市场稀缺性、商业价值、Band 适配、七天可行性、演示可见性筛成 7 个待选项。</li>
-          <li>用户手动筛选后，再进入 PRD、demo 主路径、技术架构、提交材料规划。</li>
+          <li>优先完成 SDK/WebSocket Remote Agent 自动接收与回复，或明确记录为 live gate blocker。</li>
+          <li>部署 public-safe demo URL，默认展示 mock/replay，不把 replay 伪装成 live。</li>
+          <li>确定 public GitHub 策略：当前仓库转 public 或创建脱敏提交仓库。</li>
+          <li>产出 cover image、5 分钟 video presentation 和 slide deck。</li>
+          <li>提交前重跑 readiness、no-secret、pytest、Chrome 官方页复核和最终 no-overclaim review。</li>
         </ol>
       </article>
     </section>
@@ -760,11 +782,13 @@
         <li><a href="https://docs.band.ai/api/introduction">Band docs: API Introduction</a></li>
         <li><a href="https://docs.band.ai/integrations/sdks/tutorials/setup">Band docs: SDK Setup</a></li>
         <li><a href="https://docs.band.ai/integrations/sdks/tutorials/testing-agents">Band docs: Testing Agents</a></li>
+        <li><a href="https://www.band.ai/hacker-guide">Band Hacker Guide</a></li>
         <li><a href="https://github.com/thenvoi/codeband">Codeband GitHub repository</a></li>
         <li><a href="https://lablab.ai/delivering-your-hackathon-solution">lablab submission guidelines</a></li>
         <li><a href="https://lablab.ai/ai-articles/hackathon-guidelines">lablab hackathon guidelines</a></li>
         <li><a href="https://lablab.ai/getting-started-guide">lablab getting started guide</a></li>
         <li><a href="https://aimlapi.com/?via=damian&amp;utm_source=lablab+hackathon&amp;utm_medium=lablab&amp;utm_campaign=hackathon">AI/ML API official site</a></li>
+        <li><a href="https://featherless.ai/">Featherless AI official site</a></li>
       </ol>
       <p class="note">读取说明：本文件是备忘和决策辅助，不替代 kickoff stream、官方 Discord 和后续页面变更。比赛时间、规则、奖项、提交要求以官方最新页面为准。</p>
     </section>
