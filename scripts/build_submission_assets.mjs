@@ -146,10 +146,10 @@ async function captureScreenshots(baseUrl) {
     await page.screenshot({
       path: files.routeShot,
       clip: {
-        x: 36,
+        x: 18,
         y: Math.max(0, runTrace.y - 90),
-        width: 1240,
-        height: 630,
+        width: 1404,
+        height: 700,
       },
     });
   }
@@ -159,10 +159,10 @@ async function captureScreenshots(baseUrl) {
     await page.screenshot({
       path: files.traceShot,
       clip: {
-        x: 36,
+        x: 18,
         y: Math.max(0, traces.y - 40),
-        width: 1240,
-        height: 560,
+        width: 1404,
+        height: 650,
       },
     });
   }
@@ -257,17 +257,19 @@ function coverHtml() {
 
 function slideHtml(slide, index) {
   const page = index + 1;
-  const textWidth = page === 8 ? 690 : 760;
-  const visualTop = page === 8 ? 246 : 116;
+  const screenshotProofSlide = page === 4 || page === 5;
+  const textWidth = screenshotProofSlide ? 500 : page === 8 ? 690 : 760;
+  const supportWidth = screenshotProofSlide ? 500 : 680;
+  const visualTop = screenshotProofSlide ? 132 : page === 8 ? 246 : 116;
   const visual = (() => {
     if (page === 1) {
       return `<img class="proof-img" style="width:535px;height:330px;" src="${assetUrl(files.dashboardShot)}" alt="Dashboard first screen">`;
     }
     if (page === 4) {
-      return `<img class="proof-img" style="width:660px;height:380px;" src="${assetUrl(files.routeShot)}" alt="Run Trace route screenshot">`;
+      return `<img class="proof-img" style="width:620px;height:360px;" src="${assetUrl(files.routeShot)}" alt="Run Trace route screenshot">`;
     }
     if (page === 5) {
-      return `<img class="proof-img" style="width:660px;height:380px;" src="${assetUrl(files.traceShot)}" alt="Representative item traces screenshot">`;
+      return `<img class="proof-img" style="width:620px;height:360px;" src="${assetUrl(files.traceShot)}" alt="Representative item traces screenshot">`;
     }
     if (page === 2) {
       return `<div class="path" style="grid-template-columns:1fr;gap:12px;width:500px;">
@@ -302,7 +304,7 @@ function slideHtml(slide, index) {
     <div style="position:absolute;left:58px;top:44px;width:${textWidth}px;">
       <div class="kicker">${htmlEscape(slide.kicker)}</div>
       <h2 style="margin-top:12px;">${htmlEscape(slide.title)}</h2>
-      <p style="margin-top:18px;max-width:680px;">${htmlEscape(slide.support)}</p>
+      <p style="margin-top:18px;max-width:${supportWidth}px;">${htmlEscape(slide.support)}</p>
     </div>
     <div style="position:absolute;right:58px;top:${visualTop}px;">${visual}</div>
     <div class="panel" style="position:absolute;left:58px;bottom:82px;width:520px;padding:16px 18px;">
@@ -349,8 +351,13 @@ async function renderHtmlAssets() {
 
 function slideModuleSource(slide, index) {
   const slideNumber = index + 1;
-  const titleWidth = slideNumber === 8 ? 690 : 760;
+  const screenshotProofSlide = slideNumber === 4 || slideNumber === 5;
+  const titleWidth = screenshotProofSlide ? 560 : slideNumber === 8 ? 690 : 760;
   const titleFontSize = slideNumber === 1 ? 46 : slideNumber === 8 ? 32 : 36;
+  const supportWidth = screenshotProofSlide ? 540 : 680;
+  const imagePlacement = screenshotProofSlide
+    ? { x: 662, y: 132, width: 560, height: 360 }
+    : { x: 745, y: 116, width: 475, height: 330 };
   const imageForSlide =
     slideNumber === 1 ? files.dashboardShot :
     slideNumber === 4 ? files.routeShot :
@@ -361,11 +368,11 @@ function slideModuleSource(slide, index) {
   ctx.addShape(slide, { x: 0, y: 0, width: 1280, height: 720, fill: "#f4f6f1" });
   ctx.addText(slide, { x: 58, y: 44, width: 220, height: 24, text: ${JSON.stringify(slide.kicker)}, fontSize: 13, bold: true, color: "#355e73" });
   ctx.addText(slide, { x: 58, y: 82, width: ${titleWidth}, height: 145, text: ${JSON.stringify(slide.title)}, fontSize: ${titleFontSize}, bold: true, color: "#16211a", face: ctx.fonts.title, insets: { left: 0, right: 0, top: 0, bottom: 0 } });
-  ctx.addText(slide, { x: 58, y: 242, width: 680, height: 92, text: ${JSON.stringify(slide.support)}, fontSize: 20, color: "#5f6b61", insets: { left: 0, right: 0, top: 0, bottom: 0 } });
+  ctx.addText(slide, { x: 58, y: 242, width: ${supportWidth}, height: 92, text: ${JSON.stringify(slide.support)}, fontSize: 20, color: "#5f6b61", insets: { left: 0, right: 0, top: 0, bottom: 0 } });
   ctx.addShape(slide, { x: 58, y: 552, width: 520, height: 86, fill: "#fbfcf8", line: { style: "solid", fill: "#d9dfd5", width: 1 } });
   ctx.addText(slide, { x: 76, y: 568, width: 140, height: 18, text: "PROOF OBJECT", fontSize: 11, bold: true, color: "#355e73" });
   ctx.addText(slide, { x: 76, y: 592, width: 470, height: 36, text: ${JSON.stringify(slide.proof)}, fontSize: 15, color: "#5f6b61" });
-  ${imageForSlide ? `await ctx.addImage(slide, { x: 745, y: 116, width: 475, height: 330, path: ${JSON.stringify(imageForSlide)}, fit: "contain", alt: "RFP TrustRoom screenshot" });` : ""}
+  ${imageForSlide ? `await ctx.addImage(slide, { x: ${imagePlacement.x}, y: ${imagePlacement.y}, width: ${imagePlacement.width}, height: ${imagePlacement.height}, path: ${JSON.stringify(imageForSlide)}, fit: "contain", alt: "RFP TrustRoom screenshot" });` : ""}
   ${!imageForSlide ? deckShapeSource(slideNumber) : ""}
   ctx.addText(slide, { x: 58, y: 676, width: 320, height: 16, text: "RFP TrustRoom - Band of Agents Hackathon", fontSize: 11, color: "#707c72" });
   ctx.addText(slide, { x: 1188, y: 676, width: 34, height: 16, text: "${slideNumber}/8", fontSize: 11, color: "#707c72" });

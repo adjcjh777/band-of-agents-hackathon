@@ -1104,6 +1104,50 @@ Done when:
 
 - The submission asset deck remains 8 pages/slides, slide 8 is visually and text-extraction clean, and the generator remains public-safe without broadening submission claims.
 
+## UIUX-R1.1: Submission Deck And Run Trace Density Polish
+
+Recommended model: 5.5 中 for controller-owned UI/UX polish and visual QA.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Source:
+
+- UI/UX reviewer thread `019ec1e9-8077-75c0-92ce-2990467c8a6f` found that the replay dashboard was functionally strong but visually loose in the Run Trace first route, and that deck slides 4/5 had screenshot crop / overlap risks.
+
+Boundary:
+
+- Allowed locked paths are `src/trustroom/web/templates/base.html`, `scripts/build_submission_assets.mjs`, `docs/submission-assets/`, this plan and `docs/agent-task-ledger.md`.
+- Do not change public repo visibility, deploy Render, upload video, inspect secrets/private reports, touch `pilotdeck/`, run live Band operations or alter submission checklist completion state.
+- Keep this as UI density and submission asset quality polish; do not broaden replay/live or production claims.
+
+Todo:
+
+- [x] Tighten the Run Trace proof strip so six proof points read as a compact desktop strip and no longer create a large stretched blank area.
+- [x] Preserve mobile wrapping and no horizontal overflow for long agent names, refs and trace chips.
+- [x] Expand source screenshot crops for Run Trace and Representative Item Traces so right-side content is not cut off.
+- [x] Give slides 4/5 a screenshot-safe layout that does not overlap/truncate titles or supporting copy.
+- [x] Regenerate cover, dashboard crop, route crop, representative trace crop, PDF deck and editable PPTX.
+
+Verification:
+
+- [x] Local Chrome desktop/mobile `/runs/demo/replay` smoke returns 200 with no console/page errors and no horizontal overflow.
+- [x] Chrome screenshots captured for desktop replay and deck slides 4/5/8.
+- [x] PDF has 8 pages, no encryption, no JavaScript; slides 4/5/8 text extraction is readable.
+- [x] PPTX has 8 slide XML files and 3 media images.
+- [x] `uv run pytest tests/test_web_app.py -v` passes.
+- [x] `uv run pytest -v` passes.
+- [x] `uv run python scripts/check_dual_agent_changes.py --task "UIUX-R1.1 Submission deck and Run Trace density polish"` passes.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run python scripts/check_dual_agent_protocol.py` exits 0.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- The dashboard first judge route is denser and visually clear, submission deck slides 4/5/8 are clean in Chrome/PDF/PPTX, and public/deploy/video/live blockers remain unchanged.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:

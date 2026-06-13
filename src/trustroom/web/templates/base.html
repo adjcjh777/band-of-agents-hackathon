@@ -400,7 +400,34 @@
       .trace-overview {
         display: grid;
         grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+        align-items: start;
         gap: 14px;
+      }
+
+      .trace-overview > .panel {
+        min-width: 0;
+      }
+
+      .trace-overview .proof-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .trace-overview .proof-point {
+        padding: 8px;
+      }
+
+      .trace-overview .proof-point .eyebrow {
+        font-size: 9px;
+        letter-spacing: 0.04em;
+      }
+
+      .trace-overview .proof-point strong {
+        font-size: 21px;
+      }
+
+      .trace-overview .proof-point p {
+        font-size: 11px;
+        line-height: 1.28;
       }
 
       .proof-grid,
@@ -651,6 +678,7 @@
         .evidence-grid,
         .lineage-grid,
         .owner-grid,
+        .trace-overview .proof-grid,
         .proof-grid,
         .milestone-grid,
         .item-trace-grid {
