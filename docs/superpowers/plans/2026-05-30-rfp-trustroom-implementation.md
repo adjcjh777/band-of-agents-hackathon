@@ -475,13 +475,14 @@ Current note:
 
 - 2026-06-13: Codex completed the credential-free live REST adapter contract and official API doc refresh. The real Band Remote Agent creation and redacted live evidence packet are intentionally still unchecked because they require runtime credentials / one-time API keys and must not be copied into repo files.
 - 2026-06-13 later: real Band REST smoke and Chrome live verification passed. Evidence remains redacted/ignored outside Git. Peer agents still showed Disconnected, so complete autonomous SDK/WebSocket replies remain unchecked.
+- 2026-06-13 T15: autonomous reply smoke harness now exists and fails closed, but the current ignored env dry-run is still blocked by missing REST base / peer directory. It has not produced a real SDK/WebSocket autonomous reply confirmation.
 
 Verification:
 
 - [x] `uv run pytest tests/test_live_adapter_contract.py -v` passes.
 - [x] Mock/replay path still passes readiness.
 - [x] Live REST evidence packet is redacted.
-- [ ] SDK/WebSocket autonomous reply path is verified.
+- [ ] SDK/WebSocket autonomous reply path is verified with a real Remote Agent reply.
 - [x] `uv run python scripts/check_no_secrets.py` exits 0.
 - [x] `git diff --check` exits 0.
 
@@ -657,20 +658,26 @@ Boundary:
 
 Todo:
 
-- [ ] Create a narrow autonomous live smoke harness that verifies Remote Agents can receive @mentions through SDK/WebSocket and send replies, or returns a precise blocked status if the platform/account is not ready.
-- [ ] Keep REST smoke, Band room evidence and autonomous replies as separate result fields.
-- [ ] Add tests with stubs/fakes only; tests must not require real Band credentials.
-- [ ] Preserve existing REST live smoke behavior.
+- [x] Create a narrow autonomous live smoke harness that verifies Remote Agents can receive @mentions through SDK/WebSocket and send replies, or returns a precise blocked status if the platform/account is not ready.
+- [x] Keep REST smoke, Band room evidence and autonomous replies as separate result fields.
+- [x] Add tests with stubs/fakes only; tests must not require real Band credentials.
+- [x] Preserve existing REST live smoke behavior.
+
+Current note:
+
+- 2026-06-13: Agent Bus executor implemented `scripts/run_live_band_autonomous_smoke.py` on `feature/trustroom-live-autonomous-replies`; Codex controller merged it and added fail-closed peer-resolution handling. The harness returns `DONE` only when a non-mention Band message contains the challenge token; missing credentials, missing peer directory, unresolved peer handles or no reply return `BLOCKED`.
+- 2026-06-13 dry-run against the ignored local env returned `BLOCKED` because `BAND_REST_URL` / `BAND_API_BASE` and `TRUSTROOM_BAND_PEERS_JSON` were not available. This does not verify real SDK/WebSocket autonomous replies.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_live_band_autonomous_smoke.py tests/test_live_adapter_contract.py -v` passes.
-- [ ] `uv run python scripts/check_no_secrets.py` exits 0.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest tests/test_live_band_autonomous_smoke.py tests/test_live_adapter_contract.py -v` passes.
+- [x] `uv run pytest tests/test_live_band_smoke.py -v` passes.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `git diff --check` exits 0.
 
 Done when:
 
-- Executor returns either `DONE` with redacted evidence path / summary, or `BLOCKED` with exact missing Band/SDK/WebSocket condition.
+- Executor/controller integration returns either `DONE` with redacted evidence path / summary, or `BLOCKED` with exact missing Band/SDK/WebSocket condition. Current integration result is `DONE_WITH_CONCERNS`: harness complete, real autonomous reply still unverified.
 
 ## Suggested Short Goal Prompt
 

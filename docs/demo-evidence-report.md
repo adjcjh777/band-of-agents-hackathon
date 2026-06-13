@@ -16,6 +16,7 @@
 | Agent prompts | `src/trustroom/agents/prompts/` defines role, input contract, output schema, no-overclaim boundary and Band handoff instructions | Ready |
 | Task envelopes | `docs/agent-task-envelopes.md` defines @mention handoff shape and request_changes / human approval status contract | Ready |
 | Live REST smoke | `scripts/run_live_band_smoke.py` can create a real Band room, add participants, send @mention handoff messages, and record a live event with redacted refs | Partial |
+| Live autonomous reply smoke | `scripts/run_live_band_autonomous_smoke.py` probes for a challenge-token Remote Agent reply and separates REST smoke, room evidence and autonomous replies | Blocked until runtime peer config is ready |
 
 ## Main Demo Chain
 
@@ -69,14 +70,15 @@ Live evidence target:
 Current status:
 
 - Verified: real Band REST smoke has produced a redacted evidence packet outside Git, and Chrome live verification showed the Band chat, three participants, two @mention handoff messages and a live event.
-- Not verified: SDK/WebSocket Remote Agents autonomously receiving @mentions and replying. Peer agents were still shown as Disconnected during the latest Chrome verification.
+- Added: autonomous reply smoke harness exists and returns `DONE` only when a non-mention Band message includes the challenge token. Current dry-run returned `BLOCKED` because the ignored local env is missing REST base / peer directory.
+- Not verified: SDK/WebSocket Remote Agents autonomously receiving @mentions and replying. Peer agents were still shown as Disconnected during the latest Chrome verification, and the new harness has not produced a real reply confirmation.
 - Submission wording must keep these separate: REST live boundary is verified; replay fallback is stable; complete autonomous live Band workflow remains a gate.
 
 ## Known Gaps Before Final Submission
 
 - Official deadline, exact submission fields, partner access details and submitted-competitor context must be rechecked on the official page immediately before final submission.
 - Public GitHub strategy is unresolved: make this repo public or create a sanitized public submission repo.
-- Live autonomous SDK/WebSocket replies remain pending.
+- Live autonomous SDK/WebSocket replies remain pending; the smoke harness is ready, but needs runtime `BAND_REST_URL` / `BAND_API_BASE` plus `TRUSTROOM_BAND_PEERS_JSON` for a connected peer.
 - Deployment URL, cover image, video and slide deck are not yet final.
 - Final submission must rerun no-secret checks and review wording.
 

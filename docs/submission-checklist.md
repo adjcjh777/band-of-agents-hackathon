@@ -20,8 +20,8 @@
 - [x] Orchestrator Agent 的 UUID 和 API key 已安全保存在本机 ignored `.env`，未进入 Git。
 - [x] `.env` 已加入 `.gitignore`。
 - [x] `agent_config.yaml` 已加入 `.gitignore`。
-- [ ] 能在 Band room 中 @mention 一个 Agent 并收到回复。
-- [ ] 能完成 3 个 Agent 的端到端自主协作。当前已验证真实 Band room、3 participants、2 条 @mention handoff 和 live event；peer agents 仍显示 Disconnected，尚未验证 SDK/WebSocket 自动回复。
+- [ ] 能在 Band room 中 @mention 一个 Agent 并收到自主回复。当前已有 fail-closed smoke harness，但本机 dry-run 仍因缺少 REST base / peer directory 返回 `BLOCKED`。
+- [ ] 能完成 3 个 Agent 的端到端自主协作。当前已验证真实 Band room、3 participants、2 条 @mention handoff 和 live event；peer agents 仍显示 Disconnected，尚未用新 harness 验证 SDK/WebSocket 自动回复。
 - [x] 有 mock mode，防止现场 Band/API 波动。
 - [x] 有 replay fallback，且 dashboard 明确标注 `REPLAY`。
 
@@ -61,14 +61,14 @@
 
 - Public GitHub Repository：需要用户决定切当前仓库 public，还是创建脱敏公开提交仓库。
 - Demo Application Platform / Application URL：尚未部署；当前建议见 `docs/deployment-notes.md`。
-- Live Band autonomous replies：真实 Band REST smoke 已完成并生成 redacted evidence，但 peer agents 仍显示 Disconnected；提交前仍需跑通 SDK/WebSocket 远程 Agent 自动处理与回复。
+- Live Band autonomous replies：真实 Band REST smoke 已完成并生成 redacted evidence；autonomous reply smoke harness 已完成，但当前 dry-run 缺少 `BAND_REST_URL` / `BAND_API_BASE` 和 `TRUSTROOM_BAND_PEERS_JSON`，提交前仍需用 connected peer 跑通 SDK/WebSocket 远程 Agent 自动处理与回复。
 - Cover Image / Video Presentation / Slide Presentation：尚未最终产出。
 - Partner prize strategy：AI/ML API / Featherless AI 可以作为加分项，但不要牺牲 Band 协作主线；只有真实接入并能演示时才写入主 claims。
 - Final official page gate：提交前再次用 Chrome 打开官方页确认 deadline、奖项、提交字段、partner terms 和已提交作品竞争态。
 
 ## 2026-06-13 Final Rehearsal Record
 
-- `uv run pytest -v`：72 passed，1 个 FastAPI / Starlette deprecation warning，不影响 demo。
+- `uv run pytest -v`：86 passed，1 个 FastAPI / Starlette deprecation warning，不影响 demo。
 - `uv run python scripts/check_trustroom_readiness.py`：OK，question_count 8，evidence_coverage_ratio 1.0，replay_event_count 19。
 - `uv run python scripts/check_no_secrets.py`：OK。
 - `uv run uvicorn trustroom.web.app:app --host 127.0.0.1 --port 8000`：本地服务启动成功。
@@ -79,6 +79,7 @@
 - Live Band latency：`create_room=555.691ms`、`mention_requirement-decomposer-agent=1605.576ms`、`mention_evidence-retriever-agent=1020.1ms`、`record_review_event=518.993ms`。
 - Chrome live verification：Band Chats 页面可见 live `New Session`，参与者为 `trustroom-orchestrator`、`requirement-decomposer-agent`、`evidence-retriever-agent`，消息区显示两条真实 @mention handoff；Participants panel 显示 remote agents 当前 `Disconnected`。
 - Live Band boundary：已验证真实 Band REST room / participant / message / event path；尚未验证 SDK/WebSocket 远程 Agent 自动接收并回复。提交时必须继续把 replay fallback、REST smoke 和 autonomous live agent 区分表述。
+- Live autonomous reply harness：`scripts/run_live_band_autonomous_smoke.py` 已集成，stubbed tests 通过；当前 ignored `.env` dry-run 返回 `BLOCKED`，缺少 REST base / peer directory，未形成真实 autonomous reply evidence。
 
 ## 建议提交文案草稿
 

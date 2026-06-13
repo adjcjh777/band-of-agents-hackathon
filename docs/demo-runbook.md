@@ -58,9 +58,20 @@ Live 讲解顺序与 replay 相同，但需要额外展示 Band room 中的 @men
 当前 live evidence 边界：
 
 - 已有：真实 Band REST room、3 participants、2 条 @mention handoff、live event、Chrome live verification、ignored redacted evidence packet。
+- 已有：`scripts/run_live_band_autonomous_smoke.py` fail-closed harness，可把 REST smoke、Band room evidence 和 autonomous replies 分开报告。
+- 当前 blocked：ignored env dry-run 缺少 `BAND_REST_URL` / `BAND_API_BASE` 和 `TRUSTROOM_BAND_PEERS_JSON`，尚未形成真实 autonomous reply evidence。
 - 未完成：peer agents 自动接收并回复的 SDK/WebSocket 端到端链路。
 - 提交材料可说：REST live boundary 已验证，replay fallback 可复现主流程。
 - 提交材料不可说：完整 autonomous live Band workflow 已稳定运行。
+
+自主回复 smoke 命令：
+
+```bash
+uv run python scripts/run_live_band_autonomous_smoke.py --dry-run-check
+uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent
+```
+
+只有第二条命令返回 `DONE` 且输出中 `autonomous_replies.status` 为 `PASSED` 时，才能在录屏中说 autonomous Remote Agent replies 已验证。
 
 ## Five-Minute Video Structure
 

@@ -159,3 +159,23 @@ def test_autonomous_smoke_blocks_before_rest_when_target_peer_is_not_configured(
     assert evidence["rest_smoke"]["status"] == "BLOCKED"
     assert evidence["band_room_evidence"]["status"] == "NOT_RUN"
     assert "TRUSTROOM_BAND_AUTONOMOUS_AGENT" in evidence["rest_smoke"]["credential_status"]["invalid"][0]
+
+
+def test_autonomous_smoke_blocks_when_peer_handle_cannot_resolve() -> None:
+    env = runtime_env()
+    env["TRUSTROOM_BAND_PEERS_JSON"] = json.dumps(
+        {"requirement-decomposer-agent": "@missing-peer-handle"}
+    )
+
+    evidence = run_autonomous_smoke(
+        env=env,
+        peer_provider=lambda _config: [],
+        run_id="run-autonomous",
+        write_report=False,
+    )
+
+    assert evidence["status"] == "BLOCKED"
+    assert evidence["rest_smoke"]["status"] == "BLOCKED"
+    assert evidence["band_room_evidence"]["status"] == "NOT_RUN"
+    assert "Could not resolve Band peer id" in evidence["rest_smoke"]["blocker"]
+    assert "@missing-peer-handle" not in json.dumps(evidence)

@@ -15,6 +15,7 @@ from trustroom.band.live_adapter import (
     LiveBandAdapter,
     LiveBandConfig,
     LiveBandConfigurationError,
+    LiveBandProtocolError,
 )
 from trustroom.models import RunState, TimelineEvent
 
@@ -211,9 +212,21 @@ def run_autonomous_smoke(
             "autonomous_replies": _status("NOT_RUN"),
         }
 
-    config = build_live_config(source, peer_provider=peer_provider)
-    target = target_agent or next(iter(config.agent_directory))
-    adapter = adapter_factory(config) if adapter_factory else LiveBandAdapter(config=config)
+    try:
+        config = build_live_config(source, peer_provider=peer_provider)
+        target = target_agent or next(iter(config.agent_directory))
+        adapter = adapter_factory(config) if adapter_factory else LiveBandAdapter(config=config)
+    except (LiveBandConfigurationError, LiveBandProtocolError) as exc:
+        return {
+            "status": "BLOCKED",
+            "mode": "live",
+            "generated_at": generated_at,
+            "run_id": run_id,
+            "target_agent": status["target_agent"],
+            "rest_smoke": _status("BLOCKED", credential_status=status, blocker=str(exc)),
+            "band_room_evidence": _status("NOT_RUN"),
+            "autonomous_replies": _status("NOT_RUN"),
+        }
     operations: list[dict[str, Any]] = []
     room: BandRoom | None = None
     mention_event: TimelineEvent | None = None
@@ -245,7 +258,7 @@ def run_autonomous_smoke(
             ),
         )
         operations[-1]["band_ref"] = mention_event.band_message_ref
-    except LiveBandConfigurationError as exc:
+    except (LiveBandConfigurationError, LiveBandProtocolError) as exc:
         return {
             "status": "BLOCKED",
             "mode": "live",
@@ -264,14 +277,25 @@ def run_autonomous_smoke(
         mention_event=_event_dict(mention_event),
         timeline=[_event_dict(event) for event in adapter.get_room_timeline(run_id)],
     )
-    reply_probe = wait_for_autonomous_reply(
-        adapter,
-        run_id=run_id,
-        target_agent=target,
-        token=token,
-        timeout_seconds=timeout_seconds,
-        poll_interval_seconds=poll_interval_seconds,
-    )
+    try:
+        reply_probe = wait_for_autonomous_reply(
+            adapter,
+            run_id=run_id,
+            target_agent=target,
+            token=token,
+            timeout_seconds=timeout_seconds,
+            poll_interval_seconds=poll_interval_seconds,
+        )
+    except (LiveBandConfigurationError, LiveBandProtocolError) as exc:
+        reply_probe = {
+            "reply_seen": False,
+            "attempts": 1,
+            "message_count": 0,
+            "blocker": (
+                "Could not inspect Band messages for an autonomous Remote Agent reply: "
+                f"{exc}"
+            ),
+        }
     autonomous_status = _status(
         "PASSED" if reply_probe["reply_seen"] else "BLOCKED",
         target_agent=target,

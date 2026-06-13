@@ -14,8 +14,8 @@
 
 - 官方页已用 Chrome 重新复核：比赛截止时间为 2026-06-19 23:00 CST，提交项仍是 Public GitHub Repository、Demo Application Platform、Application URL、Video Presentation、Slide Presentation、Cover Image、short/long description 和 tags。
 - 官方奖池当前写为 `$10,000+`，除 AI/ML API partner prize 外，页面新增 Featherless AI partner resources/prize；Band Pro promo code `BANDHACK26`、Featherless promo code `BOA26` 已在页面可见。
-- 本仓库已有 mock/replay 主路径、enterprise dashboard、readiness/no-secret gates、T13 REST live smoke harness 和 Chrome live verification 记录。
-- 当前不能宣称完整 autonomous live Band workflow：真实 REST room / participants / @mention / event smoke 已验证，但 SDK/WebSocket Remote Agent 自动接收并回复仍是下一个 gate。
+- 本仓库已有 mock/replay 主路径、enterprise dashboard、readiness/no-secret gates、T13 REST live smoke harness、T15 autonomous reply smoke harness 和 Chrome live verification 记录。
+- 当前不能宣称完整 autonomous live Band workflow：真实 REST room / participants / @mention / event smoke 已验证，但 SDK/WebSocket Remote Agent 自动接收并回复仍未用 connected peer 跑通；新 harness 当前 dry-run 返回 `BLOCKED`。
 - 提交前最大未决项：public repo 策略、demo URL、cover image、5 分钟视频、slide deck、live autonomous replies 或明确 replay fallback 叙事。
 
 ## 本地文档
@@ -92,6 +92,15 @@ export TRUSTROOM_BAND_PEERS_JSON='{"requirement-decomposer-agent":"@owner/requir
 
 `BAND_REST_URL` 也可替代 `BAND_API_BASE`。`TRUSTROOM_BAND_PEERS_JSON` 可使用公开 handle；`scripts/run_live_band_smoke.py` 会在运行时通过 Band `/peers` 解析为 UUID，并只写入脱敏 `band-ref:*` evidence。Agent UUID、API key、真实 room id 和真实 message id 不要写进 README、测试、replay、报告或源代码。live 验证失败时，demo 必须明确切回 replay fallback。
 
+自主回复 smoke harness：
+
+```bash
+uv run python scripts/run_live_band_autonomous_smoke.py --dry-run-check
+uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent
+```
+
+该 harness 只有在 Band messages 中看到非 @mention 消息包含挑战 token 时才返回 `DONE`；缺少凭证、peer directory、peer handle 解析失败或超时无回复都会返回 `BLOCKED`。当前本机 ignored env dry-run 仍因缺少 REST base / peer directory 返回 `BLOCKED`，不能把它描述成完整 live autonomous workflow。
+
 ## 不可妥协的验收点
 
 - 至少 3 个 Agent 通过 Band 协作。
@@ -102,7 +111,7 @@ export TRUSTROOM_BAND_PEERS_JSON='{"requirement-decomposer-agent":"@owner/requir
 
 ## 近期动作
 
-1. 跑通 Band SDK/WebSocket Remote Agent 自动回复，或把 REST smoke + replay fallback 的边界写进最终提交叙事。
+1. 用 connected peer 跑通 `scripts/run_live_band_autonomous_smoke.py`，或把 REST smoke + replay fallback 的边界写进最终提交叙事。
 2. 决定 public GitHub strategy：切当前仓库 public，或创建脱敏 public submission repo。
 3. 部署 public-safe demo URL，默认只启用 mock/replay；live credentials 只放 secret store。
 4. 产出 cover image、5 分钟 video presentation 和 slide deck。
