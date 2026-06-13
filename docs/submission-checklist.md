@@ -24,17 +24,17 @@
 
 ## Demo 验收
 
-- [ ] Demo 第一屏能看懂业务问题。
-- [ ] Demo 中明确出现至少 3 个 Agent 角色。
-- [ ] Demo 展示 Band room 或 Band 协作日志。
-- [ ] 有任务交接：A Agent 的输出成为 B Agent 的输入。
-- [ ] 有 reviewer / risk / QA 的反驳、补证据或 veto。
-- [ ] 有最终业务产物：answer pack、security questionnaire 回答表、evidence index。
-- [ ] 有 human approval 或 escalation。
-- [ ] 有审计时间线。
-- [ ] 有 live path 和 replay fallback 的明确标注。
-- [ ] 有 no-overclaim 页面：说明这是 hackathon demo，不是生产部署。
-- [ ] 评委不需要理解内部 UUID / trace id 也能看懂主线。
+- [x] Demo 第一屏能看懂业务问题。
+- [x] Demo 中明确出现至少 3 个 Agent 角色。
+- [x] Demo 展示 Band room 或 Band 协作日志。
+- [x] 有任务交接：A Agent 的输出成为 B Agent 的输入。
+- [x] 有 reviewer / risk / QA 的反驳、补证据或 veto。
+- [x] 有最终业务产物：answer pack、security questionnaire 回答表、evidence index。
+- [x] 有 human approval 或 escalation。
+- [x] 有审计时间线。
+- [x] 有 live path 和 replay fallback 的明确标注。
+- [x] 有 no-overclaim 页面：说明这是 hackathon demo，不是生产部署。
+- [x] 评委不需要理解内部 UUID / trace id 也能看懂主线。
 
 ## 提交材料
 
@@ -59,6 +59,16 @@
 - Public GitHub Repository：需要用户决定切当前仓库 public，还是创建脱敏公开提交仓库。
 - Demo Application Platform / Application URL：尚未部署；当前建议见 `docs/deployment-notes.md`。
 - Live Band evidence：`LiveBandAdapter` contract 已完成并通过 stubbed tests，但真实 Remote Agent 创建、one-time API key 保存和 redacted live evidence packet 仍需在安全凭证流程下完成。
+
+## 2026-06-13 Final Rehearsal Record
+
+- `uv run pytest -v`：72 passed，1 个 FastAPI / Starlette deprecation warning，不影响 demo。
+- `uv run python scripts/check_trustroom_readiness.py`：OK，question_count 8，evidence_coverage_ratio 1.0，replay_event_count 19。
+- `uv run python scripts/check_no_secrets.py`：OK。
+- `uv run uvicorn trustroom.web.app:app --host 127.0.0.1 --port 8000`：本地服务启动成功。
+- Browser smoke：`/runs/demo/replay` 首屏包含 `REPLAY`、Submission Readiness、Evidence Coverage、Approval Queue、Risk Flags、Final Pack、Band Collaboration Timeline、Governed Evolution，并显示 `fallback, not live Band`；浏览器 error logs 为空。
+- Browser smoke：`/runs/demo` mock route 可打开，包含 `MOCK`、Submission Readiness、Final Pack、Band Collaboration Timeline；浏览器 error logs 为空。
+- Live Band path：未执行真实凭证/Remote Agent 操作，避免读取或暴露 Agent API key；提交时必须继续把 replay fallback 和 live path 分开表述。
 
 ## 建议提交文案草稿
 

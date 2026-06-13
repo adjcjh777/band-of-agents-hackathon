@@ -570,23 +570,27 @@ Boundary:
 
 Todo:
 
-- [ ] Run all tests.
-- [ ] Run readiness check.
-- [ ] Run no-secret check.
-- [ ] Start dashboard and open the demo path.
-- [ ] Verify first viewport answers enterprise readiness questions.
-- [ ] Verify replay fallback loads and is labeled as replay.
+- [x] Run all tests.
+- [x] Run readiness check.
+- [x] Run no-secret check.
+- [x] Start dashboard and open the demo path.
+- [x] Verify first viewport answers enterprise readiness questions.
+- [x] Verify replay fallback loads and is labeled as replay.
 - [ ] Verify Band live path if credentials and official access exist.
-- [ ] Verify README, judge route, runbook and submission checklist match the actual app.
-- [ ] Record unresolved issues in `docs/submission-checklist.md` rather than hiding them.
+- [x] Verify README, judge route, runbook and submission checklist match the actual app.
+- [x] Record unresolved issues in `docs/submission-checklist.md` rather than hiding them.
+
+Current note:
+
+- 2026-06-13: Replay rehearsal passed in Browser at `/runs/demo/replay`; mock route passed at `/runs/demo`; `/health` returned 200 via curl and tests. Live Band path remains unchecked because runtime credentials and one-time Agent API keys must stay outside repo-visible workflows.
 
 Verification:
 
-- [ ] `uv run pytest -v` passes.
-- [ ] `uv run python scripts/check_trustroom_readiness.py` passes.
-- [ ] `uv run python scripts/check_no_secrets.py` passes.
-- [ ] Manual demo completes in under 10 minutes using either live path or replay fallback.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `uv run python scripts/check_trustroom_readiness.py` passes.
+- [x] `uv run python scripts/check_no_secrets.py` passes.
+- [x] Manual demo completes in under 10 minutes using either live path or replay fallback.
+- [x] `git diff --check` exits 0.
 
 Commit:
 
