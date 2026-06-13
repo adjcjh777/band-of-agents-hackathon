@@ -16,13 +16,21 @@ from trustroom.models import EventType, ExecutionMode, RunState
 class FakeBandHTTPClient:
     def __init__(self) -> None:
         self.requests: list[tuple[str, dict[str, object], str]] = []
+        self.get_requests: list[tuple[str, str]] = []
         self.responses: list[dict[str, object]] = []
+        self.get_responses: list[dict[str, object]] = []
 
     def post(self, path: str, payload: dict[str, object], *, api_key: str) -> dict[str, object]:
         self.requests.append((path, payload, api_key))
         if not self.responses:
             raise AssertionError(f"no fake response queued for {path}")
         return self.responses.pop(0)
+
+    def get(self, path: str, *, api_key: str) -> dict[str, object]:
+        self.get_requests.append((path, api_key))
+        if not self.get_responses:
+            raise AssertionError(f"no fake get response queued for {path}")
+        return self.get_responses.pop(0)
 
 
 class FakeHTTPResponse:
@@ -221,3 +229,29 @@ def test_record_event_posts_live_event_metadata_and_redacts_response_id() -> Non
     )
     assert event.band_message_ref.startswith("band-ref:")
     assert "event-raw-id" not in event.band_message_ref
+
+
+def test_list_messages_reads_live_chat_messages_without_recording_timeline_events() -> None:
+    http = FakeBandHTTPClient()
+    http.responses.append({"data": {"id": "chat-raw-id"}})
+    http.get_responses.append(
+        {
+            "data": [
+                {"id": "message-1", "content": "hello"},
+                {"id": "message-2", "content": "reply"},
+            ]
+        }
+    )
+    adapter = LiveBandAdapter(config=live_config(), http=http)
+    adapter.create_room(run_id="run-live", case_name="Acme Security RFP")
+
+    messages = adapter.list_messages(run_id="run-live")
+
+    assert messages == [
+        {"id": "message-1", "content": "hello"},
+        {"id": "message-2", "content": "reply"},
+    ]
+    assert http.get_requests == [
+        ("/api/v1/agent/chats/chat-raw-id/messages", "test-key"),
+    ]
+    assert adapter.get_room_timeline("run-live") == []

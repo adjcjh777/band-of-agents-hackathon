@@ -245,6 +245,21 @@ class LiveBandAdapter(MockBandAdapter):
             visibility=visibility,
         )
 
+    def list_messages(self, *, run_id: str) -> list[Mapping[str, object]]:
+        chat_id = self._require_live_chat(run_id)
+        response = self.http.get(
+            f"/api/v1/agent/chats/{chat_id}/messages",
+            api_key=self.config.api_key,
+        )
+        data = response.get("data")
+        if not isinstance(data, list):
+            raise LiveBandProtocolError("Band response for list messages did not include data list.")
+        messages: list[Mapping[str, object]] = []
+        for item in data:
+            if isinstance(item, Mapping):
+                messages.append(item)
+        return messages
+
     def _ensure_participant(self, *, chat_id: str, participant_id: str) -> None:
         key = (chat_id, participant_id)
         if key in self._participant_ids_added:
