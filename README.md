@@ -15,6 +15,7 @@
 - 官方页已用 Chrome 重新复核：比赛截止时间为 2026-06-19 23:00 CST，提交项仍是 Public GitHub Repository、Demo Application Platform、Application URL、Video Presentation、Slide Presentation、Cover Image、short/long description 和 tags。
 - 官方奖池当前写为 `$10,000+`，除 AI/ML API partner prize 外，页面新增 Featherless AI partner resources/prize；Band Pro promo code `BANDHACK26`、Featherless promo code `BOA26` 已在页面可见。
 - 本仓库已有 mock/replay 主路径、enterprise reviewer cockpit、T20 Run Trace / Agent Handoff Chain、readiness/no-secret gates、T13 REST live smoke harness、T15 autonomous reply smoke harness 和 Chrome live verification 记录。dashboard 已把 case brief、go/no-go decision、Run Trace proof strip、Business Milestones、Representative Item Traces、Q-006 Blocked Impact Path、evidence freshness、human approval basis 和 final-pack exclusions 放到企业 reviewer / judge 可操作的视图里。
+- T22 已补上 public-safe Render Blueprint：`render.yaml` 默认只部署 mock/replay FastAPI dashboard，使用 `/health` 作为 health check，不需要、也不保存 Band live credentials。实际 Public GitHub / Render URL 仍需用户明确选择公开仓库策略后创建。
 - 当前不能宣称完整 autonomous live Band workflow：真实 REST room / participants / @mention / event smoke 已验证，但 SDK/WebSocket Remote Agent 自动接收并回复仍未用 connected peer 跑通；新 harness 当前 dry-run 返回 `BLOCKED`。
 - 提交前最大未决项：public repo 策略、demo URL、cover image、5 分钟视频、slide deck、live autonomous replies 或明确 replay fallback 叙事。
 
@@ -77,6 +78,14 @@ git diff --check
 
 部署说明见 [docs/deployment-notes.md](docs/deployment-notes.md)。
 
+`render.yaml` 已准备好作为 public-safe Render Web Service Blueprint。它只启动 FastAPI mock/replay dashboard：
+
+```bash
+uv run uvicorn trustroom.web.app:app --host 0.0.0.0 --port $PORT
+```
+
+不要在 Blueprint 或公开仓库中写入 Band credentials；如需 live path，只能通过部署平台 secret store 注入，并且不能把 replay 说成 live。
+
 ## Band live path
 
 当前仓库默认仍以 `mock` / `replay` 保证评委体验稳定。`src/trustroom/band/live_adapter.py` 提供窄 live REST boundary，用于在运行时连接 Band Agent API；它不会在仓库里保存 Agent UUID、API key、真实 room id 或真实 message id。
@@ -112,8 +121,8 @@ uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requireme
 ## 近期动作
 
 1. 用 connected peer 跑通 `scripts/run_live_band_autonomous_smoke.py`，或把 REST smoke + replay fallback 的边界写进最终提交叙事。
-2. 决定 public GitHub strategy：切当前仓库 public，或创建脱敏 public submission repo。
-3. 部署 public-safe demo URL，默认只启用 mock/replay；live credentials 只放 secret store。
+2. 决定 public GitHub strategy：切当前仓库 public，或创建脱敏 public submission repo。若无法完整审计历史，推荐脱敏 public submission repo。
+3. 用 `render.yaml` 部署 public-safe demo URL，默认只启用 mock/replay；live credentials 只放 secret store，且不作为提交主 claim。
 4. 产出 cover image、5 分钟 video presentation 和 slide deck。
 5. 录屏主线固定为：business pain -> role map / Band room evidence -> Executive Decision -> Run Trace proof strip -> Agent Handoff Chain -> Q-006 Blocked Impact Path -> Representative Item Traces -> Final Pack -> replay/live boundary。
 6. 提交前重跑 `uv run pytest -v`、`uv run python scripts/check_trustroom_readiness.py`、`uv run python scripts/check_no_secrets.py`、Chrome 官方页复核和 `git diff --check`。

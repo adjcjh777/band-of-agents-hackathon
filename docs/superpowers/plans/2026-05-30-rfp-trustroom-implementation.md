@@ -979,6 +979,48 @@ Done when:
 
 - The written judge route and video/runbook script make T20's Run Trace, representative item traces and Q-006 fail-closed blocker the primary story, while still treating `/runs/demo/replay` as replay fallback rather than live autonomous proof.
 
+## T22: Public Demo URL And Repo Strategy Prep Gate
+
+Recommended model: 5.5 中 for controller-owned deployment documentation and no-secret boundary.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Source:
+
+- GitHub Product Research / Submission Scout thread `019ec159-c870-71d3-bbb2-65d1f086014a` recommended focusing on public repo and public demo URL before more product polish.
+- Render docs confirm `render.yaml` Blueprint support for web services, Python runtime, build/start commands, health checks and disabled auto-deploy.
+
+Boundary:
+
+- Allowed locked paths are `README.md`, `docs/deployment-notes.md`, `docs/submission-checklist.md`, this plan, `docs/agent-task-ledger.md` and `render.yaml`.
+- Do not make the current repo public, create a public repo, create a Render service, inspect secrets, read private reports, touch `pilotdeck/` or claim an Application URL exists without user authorization and public URL smoke.
+- Keep deployment language public-safe: mock/replay first, live Band credentials only via deployment secret store, replay is not live.
+
+Todo:
+
+- [x] Add a root `render.yaml` for a public-safe Render Web Service that starts the FastAPI dashboard and uses `/health`.
+- [x] Update deployment notes with exact Render Blueprint values, user decision gates, public repo safety boundaries and post-deploy smoke checks.
+- [x] Update README and submission checklist so Render prep is visible while Public GitHub / Application URL remain unchecked blockers.
+- [x] Tighten draft submission copy from formal audit wording to traceable/evidence-trail wording and remove unimplemented partner-tech tags.
+- [ ] User selects public repo route and authorizes external repo / Render operations.
+- [ ] Public URL smoke passes for `/health`, `/runs/demo` and `/runs/demo/replay`.
+
+Verification:
+
+- [x] `uv run python scripts/check_dual_agent_changes.py --task "T22 Public demo URL and repo strategy prep gate"` passes.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `uv run python scripts/check_dual_agent_protocol.py` exits 0.
+- [x] `git diff --check` exits 0.
+- [x] Chrome screenshot after changes is captured for the user.
+
+Done when:
+
+- The repo is ready for a public-safe Render deployment path without exposing live credentials, while the actual Public GitHub Repository and Application URL remain explicitly blocked until the user chooses and authorizes the public repo / deployment route.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:

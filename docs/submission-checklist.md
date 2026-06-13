@@ -24,6 +24,7 @@
 - [ ] 能完成 3 个 Agent 的端到端自主协作。当前已验证真实 Band room、3 participants、2 条 @mention handoff 和 live event；peer agents 仍显示 Disconnected，尚未用新 harness 验证 SDK/WebSocket 自动回复。
 - [x] 有 mock mode，防止现场 Band/API 波动。
 - [x] 有 replay fallback，且 dashboard 明确标注 `REPLAY`。
+- [x] 已准备 public-safe Render Blueprint：`render.yaml` 默认只部署 mock/replay FastAPI dashboard，不写入 Band live credentials。
 
 ## Demo 验收
 
@@ -52,8 +53,8 @@
 - [ ] Video Presentation，官方指南建议 5 分钟以内。
 - [ ] Slide Presentation。
 - [ ] Public GitHub Repository。当前准备仓库是 private，正式提交前需要切 public 或准备脱敏公开提交仓库。
-- [ ] Demo Application Platform。
-- [ ] Application URL。
+- [ ] Demo Application Platform。当前推荐 Render Web Service，`render.yaml` 已准备，但尚未创建服务。
+- [ ] Application URL。尚未创建 public URL。
 - [x] README 包含 setup、architecture、demo script、known limitations。
 - [x] License 使用 MIT 或兼容 MIT。
 - [x] `docs/judge-10-minute-experience.md` 或等价材料。
@@ -63,7 +64,7 @@
 ## 2026-06-13 当前阻塞项
 
 - Public GitHub Repository：需要用户决定切当前仓库 public，还是创建脱敏公开提交仓库。
-- Demo Application Platform / Application URL：尚未部署；当前建议见 `docs/deployment-notes.md`。
+- Demo Application Platform / Application URL：`render.yaml` 已准备，尚未部署；必须等用户授权 public repo 策略和 Render / 其他平台账号操作。
 - Live Band autonomous replies：真实 Band REST smoke 已完成并生成 redacted evidence；autonomous reply smoke harness 已完成，但当前 dry-run 缺少 `BAND_REST_URL` / `BAND_API_BASE` 和 `TRUSTROOM_BAND_PEERS_JSON`，提交前仍需用 connected peer 跑通 SDK/WebSocket 远程 Agent 自动处理与回复。
 - Cover Image / Video Presentation / Slide Presentation：尚未最终产出。
 - Partner prize strategy：AI/ML API / Featherless AI 可以作为加分项，但不要牺牲 Band 协作主线；只有真实接入并能演示时才写入主 claims。
@@ -92,15 +93,15 @@ RFP TrustRoom
 
 Short Description:
 
-A multi-agent RFP and security questionnaire response room where specialized AI agents coordinate through Band to draft answers, verify evidence, review risk, and produce an auditable submission pack.
+A multi-agent RFP and security questionnaire response room where specialized AI agents coordinate through Band to draft answers, verify evidence, review risk, and produce a traceable submission pack.
 
 Long Description 草稿：
 
-RFP TrustRoom turns a messy B2B RFP and security questionnaire response into a coordinated multi-agent workflow. A human uploads customer requirements, questionnaire rows, and company knowledge snippets, then specialized agents for requirement decomposition, evidence retrieval, answer drafting, and compliance review collaborate through a Band room. They share structured context, hand off tasks, challenge unsupported claims, escalate high-risk answers to a human SME, and produce a submission pack with an auditable timeline. Band is the core collaboration layer: agents are routed with @mentions, exchange state, recruit reviewers when needed, and post events that make the workflow transparent. The result is a practical enterprise workflow for teams that need faster proposal responses without losing evidence quality, traceability, or human control.
+RFP TrustRoom turns a messy B2B RFP and security questionnaire response into a coordinated multi-agent workflow. A human uploads customer requirements, questionnaire rows, and company knowledge snippets, then specialized agents for requirement decomposition, evidence retrieval, answer drafting, and compliance review collaborate through a Band room. They share structured context, hand off tasks, challenge unsupported claims, escalate high-risk answers to a human SME, and produce a submission pack with a traceable event timeline. Band is the core collaboration layer: agents are routed with @mentions, exchange state, recruit reviewers when needed, and post events that make the workflow transparent. The result is a practical enterprise workflow for teams that need faster proposal responses without losing evidence quality, traceability, or human control.
 
 Technology tags:
 
-Band, Band SDK, multi-agent systems, enterprise workflow, RFP response, security questionnaire, evidence management, AI agents, audit trail, human-in-the-loop, Python, FastAPI, AI/ML API, Featherless AI
+Band, Band SDK, multi-agent systems, enterprise workflow, RFP response, security questionnaire, evidence management, AI agents, traceability, human-in-the-loop, Python, FastAPI
 
 ## 视频结构
 
