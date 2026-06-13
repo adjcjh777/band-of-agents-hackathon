@@ -624,8 +624,8 @@ Todo:
 - [x] Update official facts: `$10,000+` prize pool, AI/ML API + Featherless AI partners, Band Pro `BANDHACK26`, Featherless `BOA26`, submission deadline and schedule.
 - [x] Align README, official research, competition plan, submission checklist, judge route, runbook, evidence report, deployment notes and project concept with current evidence.
 - [x] Keep live REST smoke, replay fallback and autonomous SDK/WebSocket replies separate in public claims.
-- [ ] Dispatch next tasks to executor and tester through Agent Bus visible thread messages.
-- [ ] Close this ledger task after checks pass and task dispatch is complete.
+- [x] Dispatch next tasks to executor and tester through Agent Bus visible thread messages.
+- [x] Close this ledger task after checks pass and task dispatch is complete.
 
 Verification:
 
