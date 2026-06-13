@@ -348,11 +348,9 @@ def _run_trace_summary(
     review_loops = [
         event
         for event in events
-        if "review loop" in event["payload_summary"].lower()
-        or (
-            event["sender"] == "compliance-review-agent"
-            and event["receiver"] == "evidence-retriever-agent"
-        )
+        if event["event_type"] == EventType.HANDOFF.value
+        and event["sender"] == "compliance-review-agent"
+        and event["receiver"] == "evidence-retriever-agent"
     ]
     valid_approvals = sum(1 for item in approval_queue if item["decision"] == "approved")
     boundary = (
@@ -531,8 +529,13 @@ def _representative_item_traces(
             for event in events
             if object_ids.intersection(event["related_object_ids"])
         ]
+        if answer["approval_decision_id"]:
+            item_events.append(_approval_trace_card(answer))
         if item_id == "Q-004":
-            item_events = _prioritize_trace_cards(item_events, ("EVT-008", "EVT-009", "EVT-011", "EVT-014"))
+            item_events = _prioritize_trace_cards(
+                item_events,
+                ("EVT-008", "EVT-009", "EVT-011", "APP-Q-004", "EVT-014"),
+            )
         elif item_id == "Q-006":
             item_events = _prioritize_trace_cards(item_events, ("EVT-005", "EVT-012", "EVT-013", "EVT-014"))
         traces.append(
@@ -546,6 +549,24 @@ def _representative_item_traces(
             }
         )
     return traces
+
+
+def _approval_trace_card(answer: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "label": "Scoped approval",
+        "sender": answer["approval_role"] or "human approver",
+        "receiver": "trustroom-orchestrator-agent",
+        "event_type": EventType.HUMAN_APPROVAL.value,
+        "task_state": "approval",
+        "summary": f"{answer['approval_role']} approved scoped sample wording: {answer['approval_reason']}",
+        "refs": [
+            answer["approval_decision_id"],
+            answer["approval_validity"],
+            answer["approval_expires_at_label"],
+            *answer["approved_evidence_ids"],
+        ],
+        "tone": "human",
+    }
 
 
 def _blocked_impact_path(answers: list[dict[str, Any]]) -> list[str]:

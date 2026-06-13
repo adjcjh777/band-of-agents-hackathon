@@ -898,6 +898,45 @@ Done when:
 
 - A judge or enterprise reviewer can understand the orchestrator -> decomposer -> retriever -> drafter -> reviewer -> human approver -> final-pack path, the Q-004 review loop, and Q-006 fail-closed blocker without reading all 19 raw timeline events.
 
+## T20.1: Handoff Trace Precision Polish
+
+Recommended model: 5.5 中 for focused read-model/test polish.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Source:
+
+- Tester thread `019ec04d-7ca5-7412-ba5a-cb800fabc4df` flagged two P2 precision items: proof strip `Review loops` counted review-related payload mentions instead of the single core Q-004 reviewer loop, and Q-004 representative trace relied on the later Approval Workbench for `APP-Q-004` / legal approval visibility.
+
+Boundary:
+
+- Allowed locked paths are `src/trustroom/web/app.py`, `tests/test_web_app.py`, this plan and `docs/agent-task-ledger.md`.
+- Do not alter replay fixture, live Band adapter, public submission docs, deployment docs, credentials, `pilotdeck/` or final media assets.
+- Keep the change as precision polish: no new capability claim, no live/replay boundary change.
+
+Todo:
+
+- [x] Count proof-strip review loops from actual `compliance-review-agent -> evidence-retriever-agent` handoff events.
+- [x] Add a scoped approval mini-step to representative item traces when an answer has an approval decision, making `APP-Q-004` visible in the Q-004 path.
+- [x] Add web route assertions for `Review loops = 1` and Q-004 legal approval mini-step.
+
+Verification:
+
+- [x] `uv run pytest tests/test_web_app.py -v` passes.
+- [x] Chrome screenshot for `/runs/demo/replay` is captured for the user.
+- [x] `uv run python scripts/check_dual_agent_changes.py --task "T20.1 Handoff trace precision polish"` passes.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `uv run python scripts/check_dual_agent_protocol.py` exits 0.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- The Run Trace proof strip shows one core Q-004 review loop, and the Q-004 representative trace visibly includes the legal approval step without requiring the viewer to scroll to the Approval Workbench.
+
 ## T21: Submission Narrative Refresh For T20
 
 Recommended model: 5.5 中 for public narrative / no-overclaim alignment.

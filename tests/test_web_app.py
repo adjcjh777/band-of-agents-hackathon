@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from fastapi.testclient import TestClient
 
 from trustroom.web.app import app
@@ -140,6 +142,7 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert "Representative Item Traces" in response.text
     assert "Blocked Impact Path" in response.text
     assert "REPLAY fallback, not live Band" in response.text
+    assert re.search(r"Review loops</span>\s*<strong>1</strong>", response.text)
     assert "Sender → Receiver → Decision path" in response.text
     assert "requirement-decomposer-agent → evidence-retriever-agent" in response.text
     assert "evidence-retriever-agent → answer-drafter-agent" in response.text
@@ -148,6 +151,8 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert "EVT-009" in response.text
     assert "Q-004" in response.text
     assert "Reviewer challenged overbroad language; legal approved bounded pilot wording." in response.text
+    assert "legal-reviewer approved scoped sample wording: Legal approved bounded region-processing language." in response.text
+    assert "APP-Q-004" in response.text
     assert "Q-006" in response.text
     assert "stale/conflicting incident evidence" in response.text
     assert "no valid human approval" in response.text
