@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from trustroom.agents.mock_runner import run_mock_trustroom
 from trustroom.models import EventType, ExecutionMode, ReviewStatus, RiskLevel, TimelineEvent
+from trustroom.readiness import find_overclaim_phrases
 
 
 def test_mock_runner_outputs_typed_timeline_events() -> None:
@@ -41,6 +42,22 @@ def test_mock_runner_contains_reviewer_to_retriever_loop() -> None:
     )
 
 
+def test_mock_runner_outputs_customer_safe_non_generic_answer_copy() -> None:
+    result = run_mock_trustroom()
+    drafts_by_item = {draft.item_id: draft for draft in result.drafts}
+
+    assert all(
+        not draft.draft_text.startswith("Draft answer for")
+        for draft in result.drafts
+    )
+    assert all(not find_overclaim_phrases(draft.draft_text) for draft in result.drafts)
+    assert "bridge letter" in drafts_by_item["Q-002"].draft_text
+    assert "approved prospects" in drafts_by_item["Q-002"].draft_text
+    assert "unconditional EU-only processing commitment requires legal approval" in drafts_by_item["Q-004"].draft_text
+    assert "should not commit" in drafts_by_item["Q-006"].draft_text
+    assert "72 hour" not in drafts_by_item["Q-006"].draft_text.lower()
+
+
 def test_high_risk_stale_policy_requires_sme_approval_before_final_pack() -> None:
     result = run_mock_trustroom()
     high_risk_items = {
@@ -63,6 +80,19 @@ def test_high_risk_stale_policy_requires_sme_approval_before_final_pack() -> Non
         and review.status == ReviewStatus.NEEDS_HUMAN_APPROVAL
         for review in result.reviews
     )
+
+
+def test_high_risk_approvals_and_blockers_have_actionable_follow_up() -> None:
+    result = run_mock_trustroom()
+    approvals_by_item = {approval.item_id: approval for approval in result.approvals}
+    reviews_by_item = {review.item_id: review for review in result.reviews}
+
+    assert approvals_by_item["Q-002"].required_follow_up is not None
+    assert "bridge-letter sharing gated" in approvals_by_item["Q-002"].required_follow_up
+    assert approvals_by_item["Q-004"].required_follow_up is not None
+    assert "unconditional residency exclusion" in approvals_by_item["Q-004"].required_follow_up
+    assert reviews_by_item["Q-006"].required_follow_up is not None
+    assert "Security policy owner" in reviews_by_item["Q-006"].required_follow_up
 
 
 def test_final_pack_has_evidence_index_and_blockers() -> None:

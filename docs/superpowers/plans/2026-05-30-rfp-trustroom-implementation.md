@@ -90,6 +90,7 @@ Parallel execution rule:
 - [x] T14: Official page refresh and multi-agent execution alignment
 - [x] T15: Live autonomous reply smoke harness
 - [x] T16: Enterprise reviewer cockpit polish
+- [x] T17: Enterprise answer copy and SME follow-up polish
 
 ## File Map
 
@@ -725,6 +726,41 @@ Verification:
 Done when:
 
 - Proposal lead and SME reviewer can answer from the first two screens: can this pack move forward, what is excluded, who owns the blocker, which evidence supports each answer, and who approved high-risk language.
+
+## T17: Enterprise Answer Copy And SME Follow-Up Polish
+
+Recommended model: 5.5 中 for product and risk wording.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Boundary:
+
+- Allowed locked paths are `src/trustroom/agents/mock_runner.py`, `tests/test_mock_runner.py`, `tests/test_web_app.py`, this plan and `docs/agent-task-ledger.md`.
+- Do not touch live Band credentials, deployment, public submission claims, `pilotdeck/`, `README.md` or top-level submission docs in this task.
+- Keep every sample answer fictional, bounded and customer-safe; Q-006 must remain blocked and must not quote an unapproved notification target.
+
+Todo:
+
+- [x] Replace generic `Draft answer for Q-* grounded in available evidence.` text with evidence-backed answer copy for all sample questions.
+- [x] Preserve Q-004 bounded region-processing language and Q-006 blocked incident-response boundary.
+- [x] Add SME / reviewer follow-up text for high-risk approval records and blocked Q-006.
+- [x] Extend tests so generic draft copy cannot return silently.
+- [x] Extend web contract tests for visible SME follow-up text.
+
+Verification:
+
+- [x] `uv run pytest tests/test_mock_runner.py tests/test_web_app.py -v` passes.
+- [x] Chrome/Playwright `/runs/demo/replay` smoke passes with customer-safe answer copy visible.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- A proposal lead or SME reviewer can read the sample answer text itself, not just the evidence IDs, and see which answers are safe to send, approved with boundaries or blocked pending owner confirmation.
 
 ## Suggested Short Goal Prompt
 

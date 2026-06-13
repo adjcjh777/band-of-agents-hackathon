@@ -30,6 +30,41 @@ ANSWER_DRAFTER = "answer-drafter-agent"
 COMPLIANCE_REVIEWER = "compliance-review-agent"
 SME_APPROVER = "sme-approver"
 
+SAMPLE_DRAFT_TEXT: dict[str, str] = {
+    "Q-001": (
+        "Customer documents are encrypted with TLS 1.3 in transit and AES-256 at rest. "
+        "Key operations are separated from application operator access."
+    ),
+    "Q-002": (
+        "A current SOC 2 Type II summary is available for approved prospects, and a bridge letter can be shared "
+        "through the controlled reviewer workflow."
+    ),
+    "Q-003": (
+        "Workspace administrators can configure artifact and source-upload retention windows of 30, 90, 180 or "
+        "365 days based on the customer's policy."
+    ),
+    "Q-004": (
+        "We can support a region-restricted pilot workflow, while any unconditional EU-only processing commitment "
+        "requires legal approval."
+    ),
+    "Q-005": (
+        "The product can generate PDF risk summaries from approved templates, and those summaries must be reviewed "
+        "before external sharing."
+    ),
+    "Q-006": (
+        "We should not commit to an incident-response notification target in the customer pack until the policy owner "
+        "confirms the current incident-response language."
+    ),
+    "Q-007": (
+        "Subprocessors are reviewed quarterly, and material updates are published to the customer trust center after "
+        "security review."
+    ),
+    "Q-008": (
+        "A controlled pilot is typically planned for 21 to 30 days once security review, workspace configuration and "
+        "buyer acceptance testing are complete."
+    ),
+}
+
 
 class MockRunResult(TrustRoomModel):
     run: Run
@@ -134,7 +169,7 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
         next(question for question in sample.questions if question.item_id == "Q-004"),
         evidence,
         answer_id="A-004R",
-        draft_text="We can support a region-restricted pilot workflow, while any unconditional residency commitment requires legal approval.",
+        draft_text=SAMPLE_DRAFT_TEXT["Q-004"],
     )
     drafts = [draft for draft in drafts if draft.item_id != "Q-004"] + [revised_q4]
     adapter.record_event(
@@ -247,7 +282,7 @@ def _draft_for_question(
     return AnswerDraft(
         answer_id=answer_id,
         item_id=question.item_id,
-        draft_text=draft_text or f"Draft answer for {question.item_id} grounded in available evidence.",
+        draft_text=draft_text or SAMPLE_DRAFT_TEXT[question.item_id],
         evidence_ids=evidence_ids,
         risk_flags=risk_flags,
     )
@@ -259,9 +294,11 @@ def _review_drafts(drafts: list[AnswerDraft]) -> list[ReviewDecision]:
         if draft.item_id in {"Q-002", "Q-004", "Q-006"}:
             status = ReviewStatus.NEEDS_HUMAN_APPROVAL
             reason = "High-risk or stale commitment needs human approval before final pack."
+            follow_up = _review_follow_up(draft.item_id)
         else:
             status = ReviewStatus.APPROVED
             reason = "Draft is grounded in current evidence."
+            follow_up = None
         reviews.append(
             ReviewDecision(
                 decision_id=f"REV-{draft.item_id}",
@@ -270,9 +307,16 @@ def _review_drafts(drafts: list[AnswerDraft]) -> list[ReviewDecision]:
                 reviewer_agent=COMPLIANCE_REVIEWER,
                 status=status,
                 reason=reason,
+                required_follow_up=follow_up,
             )
         )
     return reviews
+
+
+def _review_follow_up(item_id: str) -> str | None:
+    if item_id == "Q-006":
+        return "Security policy owner must confirm current incident-response notification language before customer use."
+    return None
 
 
 def _approval_decisions() -> list[ApprovalDecision]:
@@ -283,6 +327,7 @@ def _approval_decisions() -> list[ApprovalDecision]:
             reviewer_role=SME_APPROVER,
             decision=ApprovalDecisionValue.APPROVE,
             reason="SME approved current SOC 2 bridge-letter wording.",
+            required_follow_up="No further action for the sample pack; keep bridge-letter sharing gated to approved prospects.",
         ),
         ApprovalDecision(
             decision_id="APP-Q-004",
@@ -290,6 +335,7 @@ def _approval_decisions() -> list[ApprovalDecision]:
             reviewer_role="legal-reviewer",
             decision=ApprovalDecisionValue.APPROVE,
             reason="Legal approved bounded region-processing language.",
+            required_follow_up="No further action for the sample pack; preserve the unconditional residency exclusion.",
         ),
     ]
 

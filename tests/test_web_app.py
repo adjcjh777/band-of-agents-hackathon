@@ -91,3 +91,16 @@ def test_replay_route_surfaces_human_approval_basis() -> None:
     assert "Included after sme-approver approval" in response.text
     assert "Included after legal-reviewer approval" in response.text
     assert "Hackathon demo / working prototype only." in response.text
+
+
+def test_replay_route_surfaces_customer_safe_answer_copy_and_followups() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert "Draft answer for" not in response.text
+    assert "A current SOC 2 Type II summary is available for approved prospects" in response.text
+    assert "unconditional EU-only processing commitment requires legal approval" in response.text
+    assert "should not commit to an incident-response notification target" in response.text
+    assert "No further action for the sample pack; keep bridge-letter sharing gated to approved prospects." in response.text
+    assert "No further action for the sample pack; preserve the unconditional residency exclusion." in response.text
+    assert "Security policy owner must confirm current incident-response notification language before customer use." in response.text
