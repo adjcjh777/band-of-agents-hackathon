@@ -114,6 +114,17 @@
           <p class="small">Review: {{ answer.review_decision_id }} · {{ answer.review_status }} · {{ answer.review_reason }}</p>
           {% if answer.approval_decision %}
             <p class="small">Approval: {{ answer.approval_decision }} by {{ answer.approval_role }} · {{ answer.approval_decision_id }} · {{ answer.approval_reason }}</p>
+            <div class="approval-detail">
+              <p class="small"><strong>Approval scope:</strong> {{ answer.approval_scope }}</p>
+              <p class="small"><strong>Validity:</strong> {{ answer.approval_validity }} · {{ answer.approval_expires_at_label }}</p>
+              {% if answer.approved_evidence_ids %}
+                <div class="trace compact" aria-label="{{ answer.item_id }} approved evidence">
+                  {% for evidence_id in answer.approved_evidence_ids %}
+                    <span>{{ evidence_id }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
           {% else %}
             <p class="small">Approval: no approval record attached to this item.</p>
           {% endif %}
@@ -175,6 +186,17 @@
           <p class="small">Review record: {{ item.decision_id }} · {{ item.reason }}</p>
           {% if item.approval_reason %}
             <p class="small">Approval basis: {{ item.approval_reason }}</p>
+            <div class="approval-detail">
+              <p class="small"><strong>Scope:</strong> {{ item.approval_scope }}</p>
+              <p class="small"><strong>Validity:</strong> {{ item.approval_validity }} · {{ item.approval_expires_at_label }}</p>
+              {% if item.approved_evidence_ids %}
+                <div class="trace compact" aria-label="{{ item.item_id }} approved evidence refs">
+                  {% for evidence_id in item.approved_evidence_ids %}
+                    <span>{{ evidence_id }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
           {% endif %}
           {% if item.required_follow_up %}
             <p class="small">Follow-up: {{ item.required_follow_up }}</p>

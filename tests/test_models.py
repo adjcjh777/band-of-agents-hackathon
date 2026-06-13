@@ -9,6 +9,7 @@ from trustroom.models import (
     AnswerLineage,
     ApprovalDecision,
     ApprovalDecisionValue,
+    ApprovalValidity,
     BusinessOwner,
     CustomerCase,
     EvidenceCandidate,
@@ -161,13 +162,21 @@ def test_review_and_approval_models_separate_agent_review_from_human_decision() 
     approval = ApprovalDecision(
         decision_id="H-001",
         item_id="Q-001",
+        answer_id="A-001",
         reviewer_role="sme-approver",
         decision=ApprovalDecisionValue.APPROVE,
         reason="SME approved current bridge-letter wording.",
+        scope="Bridge-letter wording for approved prospects only.",
+        expires_at_label="Valid until the next SOC 2 period changes.",
+        approved_evidence_ids=["EV-001"],
     )
 
     assert review.status == ReviewStatus.NEEDS_HUMAN_APPROVAL
     assert approval.decision == ApprovalDecisionValue.APPROVE
+    assert approval.validity == ApprovalValidity.VALID
+    assert approval.answer_id == "A-001"
+    assert approval.approved_evidence_ids == ["EV-001"]
+    assert "approved prospects" in approval.scope
 
 
 def test_answer_lineage_preserves_traceable_enterprise_chain() -> None:

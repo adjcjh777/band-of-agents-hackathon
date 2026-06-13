@@ -807,6 +807,50 @@ T18.1 precision polish:
 - [x] Tester audit noted the compact subtitle said `Answer -> Evidence -> Review -> Approval -> Final Pack` while the actual typed lineage starts at question intake and includes draft.
 - [x] Subtitle and web contract test now use `Question -> Evidence -> Draft -> Review -> Approval -> Final Pack`.
 
+## T19: Approval Scope And Expiry Gate
+
+Recommended model: 5.5 中 for governance semantics plus bounded UI/test edits.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Research source:
+
+- GitHub Product Research Agent thread `019ec159-c870-71d3-bbb2-65d1f086014a` recommended Temporal/Windmill/Camunda-style approval workbench concepts: scope, expiry, owner, artifact trail and fail-closed blocked items.
+
+Boundary:
+
+- Allowed locked paths are `src/trustroom/models.py`, `src/trustroom/state_machine.py`, `src/trustroom/agents/mock_runner.py`, `src/trustroom/web/app.py`, `src/trustroom/web/templates/base.html`, `src/trustroom/web/templates/run.html`, `tests/test_models.py`, `tests/test_state_machine.py`, `tests/test_mock_runner.py`, `tests/test_web_app.py`, this plan and `docs/agent-task-ledger.md`.
+- Do not edit live Band credentials, deployment docs, public submission claims, official page docs, `pilotdeck/`, ignored evidence reports or final media assets.
+- Keep the wording bounded: approval scope/expiry is demo/sample governance, not a production GRC approval engine or formal legal sign-off.
+
+Todo:
+
+- [x] Extend approval decisions with explicit customer-safe scope, expiry label/status and optional applicable evidence refs.
+- [x] Update final-pack gate so high-risk approvals only unblock answers when the approval is still valid for the current item.
+- [x] Populate Q-002 and Q-004 with scoped, valid approvals while leaving Q-006 fail-closed without approval.
+- [x] Render scope/expiry/follow-up in the Approval Workbench, reviewer matrix and lineage approval step.
+- [x] Add tests that expired/out-of-scope approvals fail closed and visible UI copy does not regress.
+- [x] Browser smoke `/runs/demo/replay` after UI changes.
+
+Current note:
+
+- 2026-06-13: Q-002 and Q-004 approvals now show scope, validity, expiry label and approved evidence refs in the reviewer matrix, approval workbench and lineage step. The final-pack gate only treats `approve + valid + matching answer_id` as an unblocking human approval; expired or answer-mismatched approvals fail closed. Q-006 still has no approval record and remains excluded.
+
+Verification:
+
+- [x] `uv run pytest tests/test_models.py tests/test_state_machine.py tests/test_mock_runner.py tests/test_web_app.py -v` passes.
+- [x] Browser smoke for `/runs/demo/replay` passes on desktop and mobile.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- A security reviewer can see not only that a high-risk answer was approved, but exactly what sample wording/evidence the approval covers, whether it is still valid, and why unapproved or invalid approvals cannot enter the final pack.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:

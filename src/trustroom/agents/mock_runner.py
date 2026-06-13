@@ -186,7 +186,7 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
     )
 
     reviews = _review_drafts(drafts)
-    approvals = _approval_decisions()
+    approvals = _approval_decisions(drafts)
     adapter.record_event(
         run_id=run.run_id,
         sender=COMPLIANCE_REVIEWER,
@@ -331,22 +331,31 @@ def _review_follow_up(item_id: str) -> str | None:
     return None
 
 
-def _approval_decisions() -> list[ApprovalDecision]:
+def _approval_decisions(drafts: list[AnswerDraft]) -> list[ApprovalDecision]:
+    draft_by_item_id = {draft.item_id: draft for draft in drafts}
     return [
         ApprovalDecision(
             decision_id="APP-Q-002",
             item_id="Q-002",
+            answer_id=draft_by_item_id["Q-002"].answer_id,
             reviewer_role=SME_APPROVER,
             decision=ApprovalDecisionValue.APPROVE,
             reason="SME approved current SOC 2 bridge-letter wording.",
+            scope="SOC 2 summary availability and bridge-letter sharing for approved prospects in this Acme sample pack.",
+            expires_at_label="Valid for Acme sample pack only; renew before quoting a future SOC 2 period.",
+            approved_evidence_ids=draft_by_item_id["Q-002"].evidence_ids,
             required_follow_up="No further action for the sample pack; keep bridge-letter sharing gated to approved prospects.",
         ),
         ApprovalDecision(
             decision_id="APP-Q-004",
             item_id="Q-004",
+            answer_id=draft_by_item_id["Q-004"].answer_id,
             reviewer_role="legal-reviewer",
             decision=ApprovalDecisionValue.APPROVE,
             reason="Legal approved bounded region-processing language.",
+            scope="Region-restricted pilot wording only; does not approve an unconditional EU-only processing promise.",
+            expires_at_label="Valid for this sample replay until legal policy language changes.",
+            approved_evidence_ids=draft_by_item_id["Q-004"].evidence_ids,
             required_follow_up="No further action for the sample pack; preserve the unconditional residency exclusion.",
         ),
     ]
@@ -468,7 +477,9 @@ def _build_answer_lineage(
                         status=approval.decision.value if approval else "missing",
                         object_ids=[approval.decision_id] if approval else [],
                         owner=approval.reviewer_role if approval else "policy owner",
-                        reason=approval.reason if approval else "No human approval record is attached to this answer.",
+                        reason=_lineage_approval_reason(approval)
+                        if approval
+                        else "No human approval record is attached to this answer.",
                     ),
                     LineageStep(
                         stage="final_pack",
@@ -499,4 +510,12 @@ def _lineage_evidence_reason(evidence: list[EvidenceCandidate]) -> str:
         return "No evidence references are attached."
     return "Evidence refs: " + ", ".join(
         f"{candidate.evidence_id} ({candidate.source_title})" for candidate in evidence
+    )
+
+
+def _lineage_approval_reason(approval: ApprovalDecision) -> str:
+    covered = ", ".join(approval.approved_evidence_ids) or "no evidence refs recorded"
+    return (
+        f"{approval.reason} Scope: {approval.scope} Validity: {approval.validity.value}; "
+        f"{approval.expires_at_label} Covered evidence: {covered}."
     )

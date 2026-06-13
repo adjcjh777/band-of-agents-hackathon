@@ -6,6 +6,7 @@ from trustroom.models import (
     AnswerDraft,
     ApprovalDecision,
     ApprovalDecisionValue,
+    ApprovalValidity,
     EvidenceCandidate,
     EvidenceFreshness,
     FinalSubmissionPack,
@@ -79,8 +80,46 @@ def transition_run(run: Run, next_state: RunState) -> Run:
     return run.model_copy(update={"state": next_state})
 
 
-def _approved(approval_decision: ApprovalDecision | None) -> bool:
-    return approval_decision is not None and approval_decision.decision == ApprovalDecisionValue.APPROVE
+def _approved(approval_decision: ApprovalDecision | None, answer: AnswerDraft) -> bool:
+    if approval_decision is None:
+        return False
+    return (
+        approval_decision.decision == ApprovalDecisionValue.APPROVE
+        and approval_decision.validity == ApprovalValidity.VALID
+        and (
+            approval_decision.answer_id is None
+            or approval_decision.answer_id == answer.answer_id
+        )
+    )
+
+
+def _approval_blocking_reasons(
+    approval_decision: ApprovalDecision | None,
+    answer: AnswerDraft,
+    *,
+    missing_reason: str,
+) -> list[str]:
+    if approval_decision is None:
+        return [missing_reason]
+
+    reasons: list[str] = []
+    if approval_decision.decision != ApprovalDecisionValue.APPROVE:
+        reasons.append(
+            f"human approval {approval_decision.decision_id} is {approval_decision.decision.value}"
+        )
+    if approval_decision.validity == ApprovalValidity.EXPIRED:
+        reasons.append(
+            f"human approval {approval_decision.decision_id} expired and cannot unblock final pack entry"
+        )
+    elif approval_decision.validity == ApprovalValidity.OUT_OF_SCOPE:
+        reasons.append(
+            f"human approval {approval_decision.decision_id} is out of scope for this answer"
+        )
+    if approval_decision.answer_id is not None and approval_decision.answer_id != answer.answer_id:
+        reasons.append(
+            f"human approval {approval_decision.decision_id} applies to {approval_decision.answer_id}, not {answer.answer_id}"
+        )
+    return reasons or [missing_reason]
 
 
 def _evidence_by_id(evidence: list[EvidenceCandidate]) -> dict[str, EvidenceCandidate]:
@@ -96,7 +135,7 @@ def assess_answer_gate(
     approval_decision: ApprovalDecision | None = None,
 ) -> AnswerGate:
     reasons: list[str] = []
-    approved = _approved(approval_decision)
+    approved = _approved(approval_decision, answer)
     indexed_evidence = _evidence_by_id(evidence)
 
     if not answer.evidence_ids:
@@ -119,10 +158,20 @@ def assess_answer_gate(
             reasons.append(f"conflicting evidence {evidence_id} needs review")
 
     if question.risk_level == RiskLevel.HIGH and not approved:
-        reasons.append("high-risk answer requires human approval")
+        reasons.extend(
+            _approval_blocking_reasons(
+                approval_decision,
+                answer,
+                missing_reason="high-risk answer requires human approval",
+            )
+        )
 
     normalized_flags = {flag.strip().lower() for flag in answer.risk_flags}
-    if "unsupported_certification" in normalized_flags and not approved:
+    if (
+        "unsupported_certification" in normalized_flags
+        and question.risk_level != RiskLevel.HIGH
+        and not approved
+    ):
         reasons.append("unsupported certification requires human approval")
 
     if review_decision is not None and review_decision.status in REVIEW_BLOCKING_STATUSES and not approved:

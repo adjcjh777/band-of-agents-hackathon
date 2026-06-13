@@ -9,7 +9,15 @@ from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from trustroom.agents.mock_runner import run_mock_trustroom
-from trustroom.models import EventType, ExecutionMode, ReviewStatus
+from trustroom.models import (
+    AnswerDraft,
+    ApprovalDecision,
+    ApprovalDecisionValue,
+    ApprovalValidity,
+    EventType,
+    ExecutionMode,
+    ReviewStatus,
+)
 from trustroom.sample_loader import load_default_sample_pack, load_replay_events
 from trustroom.state_machine import assess_answer_gate
 
@@ -56,9 +64,9 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     result = run_mock_trustroom(sample)
     case = sample.case
     question_by_id = {question.item_id: question for question in result.questions}
+    draft_by_item_id = {draft.item_id: draft for draft in result.drafts}
     included = set(result.final_pack.included_answer_ids)
     blocked_items = set(result.final_pack.blocked_item_ids)
-    approval_item_ids = {approval.item_id for approval in result.approvals}
     evidence_counter = Counter(candidate.freshness_label.value for candidate in result.evidence)
 
     if mode == ExecutionMode.REPLAY:
@@ -132,6 +140,10 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                 "approval_role": approval.reviewer_role if approval else None,
                 "approval_decision_id": approval.decision_id if approval else None,
                 "approval_reason": approval.reason if approval else None,
+                "approval_scope": approval.scope if approval else None,
+                "approval_validity": approval.validity.value if approval else None,
+                "approval_expires_at_label": approval.expires_at_label if approval else None,
+                "approved_evidence_ids": approval.approved_evidence_ids if approval else [],
                 "final_pack_status": final_pack_status,
                 "gate_reasons": gate.reasons,
                 "final_pack_reason": _final_pack_reason(
@@ -169,23 +181,31 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     for review in result.reviews:
         if review.status == ReviewStatus.NEEDS_HUMAN_APPROVAL:
             approval = approval_by_item_id.get(review.item_id)
+            approval_valid = _approval_is_valid_for_answer(
+                approval,
+                draft_by_item_id.get(review.item_id),
+            )
             approval_queue.append(
                 {
                     "item_id": review.item_id,
                     "question": question_by_id[review.item_id].question_text,
-                    "decision": "approved" if review.item_id in approval_item_ids else "blocked",
+                    "decision": "approved" if approval_valid else "blocked",
                     "owner": question_by_id[review.item_id].business_owner.value,
                     "reviewer": review.reviewer_agent,
                     "decision_id": review.decision_id,
                     "approval_role": approval.reviewer_role if approval else "security policy owner",
                     "approval_reason": approval.reason if approval else "",
+                    "approval_scope": approval.scope if approval else "",
+                    "approval_validity": approval.validity.value if approval else "missing",
+                    "approval_expires_at_label": approval.expires_at_label if approval else "",
+                    "approved_evidence_ids": approval.approved_evidence_ids if approval else [],
                     "required_follow_up": review.required_follow_up
                     or (approval.required_follow_up if approval else None),
                     "reason": review.reason,
                     "next_action": _next_action_for_item(
                         item_id=review.item_id,
                         owner=question_by_id[review.item_id].business_owner.value,
-                        status="ready" if review.item_id in approval_item_ids else "blocked",
+                        status="ready" if approval_valid else "blocked",
                         freshness=[
                             candidate.freshness_label.value
                             for candidate in evidence_by_item_id[review.item_id]
@@ -335,6 +355,23 @@ def _evidence_action(freshness: str) -> str:
     if freshness == "conflicting":
         return "Resolve commercial or policy conflict before customer use."
     return "Review before customer use."
+
+
+def _approval_is_valid_for_answer(
+    approval: ApprovalDecision | None,
+    draft: AnswerDraft | None,
+) -> bool:
+    if approval is None:
+        return False
+    return (
+        approval.decision == ApprovalDecisionValue.APPROVE
+        and approval.validity == ApprovalValidity.VALID
+        and (
+            approval.answer_id is None
+            or draft is not None
+            and approval.answer_id == draft.answer_id
+        )
+    )
 
 
 def _owner_summary(answers: list[dict[str, Any]]) -> list[dict[str, Any]]:

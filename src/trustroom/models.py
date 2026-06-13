@@ -76,6 +76,12 @@ class ApprovalDecisionValue(str, Enum):
     DEFER = "defer"
 
 
+class ApprovalValidity(str, Enum):
+    VALID = "valid"
+    EXPIRED = "expired"
+    OUT_OF_SCOPE = "out_of_scope"
+
+
 class ProposalStatus(str, Enum):
     PENDING_REVIEW = "pending_review"
     APPROVED = "approved"
@@ -240,9 +246,14 @@ class ReviewDecision(TrustRoomModel):
 class ApprovalDecision(TrustRoomModel):
     decision_id: str
     item_id: str
+    answer_id: str | None = None
     reviewer_role: str
     decision: ApprovalDecisionValue
     reason: str
+    scope: str = "Current answer wording and attached evidence for this sample item."
+    expires_at_label: str = "Valid for this sample run."
+    validity: ApprovalValidity = ApprovalValidity.VALID
+    approved_evidence_ids: list[str] = Field(default_factory=list)
     required_follow_up: str | None = None
     created_at: datetime = Field(default_factory=utc_now)
 

@@ -87,8 +87,16 @@ def test_high_risk_approvals_and_blockers_have_actionable_follow_up() -> None:
     approvals_by_item = {approval.item_id: approval for approval in result.approvals}
     reviews_by_item = {review.item_id: review for review in result.reviews}
 
+    assert approvals_by_item["Q-002"].answer_id == "A-002"
+    assert approvals_by_item["Q-002"].approved_evidence_ids == ["EV-002", "EV-012-Q-002"]
+    assert "Acme sample pack" in approvals_by_item["Q-002"].scope
+    assert "renew before quoting a future SOC 2 period" in approvals_by_item["Q-002"].expires_at_label
     assert approvals_by_item["Q-002"].required_follow_up is not None
     assert "bridge-letter sharing gated" in approvals_by_item["Q-002"].required_follow_up
+    assert approvals_by_item["Q-004"].answer_id == "A-004R"
+    assert approvals_by_item["Q-004"].approved_evidence_ids == ["EV-004", "EV-009", "EV-012-Q-004"]
+    assert "does not approve an unconditional EU-only processing promise" in approvals_by_item["Q-004"].scope
+    assert "sample replay" in approvals_by_item["Q-004"].expires_at_label
     assert approvals_by_item["Q-004"].required_follow_up is not None
     assert "unconditional residency exclusion" in approvals_by_item["Q-004"].required_follow_up
     assert reviews_by_item["Q-006"].required_follow_up is not None
@@ -111,6 +119,9 @@ def test_mock_runner_builds_answer_lineage_for_reviewer_drilldown() -> None:
     q4_steps = {step.stage: step for step in lineage_by_item["Q-004"].steps}
     assert q4_steps["evidence"].object_ids == ["EV-004", "EV-009", "EV-012-Q-004"]
     assert q4_steps["approval"].object_ids == ["APP-Q-004"]
+    assert "Scope:" in q4_steps["approval"].reason
+    assert "Validity: valid" in q4_steps["approval"].reason
+    assert "Covered evidence: EV-004, EV-009, EV-012-Q-004" in q4_steps["approval"].reason
     assert q4_steps["final_pack"].status == "included"
 
     q6_steps = {step.stage: step for step in lineage_by_item["Q-006"].steps}

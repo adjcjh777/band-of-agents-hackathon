@@ -90,6 +90,12 @@ def test_replay_route_surfaces_human_approval_basis() -> None:
     assert "APP-Q-004" in response.text
     assert "Included after sme-approver approval" in response.text
     assert "Included after legal-reviewer approval" in response.text
+    assert "Approval scope:" in response.text
+    assert "SOC 2 summary availability and bridge-letter sharing for approved prospects in this Acme sample pack." in response.text
+    assert "Valid for Acme sample pack only; renew before quoting a future SOC 2 period." in response.text
+    assert "Region-restricted pilot wording only; does not approve an unconditional EU-only processing promise." in response.text
+    assert "Valid for this sample replay until legal policy language changes." in response.text
+    assert "EV-012-Q-004" in response.text
     assert "Hackathon demo / working prototype only." in response.text
 
 
