@@ -536,18 +536,18 @@ Boundary:
 
 Todo:
 
-- [ ] Add a public-safe run command to README.
-- [ ] Add `LICENSE` with MIT license if not already present.
-- [ ] Add deployment notes for the chosen platform.
+- [x] Add a public-safe run command to README.
+- [x] Add `LICENSE` with MIT license if not already present.
+- [x] Add deployment notes for the chosen platform.
 - [ ] Decide with user: make current repo public or create a separate sanitized public submission repo.
-- [ ] Run no-secret checks against staged files and submission docs.
+- [x] Run no-secret checks against staged files and submission docs.
 
 Verification:
 
-- [ ] `uv run python scripts/check_no_secrets.py` exits 0.
-- [ ] `uv run python scripts/check_trustroom_readiness.py` exits 0.
-- [ ] `git status --short --ignored` does not show secrets staged or tracked.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `git status --short --ignored` does not show secrets staged or tracked.
+- [x] `git diff --check` exits 0.
 
 Commit:
 

@@ -4,23 +4,23 @@
 
 - [ ] lablab.ai 已报名。
 - [ ] 已加入 lablab.ai Discord。
-- [ ] Band 账号已创建。
+- [x] Band 账号已创建。
 - [ ] 已加入 Band Discord。
 - [ ] 已关注 kickoff 公告。
 - [ ] AI/ML API 账号准备好，等待 kickoff promo code。
 
 ## 技术准备
 
-- [ ] Python 3.11+。
-- [ ] uv。
+- [x] Python 3.11+。
+- [x] uv。
 - [ ] Band SDK 可安装。
 - [ ] 至少 3 个 Band Remote Agents 已创建。
 - [ ] 每个 Agent 的 UUID 和 API key 已安全保存。
-- [ ] `.env` 已加入 `.gitignore`。
-- [ ] `agent_config.yaml` 已加入 `.gitignore`。
+- [x] `.env` 已加入 `.gitignore`。
+- [x] `agent_config.yaml` 已加入 `.gitignore`。
 - [ ] 能在 Band room 中 @mention 一个 Agent 并收到回复。
 - [ ] 能完成 3 个 Agent 的端到端协作。
-- [ ] 有 mock mode，防止现场 Band/API 波动。
+- [x] 有 mock mode，防止现场 Band/API 波动。
 
 ## Demo 验收
 
@@ -48,11 +48,17 @@
 - [ ] Public GitHub Repository。当前准备仓库是 private，正式提交前需要切 public 或准备脱敏公开提交仓库。
 - [ ] Demo Application Platform。
 - [ ] Application URL。
-- [ ] README 包含 setup、architecture、demo script、known limitations。
-- [ ] License 使用 MIT 或兼容 MIT。
-- [ ] `docs/judge-10-minute-experience.md` 或等价材料。
-- [ ] `docs/demo-runbook.md` 或等价材料。
-- [ ] `reports/trustroom_replay.example.jsonl` 或录屏中可见的 Band live evidence。
+- [x] README 包含 setup、architecture、demo script、known limitations。
+- [x] License 使用 MIT 或兼容 MIT。
+- [x] `docs/judge-10-minute-experience.md` 或等价材料。
+- [x] `docs/demo-runbook.md` 或等价材料。
+- [x] `reports/trustroom_replay.example.jsonl` 或录屏中可见的 Band live evidence。
+
+## 2026-06-13 当前阻塞项
+
+- Public GitHub Repository：需要用户决定切当前仓库 public，还是创建脱敏公开提交仓库。
+- Demo Application Platform / Application URL：尚未部署；当前建议见 `docs/deployment-notes.md`。
+- Live Band evidence：`LiveBandAdapter` contract 已完成并通过 stubbed tests，但真实 Remote Agent 创建、one-time API key 保存和 redacted live evidence packet 仍需在安全凭证流程下完成。
 
 ## 建议提交文案草稿
 
