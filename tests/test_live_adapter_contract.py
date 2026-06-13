@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import urllib.request
+
 import pytest
 
 from trustroom.band.live_adapter import (
     LiveBandAdapter,
     LiveBandConfig,
     LiveBandConfigurationError,
+    UrllibBandHTTPClient,
 )
 from trustroom.models import EventType, ExecutionMode, RunState
 
@@ -20,6 +23,17 @@ class FakeBandHTTPClient:
         if not self.responses:
             raise AssertionError(f"no fake response queued for {path}")
         return self.responses.pop(0)
+
+
+class FakeHTTPResponse:
+    def __enter__(self) -> FakeHTTPResponse:
+        return self
+
+    def __exit__(self, exc_type: object, exc: object, traceback: object) -> None:
+        return None
+
+    def read(self) -> bytes:
+        return b'{"data":{"id":"chat-ok"}}'
 
 
 def live_config(**overrides: object) -> LiveBandConfig:
@@ -41,6 +55,26 @@ def test_live_config_requires_runtime_credentials_without_echoing_values() -> No
     assert "BAND_AGENT_ID" in message
     assert "BAND_AGENT_KEY" in message
     assert "https://platform.dev.band.ai" not in message
+
+
+def test_urllib_client_sends_browser_safe_user_agent(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen_headers: dict[str, str] = {}
+
+    def fake_urlopen(request: urllib.request.Request, timeout: float) -> FakeHTTPResponse:
+        seen_headers.update(dict(request.header_items()))
+        assert timeout == 10.0
+        return FakeHTTPResponse()
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+
+    response = UrllibBandHTTPClient("https://app.band.ai").post(
+        "/api/v1/agent/chats",
+        {"chat": {}},
+        api_key="test-key",
+    )
+
+    assert response == {"data": {"id": "chat-ok"}}
+    assert seen_headers["User-agent"].startswith("RFP-TrustRoom-Hackathon/")
 
 
 def test_create_room_uses_agent_api_and_redacts_live_chat_ref() -> None:
@@ -171,11 +205,12 @@ def test_record_event_posts_live_event_metadata_and_redacts_response_id() -> Non
         {
             "event": {
                 "content": "SLA commitment requires SME approval.",
-                "message_type": "review_decision",
+                "message_type": "task",
                 "metadata": {
                     "run_id": "run-live",
                     "sender": "compliance-review-agent",
                     "receiver": "trustroom-orchestrator-agent",
+                    "trustroom_event_type": "review_decision",
                     "task_state": "review",
                     "related_object_ids": ["Q-003"],
                     "visibility": "judge_view",

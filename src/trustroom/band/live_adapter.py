@@ -20,6 +20,9 @@ class LiveBandProtocolError(RuntimeError):
 
 
 class BandHTTPClient(Protocol):
+    def get(self, path: str, *, api_key: str) -> Mapping[str, object]:
+        ...
+
     def post(self, path: str, payload: dict[str, object], *, api_key: str) -> Mapping[str, object]:
         ...
 
@@ -58,16 +61,30 @@ class UrllibBandHTTPClient:
         self.rest_url = rest_url.rstrip("/")
         self.timeout_seconds = timeout_seconds
 
+    def get(self, path: str, *, api_key: str) -> Mapping[str, object]:
+        return self._request(path, api_key=api_key, method="GET")
+
     def post(self, path: str, payload: dict[str, object], *, api_key: str) -> Mapping[str, object]:
         body = json.dumps(payload).encode("utf-8")
+        return self._request(path, api_key=api_key, method="POST", body=body)
+
+    def _request(
+        self,
+        path: str,
+        *,
+        api_key: str,
+        method: str,
+        body: bytes | None = None,
+    ) -> Mapping[str, object]:
         request = urllib.request.Request(
             f"{self.rest_url}{path}",
             data=body,
             headers={
                 "Content-Type": "application/json",
+                "User-Agent": "RFP-TrustRoom-Hackathon/1.0",
                 "X-API-Key": api_key,
             },
-            method="POST",
+            method=method,
         )
         try:
             with urllib.request.urlopen(request, timeout=self.timeout_seconds) as response:
@@ -201,11 +218,12 @@ class LiveBandAdapter(MockBandAdapter):
             {
                 "event": {
                     "content": payload_summary,
-                    "message_type": event_type.value,
+                    "message_type": "task",
                     "metadata": {
                         "run_id": run_id,
                         "sender": sender,
                         "receiver": receiver,
+                        "trustroom_event_type": event_type.value,
                         "task_state": task_state.value,
                         "related_object_ids": related_object_ids or [],
                         "visibility": visibility,

@@ -76,12 +76,13 @@ git diff --check
 运行 live path 前，在本机或部署平台的 secret store 中配置：
 
 ```bash
-export BAND_API_BASE="https://platform.dev.band.ai"
+export BAND_API_BASE="https://app.band.ai"
 export BAND_AGENT_ID="<runtime-agent-id>"
 export BAND_AGENT_KEY="<runtime-agent-key>"
+export TRUSTROOM_BAND_PEERS_JSON='{"requirement-decomposer-agent":"@owner/requirement-decomposer-agent","evidence-retriever-agent":"@owner/evidence-retriever-agent"}'
 ```
 
-`BAND_REST_URL` 也可替代 `BAND_API_BASE`。Peer agent 的 UUID 映射必须由运行时安全配置传入 `LiveBandConfig.agent_directory`，不要写进 README、测试、replay、报告或源代码。live 验证失败时，demo 必须明确切回 replay fallback。
+`BAND_REST_URL` 也可替代 `BAND_API_BASE`。`TRUSTROOM_BAND_PEERS_JSON` 可使用公开 handle；`scripts/run_live_band_smoke.py` 会在运行时通过 Band `/peers` 解析为 UUID，并只写入脱敏 `band-ref:*` evidence。Agent UUID、API key、真实 room id 和真实 message id 不要写进 README、测试、replay、报告或源代码。live 验证失败时，demo 必须明确切回 replay fallback。
 
 ## 不可妥协的验收点
 
