@@ -802,6 +802,11 @@ Done when:
 
 - Q-002, Q-004 and Q-006 each show a traceable chain from question source to evidence, review, approval or missing approval, and final-pack inclusion/exclusion reason.
 
+T18.1 precision polish:
+
+- [x] Tester audit noted the compact subtitle said `Answer -> Evidence -> Review -> Approval -> Final Pack` while the actual typed lineage starts at question intake and includes draft.
+- [x] Subtitle and web contract test now use `Question -> Evidence -> Draft -> Review -> Approval -> Final Pack`.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:

@@ -111,7 +111,7 @@ def test_replay_route_surfaces_answer_lineage_drilldown() -> None:
 
     assert response.status_code == 200
     assert "Evidence lineage" in response.text
-    assert "Answer → Evidence → Review → Approval → Final Pack" in response.text
+    assert "Question → Evidence → Draft → Review → Approval → Final Pack" in response.text
     assert "Question intake" in response.text
     assert "Customer-safe draft" in response.text
     assert "Human approval" in response.text
