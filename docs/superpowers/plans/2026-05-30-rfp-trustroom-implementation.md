@@ -898,6 +898,48 @@ Done when:
 
 - A judge or enterprise reviewer can understand the orchestrator -> decomposer -> retriever -> drafter -> reviewer -> human approver -> final-pack path, the Q-004 review loop, and Q-006 fail-closed blocker without reading all 19 raw timeline events.
 
+## T21: Submission Narrative Refresh For T20
+
+Recommended model: 5.5 中 for public narrative / no-overclaim alignment.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Research sources:
+
+- GitHub Product Research Agent thread `019ec159-c870-71d3-bbb2-65d1f086014a` recommended making T20 Run Trace the main judge route before adding more product UI.
+- Tester thread `019ec04d-7ca5-7412-ba5a-cb800fabc4df` verified T20 as pass-with-concerns and recommended keeping no-overclaim wording strict.
+
+Boundary:
+
+- Allowed locked paths are `README.md`, `docs/judge-10-minute-experience.md`, `docs/demo-runbook.md`, `docs/demo-evidence-report.md`, `docs/submission-checklist.md`, this plan and `docs/agent-task-ledger.md`.
+- Do not edit live Band credentials, deployment configs, real reports, `pilotdeck/`, private evidence or public repo visibility settings.
+- Keep trace wording bounded: replay/sample observability, redacted handoff trace and judge route; not formal audit log, production observability, compliance certification or complete autonomous live workflow.
+
+Todo:
+
+- [x] Update the 10-minute judge route to lead with Executive Decision, Run Trace, Business Milestones, Agent Handoff Chain, Representative Item Traces, Q-006 Blocked Impact Path and replay/live boundary.
+- [x] Update the demo runbook and five-minute video arc to use the T20 sections as the main recording path.
+- [x] Update evidence report and submission checklist so T20 trace evidence is visible in readiness materials.
+- [x] Refresh README current status / recording route language without broadening live autonomous claims.
+- [x] Run no-overclaim, no-secret, readiness, full tests, diff checks and post-change Chrome screenshot.
+
+Verification:
+
+- [x] T20 route terms appear in README, judge route, runbook, evidence report and submission checklist.
+- [x] No-overclaim terms appear only in boundary/prohibited contexts.
+- [x] `uv run python scripts/check_dual_agent_changes.py --task "T21 Submission narrative refresh for T20"` passes.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `git diff --check` exits 0.
+- [x] Chrome screenshot after changes is captured for the user.
+
+Done when:
+
+- The written judge route and video/runbook script make T20's Run Trace, representative item traces and Q-006 fail-closed blocker the primary story, while still treating `/runs/demo/replay` as replay fallback rather than live autonomous proof.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:

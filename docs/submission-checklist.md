@@ -35,6 +35,9 @@
 - [x] 有最终业务产物：answer pack、security questionnaire 回答表、evidence index。
 - [x] 有 human approval 或 escalation。
 - [x] 有审计时间线。
+- [x] 有 T20 Run Trace / Agent Handoff Chain，不用读完整 19 条 raw event 也能看懂 Band-style 协作链。
+- [x] 有 Representative Item Traces：Q-002 approved path、Q-004 review loop、Q-006 fail-closed blocker。
+- [x] 有 Q-006 Blocked Impact Path：stale/conflicting evidence -> no valid approval -> final pack excluded -> policy owner next action。
 - [x] 有 live path 和 replay fallback 的明确标注。
 - [x] 有 no-overclaim 页面：说明这是 hackathon demo，不是生产部署。
 - [x] 评委不需要理解内部 UUID / trace id 也能看懂主线。
@@ -68,11 +71,11 @@
 
 ## 2026-06-13 Final Rehearsal Record
 
-- `uv run pytest -v`：86 passed，1 个 FastAPI / Starlette deprecation warning，不影响 demo。
+- `uv run pytest -v`：100 passed，1 个 FastAPI / Starlette deprecation warning，不影响 demo。
 - `uv run python scripts/check_trustroom_readiness.py`：OK，question_count 8，evidence_coverage_ratio 1.0，replay_event_count 19。
 - `uv run python scripts/check_no_secrets.py`：OK。
 - `uv run uvicorn trustroom.web.app:app --host 127.0.0.1 --port 8000`：本地服务启动成功。
-- Browser smoke：`/runs/demo/replay` 首屏包含 `REPLAY`、Submission Readiness、Evidence Coverage、Approval Queue、Risk Flags、Final Pack、Band Collaboration Timeline、Governed Evolution，并显示 `fallback, not live Band`；浏览器 error logs 为空。
+- Browser smoke：`/runs/demo/replay` 包含 `REPLAY`、Executive Decision、Run Trace、Business Milestones、Agent Handoff Chain、Representative Item Traces、Blocked Impact Path、Reviewer Decision Matrix、Approval Workbench、Final Pack、Event Log Detail、Governed Evolution，并显示 `fallback, not live Band`；浏览器 error logs 为空，无横向溢出。
 - Browser smoke：`/runs/demo` mock route 可打开，包含 `MOCK`、Submission Readiness、Final Pack、Band Collaboration Timeline；浏览器 error logs 为空。
 - Local benchmark：`uv run python scripts/benchmark_trustroom.py --iterations 10` 通过。p95：`sample_load_ms=0.194`、`mock_run_ms=0.721`、`replay_load_ms=0.065`、`dashboard_health_ms=3.126`、`dashboard_mock_ms=4.271`、`dashboard_replay_ms=1.643`。
 - Live Band smoke：`BAND_API_BASE=https://app.band.ai TRUSTROOM_BAND_PEERS_JSON=<public handles> uv run python scripts/run_live_band_smoke.py` 通过，生成 ignored redacted evidence `reports/live_band_smoke.20260613T062919Z.json`。
@@ -105,7 +108,7 @@ Band, Band SDK, multi-agent systems, enterprise workflow, RFP response, security
 
 0:25-0:55 解决方案：RFP TrustRoom 的 Agent 角色和 Band 协作层。
 
-0:55-3:30 Live demo：上传 RFP / 安全问卷，3-4 个 Agent 通过 Band 协作、交接、审查、升级。
+0:55-3:30 Demo：打开 `/runs/demo/replay`，按 Executive Decision -> Run Trace -> Agent Handoff Chain -> Representative Item Traces -> Blocked Impact Path -> Reviewer Matrix -> Final Pack 展示 Band-style 协作、交接、审查和升级。
 
 3:30-4:20 技术结构：Band room、Agent API、SDK、events、dashboard。
 

@@ -10,7 +10,7 @@
 | Replay mirror | `reports/trustroom_replay.example.jsonl` has 19 events | Ready |
 | Domain model | `src/trustroom/models.py` and `src/trustroom/state_machine.py` model run, items, evidence, review, approval, final pack, evolution | Ready |
 | Mock agents | `src/trustroom/agents/mock_runner.py` produces intake, 3+ Agent handoff, evidence, draft, review, human approval, final pack | Ready |
-| Dashboard | `/runs/demo/replay` shows Executive Decision, Next Actions, Reviewer Decision Matrix, evidence freshness/detail, Approval Workbench, Risk Register, Final Pack, Band timeline, Governed Evolution | Ready |
+| Dashboard | `/runs/demo/replay` shows Executive Decision, Run Trace, Business Milestones, Agent Handoff Chain, Representative Item Traces, Blocked Impact Path, Reviewer Decision Matrix, Approval Workbench, Final Pack, Event Log Detail and Governed Evolution | Ready |
 | Readiness gates | `scripts/check_trustroom_readiness.py` checks sample size, replay load, evidence coverage, high-risk gating, no-overclaim phrases | Ready |
 | No-secret gate | `scripts/check_no_secrets.py` scans for secret-like values while excluding local secret files and `pilotdeck/` | Ready |
 | Agent prompts | `src/trustroom/agents/prompts/` defines role, input contract, output schema, no-overclaim boundary and Band handoff instructions | Ready |
@@ -31,7 +31,19 @@ The replay evidence covers:
 7. Final Pack generation with evidence index and blockers.
 8. Governed Evolution proposal and challenge generation.
 
-This route is enough to show the product priority: RFP intake, 3+ Agent handoff, evidence retrieval, answer drafting, review loop, human approval, Final Pack and Governed Evolution. The current dashboard also makes the enterprise reviewer decision explicit: 7/8 answers can enter the draft pack, Q-006 stays excluded, Q-002 and Q-004 show approval basis, and stale/missing/conflicting evidence is visible by answer instead of hidden in aggregate metrics.
+This route is enough to show the product priority: RFP intake, 3+ Agent handoff, evidence retrieval, answer drafting, one core Q-004 review loop, human approval, Final Pack and Governed Evolution. The current dashboard also makes the enterprise reviewer decision explicit: 7/8 answers can enter the draft pack, Q-006 stays excluded, Q-002 and Q-004 show approval basis, and stale/missing/conflicting evidence is visible by answer instead of hidden in aggregate metrics.
+
+## T20 Judge-Facing Trace Evidence
+
+T20 adds a 30-second proof path on `/runs/demo/replay` so the judge does not need to read all 19 raw event rows first:
+
+- `Run Trace`: proof strip for roles, handoffs, review-loop signal, valid approvals, final-pack ratio and `REPLAY` mode.
+- `Business Milestones`: intake -> triage -> evidence -> draft -> review loop -> human approval -> final pack.
+- `Agent Handoff Chain`: sender -> receiver path from orchestrator to requirement decomposer, evidence retriever, answer drafter, compliance reviewer, human approver and final pack.
+- `Representative Item Traces`: Q-002 shows scoped SME approval and inclusion; Q-004 shows request_changes, evidence clarification, revised bounded draft and legal approval; Q-006 shows stale/conflicting evidence, missing valid approval and exclusion.
+- `Blocked Impact Path`: Q-006 remains blocked because stale/conflicting incident evidence plus no valid human approval cannot enter the customer pack.
+
+This trace evidence is a replay/sample observability surface with redacted refs. It is not a formal audit log, production observability system or proof of complete live autonomous Band workflow.
 
 ## Validation Commands
 

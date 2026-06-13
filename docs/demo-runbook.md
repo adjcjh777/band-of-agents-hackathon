@@ -35,12 +35,13 @@ http://127.0.0.1:8000/runs/demo/replay
 
 1. Case Brief: 解释 Acme RFP / security questionnaire 场景。
 2. Executive Decision: 先讲 7/8 可进入 draft pack，Q-006 必须 excluded，不能自动发给客户。
-3. Next Actions: 指出 policy owner 需要确认 incident response wording。
-4. Reviewer Decision Matrix: 展示每条 answer 的 draft、risk、owner、evidence title/snippet/freshness、review decision、human approval 和 final-pack status。
-5. Approval Workbench: 展示 Q-002 SOC 2 和 Q-004 region-boundary language 的 human approval basis，以及 Q-006 缺失审批的 blocker。
-6. Risk Register / Owner Load: 解释 stale、missing、conflicting evidence 如何变成 owner action，而不是被全局 coverage 隐藏。
-7. Band Timeline: 解释 @mention、handoff、review loop 和 final pack event。
-8. Governed Evolution: 展示从 reviewer friction 到改进建议和 stress test 的闭环。
+3. Run Trace: 用 proof strip 解释 roles、handoffs、one core Q-004 review loop、valid approvals、Final Pack 和 `REPLAY` mode。
+4. Business Milestones: 按 intake -> triage -> evidence -> draft -> review loop -> human approval -> final pack 讲状态转移。
+5. Agent Handoff Chain: 展示 orchestrator -> decomposer -> retriever -> drafter -> reviewer -> human approver -> final pack 的 sender / receiver / event refs。
+6. Representative Item Traces: 用 Q-002、Q-004、Q-006 三条链说明 approved bounded wording、review loop rewrite 和 fail-closed blocker。
+7. Blocked Impact Path: 指出 Q-006 是 stale/conflicting incident evidence -> needs human approval -> no valid approval -> final pack excluded -> policy owner follow-up。
+8. Reviewer Decision Matrix / Approval Workbench: 展示每条 answer 的 draft、risk、owner、evidence title/snippet/freshness、review decision、approval scope/validity 和 final-pack status。Approved evidence refs 是 reviewer-visible context，不是 machine-enforced evidence-set gate。
+9. Event Log Detail / Governed Evolution: 原始 Band Collaboration Timeline 保留为 audit detail；Governed Evolution 展示 reviewer friction 到受控改进建议和 stress test 的闭环。
 
 必须口头说明：当前页面是 REPLAY fallback，不是 live Band room。
 
@@ -79,13 +80,17 @@ uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requireme
 
 0:25-0:55 Solution: RFP TrustRoom 用 Band 做协作层，让 orchestrator、decomposer、retriever、drafter、reviewer 和 human approver 共享同一条审计链。
 
-0:55-2:45 Demo: 打开 dashboard 第一屏，依次展示 Executive Decision、Next Actions、Submission Readiness、Reviewer Decision Matrix、Approval Workbench 和 Final Pack exclusions。
+0:55-1:20 Executive Decision: 打开 `/runs/demo/replay`，先讲 7/8 answers can enter the pack，Q-006 stays excluded，customer pack not auto-sent。
 
-2:45-3:45 Agent Workflow: 讲 Band @mention handoff、证据检索、答案起草、review 打回和 human approval。
+1:20-2:10 Run Trace: 展示 `Run Trace` proof strip、`Business Milestones` 和 `Agent Handoff Chain`，让评委看到 Band-style sender -> receiver handoff、shared object refs 和 state transitions，而不是只看最终文本。
 
-3:45-4:25 Governed Evolution: 展示 reviewer friction 如何变成受控改进建议和 stress test。
+2:10-3:10 Representative Item Traces: 讲 Q-002 scoped SME approval、Q-004 request_changes -> evidence clarification -> revised bounded draft -> legal approval、Q-006 fail-closed blocker。
 
-4:25-5:00 Boundary And Value: 说明这是 hackathon demo / working prototype；价值是更快响应、证据可追溯、风险受控、replay fallback 可验收。
+3:10-3:55 Reviewer Matrix And Approval Workbench: 展示 evidence title/snippet/freshness、review decision、approval scope/validity、approved evidence refs context 和 final-pack reason。
+
+3:55-4:25 Final Pack And Governed Evolution: 展示 included answers、blocked item、evidence index、audit event refs，以及 reviewer friction 如何变成受控改进建议和 stress test。
+
+4:25-5:00 Boundary And Value: 说明这是 hackathon demo / working prototype；价值是更快响应、证据可追溯、风险受控、replay fallback 可验收；REST live boundary 和 autonomous live replies 是分开的证据门槛。
 
 ## Failure Handling
 
