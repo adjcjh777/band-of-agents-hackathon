@@ -461,20 +461,24 @@ Boundary:
 
 Todo:
 
-- [ ] Re-read official Band docs with Chrome if live API details may have changed.
-- [ ] Create `LiveBandAdapter` behind the same interface as `MockBandAdapter`.
+- [x] Re-read official Band docs with Chrome if live API details may have changed.
+- [x] Create `LiveBandAdapter` behind the same interface as `MockBandAdapter`.
 - [ ] Create at least 3 Band Remote Agents for orchestrator, evidence/retrieval or drafting, and reviewer roles.
 - [ ] Record a redacted live evidence packet showing room creation, @mention handoff and reviewer decision.
-- [ ] Document setup in README without exposing secrets.
-- [ ] Create `tests/test_live_adapter_contract.py` using mock/stubbed responses only.
+- [x] Document setup in README without exposing secrets.
+- [x] Create `tests/test_live_adapter_contract.py` using mock/stubbed responses only.
+
+Current note:
+
+- 2026-06-13: Codex completed the credential-free live REST adapter contract and official API doc refresh. The real Band Remote Agent creation and redacted live evidence packet are intentionally still unchecked because they require runtime credentials / one-time API keys and must not be copied into repo files.
 
 Verification:
 
-- [ ] `uv run pytest tests/test_live_adapter_contract.py -v` passes.
-- [ ] Mock/replay path still passes readiness.
+- [x] `uv run pytest tests/test_live_adapter_contract.py -v` passes.
+- [x] Mock/replay path still passes readiness.
 - [ ] Live evidence packet is redacted.
-- [ ] `rg -n "agent_key|BAND_AGENT_KEY=.+|room_[A-Za-z0-9]{8,}|sk-" README.md docs reports src tests .env.example` returns no real secret.
-- [ ] `git diff --check` exits 0.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `git diff --check` exits 0.
 
 Commit:
 

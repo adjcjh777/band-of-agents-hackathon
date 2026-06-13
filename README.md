@@ -58,6 +58,20 @@ uv run uvicorn trustroom.web.app:app --reload
 
 `replay` 路径基于示例事件日志做可复现演示；`live` 路径会在 Band 接入确认后通过适配器连接真实协作环境，不能把 replay 结果伪装成 live。
 
+## Band live path
+
+当前仓库默认仍以 `mock` / `replay` 保证评委体验稳定。`src/trustroom/band/live_adapter.py` 提供窄 live REST boundary，用于在运行时连接 Band Agent API；它不会在仓库里保存 Agent UUID、API key、真实 room id 或真实 message id。
+
+运行 live path 前，在本机或部署平台的 secret store 中配置：
+
+```bash
+export BAND_API_BASE="https://platform.dev.band.ai"
+export BAND_AGENT_ID="<runtime-agent-id>"
+export BAND_AGENT_KEY="<runtime-agent-key>"
+```
+
+`BAND_REST_URL` 也可替代 `BAND_API_BASE`。Peer agent 的 UUID 映射必须由运行时安全配置传入 `LiveBandConfig.agent_directory`，不要写进 README、测试、replay、报告或源代码。live 验证失败时，demo 必须明确切回 replay fallback。
+
 ## 不可妥协的验收点
 
 - 至少 3 个 Agent 通过 Band 协作。

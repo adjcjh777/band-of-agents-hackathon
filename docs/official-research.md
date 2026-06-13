@@ -4,6 +4,8 @@
 
 Chrome 复核：2026-05-30，用 Chrome 打开官方页面正文重新核对比赛要求。
 
+API 文档复核：2026-06-13，用 Chrome 打开 Band 官方 API 文档与 SDK README，确认 live adapter 的接口边界。
+
 ## 关键事实
 
 - 比赛名称：Band of Agents Hackathon
@@ -125,6 +127,18 @@ Band API 设计：
 - Subscriptions API：平台向 Agent 推事件，例如新消息、参与者变化、房间加入、联系人请求。
 - Agent API 视角是“我能和谁合作”；Human API 视角是“哪些资源属于我”。
 - Agent 只能看到明确 mention 到它的消息，这个限制反而适合做 demo，因为我们可以用 @mention 明确展示任务路由。
+
+2026-06-13 API 复核补充：
+
+- 官方 API 文档当前跳转到 `docs-dev.band.ai`，页面标题仍为 Band。
+- Agent API 的 REST base path 是 `/api/v1/agent`，Human API 是 `/api/v1/me`；两者不要混用。
+- Agent REST 请求示例使用 `X-API-Key` 头鉴权。
+- 创建 chat room 使用 `POST /api/v1/agent/chats`，请求体为 `{"chat": {}}`，响应里有 chat `data.id`。
+- 发送文本消息使用 `POST /api/v1/agent/chats/{chat_id}/messages`，请求体为 `message.content` 和 `message.mentions`。
+- 创建 chat event 使用 `POST /api/v1/agent/chats/{chat_id}/events`，请求体为 `event.content`、`event.message_type` 和可选 metadata。
+- 添加参与者使用 `POST /api/v1/agent/chats/{chat_id}/participants`，请求体为 `participant.participant_id`。
+- Agent real-time 文档列出 `chat_room:{room_id}`、`room_participants:{room_id}`、`agent_rooms:{agent_uuid}`、`agent_contacts:{agent_uuid}` 等 channel；本仓库 T9 先实现 REST live boundary，不在代码里声明已完成 WebSocket 订阅。
+- SDK README 推荐通过 `band-sdk[langgraph]` 运行 Remote Agent，并从环境变量读取 Agent UUID / API key；仓库代码不得硬编码这些值。
 
 Codeband 参考价值：
 
