@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 ReadinessSummary = Literal["ready", "needs_review", "blocked"]
 Visibility = Literal["judge_view", "technical_appendix"]
+LineageStage = Literal["question", "evidence", "draft", "review", "approval", "final_pack"]
 
 
 class TrustRoomModel(BaseModel):
@@ -256,6 +257,21 @@ class FinalSubmissionPack(TrustRoomModel):
     evidence_index: dict[str, list[str]] = Field(default_factory=dict)
     audit_event_ids: list[str] = Field(default_factory=list)
     mode: ExecutionMode
+
+
+class LineageStep(TrustRoomModel):
+    stage: LineageStage
+    label: str
+    status: str
+    object_ids: list[str] = Field(default_factory=list)
+    owner: str | None = None
+    reason: str | None = None
+
+
+class AnswerLineage(TrustRoomModel):
+    item_id: str
+    answer_id: str
+    steps: list[LineageStep] = Field(min_length=1)
 
 
 class TimelineEvent(TrustRoomModel):

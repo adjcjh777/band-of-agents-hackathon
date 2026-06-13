@@ -91,6 +91,7 @@ Parallel execution rule:
 - [x] T15: Live autonomous reply smoke harness
 - [x] T16: Enterprise reviewer cockpit polish
 - [x] T17: Enterprise answer copy and SME follow-up polish
+- [x] T18: Evidence lineage drilldown
 
 ## File Map
 
@@ -761,6 +762,45 @@ Verification:
 Done when:
 
 - A proposal lead or SME reviewer can read the sample answer text itself, not just the evidence IDs, and see which answers are safe to send, approved with boundaries or blocked pending owner confirmation.
+
+## T18: Evidence Lineage Drilldown
+
+Recommended model: 5.5 中 for cross-module product workflow.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Research source:
+
+- GitHub Product Research Agent thread `019ec159-c870-71d3-bbb2-65d1f086014a` recommended a lightweight DataHub/OpenMetadata-style answer lineage: Answer -> Evidence -> Review -> Approval -> Final Pack.
+
+Boundary:
+
+- Allowed locked paths are `src/trustroom/models.py`, `src/trustroom/agents/mock_runner.py`, `src/trustroom/web/app.py`, `src/trustroom/web/templates/base.html`, `src/trustroom/web/templates/run.html`, `tests/test_models.py`, `tests/test_mock_runner.py`, `tests/test_web_app.py`, this plan and `docs/agent-task-ledger.md`.
+- Do not edit live Band credentials, deployment, public submission claims, official page docs, `pilotdeck/`, or ignored evidence reports.
+- Keep lineage as demo/sample traceability, not formal audit evidence.
+
+Todo:
+
+- [x] Add typed lineage objects that connect question source, answer draft, evidence refs, review decision, approval decision and final-pack decision.
+- [x] Generate lineage for every mock answer, including Q-006 excluded/fail-closed path.
+- [x] Render a compact lineage drilldown in the reviewer cockpit without hiding existing evidence cards.
+- [x] Add tests for Q-002/Q-004/Q-006 lineage stages and final-pack reason visibility.
+- [x] Browser smoke `/runs/demo/replay` after UI changes.
+
+Verification:
+
+- [x] `uv run pytest tests/test_models.py tests/test_mock_runner.py tests/test_web_app.py -v` passes.
+- [x] Browser smoke for `/runs/demo/replay` passes with lineage text visible.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- Q-002, Q-004 and Q-006 each show a traceable chain from question source to evidence, review, approval or missing approval, and final-pack inclusion/exclusion reason.
 
 ## Suggested Short Goal Prompt
 

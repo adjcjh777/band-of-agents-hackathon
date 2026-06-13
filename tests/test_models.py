@@ -6,6 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from trustroom.models import (
+    AnswerLineage,
     ApprovalDecision,
     ApprovalDecisionValue,
     BusinessOwner,
@@ -18,6 +19,7 @@ from trustroom.models import (
     FinalSubmissionPack,
     LessonScope,
     LessonType,
+    LineageStep,
     MaterialType,
     ProposalStatus,
     ProposalType,
@@ -166,6 +168,54 @@ def test_review_and_approval_models_separate_agent_review_from_human_decision() 
 
     assert review.status == ReviewStatus.NEEDS_HUMAN_APPROVAL
     assert approval.decision == ApprovalDecisionValue.APPROVE
+
+
+def test_answer_lineage_preserves_traceable_enterprise_chain() -> None:
+    lineage = AnswerLineage(
+        item_id="Q-004",
+        answer_id="A-004R",
+        steps=[
+            LineageStep(
+                stage="question",
+                label="Question intake",
+                status="high risk",
+                object_ids=["questionnaire.csv:5", "Q-004"],
+                owner="legal",
+                reason="Customer asks for region-restricted workflow.",
+            ),
+            LineageStep(
+                stage="evidence",
+                label="Evidence set",
+                status="current, missing",
+                object_ids=["EV-004", "EV-009"],
+                reason="Evidence includes a current pilot design note and explicit gap note.",
+            ),
+            LineageStep(
+                stage="approval",
+                label="Human approval",
+                status="approve",
+                object_ids=["APP-Q-004"],
+                owner="legal-reviewer",
+                reason="Legal approved bounded region-processing language.",
+            ),
+            LineageStep(
+                stage="final_pack",
+                label="Final pack decision",
+                status="included",
+                object_ids=["pack-run-acme-mock"],
+                reason="Included after legal-reviewer approval.",
+            ),
+        ],
+    )
+
+    assert lineage.steps[0].stage == "question"
+    assert lineage.steps[-1].status == "included"
+    assert "APP-Q-004" in lineage.steps[2].object_ids
+
+
+def test_answer_lineage_requires_at_least_one_step() -> None:
+    with pytest.raises(ValidationError):
+        AnswerLineage(item_id="Q-006", answer_id="A-006", steps=[])
 
 
 def test_governed_evolution_models_are_human_reviewable() -> None:

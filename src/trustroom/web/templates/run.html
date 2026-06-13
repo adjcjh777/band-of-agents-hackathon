@@ -128,6 +128,33 @@
           {% if answer.status != 'ready' %}
             <p class="small"><strong>Next:</strong> {{ answer.next_action }}</p>
           {% endif %}
+          <section class="lineage" aria-label="{{ answer.item_id }} evidence lineage">
+            <div class="row-topline">
+              <strong>Evidence lineage</strong>
+              <span class="small">Answer → Evidence → Review → Approval → Final Pack</span>
+            </div>
+            <div class="lineage-grid">
+              {% for step in answer.lineage_steps %}
+                <article class="lineage-step {{ step.stage }}">
+                  <span class="lineage-stage">{{ step.label }}</span>
+                  <strong>{{ step.status }}</strong>
+                  {% if step.owner %}
+                    <p class="small">Owner: {{ step.owner }}</p>
+                  {% endif %}
+                  {% if step.object_ids %}
+                    <div class="trace compact">
+                      {% for object_id in step.object_ids %}
+                        <span>{{ object_id }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  {% if step.reason %}
+                    <p class="small">{{ step.reason }}</p>
+                  {% endif %}
+                </article>
+              {% endfor %}
+            </div>
+          </section>
           <div class="trace" aria-label="{{ answer.item_id }} trace">
             {% for trace_id in answer.trace_ids %}
               <span>{{ trace_id }}</span>

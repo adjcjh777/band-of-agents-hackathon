@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from trustroom.band.adapter import MockBandAdapter
 from trustroom.models import (
+    AnswerLineage,
     AnswerDraft,
     ApprovalDecision,
     ApprovalDecisionValue,
@@ -10,6 +11,7 @@ from trustroom.models import (
     EventType,
     ExecutionMode,
     FinalSubmissionPack,
+    LineageStep,
     QuestionItem,
     ReviewDecision,
     ReviewStatus,
@@ -75,6 +77,7 @@ class MockRunResult(TrustRoomModel):
     reviews: list[ReviewDecision]
     approvals: list[ApprovalDecision]
     final_pack: FinalSubmissionPack
+    lineage: list[AnswerLineage]
 
 
 def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
@@ -220,6 +223,14 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
         payload_summary="Final pack contains included answers, evidence index and explicit blockers for unsafe commitments.",
         related_object_ids=final_pack.included_answer_ids + final_pack.blocked_item_ids,
     )
+    lineage = _build_answer_lineage(
+        pack=final_pack,
+        questions=sample.questions,
+        evidence=evidence,
+        drafts=drafts,
+        reviews=reviews,
+        approvals=approvals,
+    )
 
     return MockRunResult(
         run=run.model_copy(update={"state": RunState.SUBMISSION_PACK}),
@@ -230,6 +241,7 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
         reviews=reviews,
         approvals=approvals,
         final_pack=final_pack,
+        lineage=lineage,
     )
 
 
@@ -380,4 +392,111 @@ def _build_mock_final_pack(
         evidence_index=evidence_index,
         audit_event_ids=[review.decision_id for review in reviews] + [approval.decision_id for approval in approvals],
         mode=run.mode,
+    )
+
+
+def _build_answer_lineage(
+    *,
+    pack: FinalSubmissionPack,
+    questions: list[QuestionItem],
+    evidence: list[EvidenceCandidate],
+    drafts: list[AnswerDraft],
+    reviews: list[ReviewDecision],
+    approvals: list[ApprovalDecision],
+) -> list[AnswerLineage]:
+    question_by_id = {question.item_id: question for question in questions}
+    review_by_answer_id = {review.answer_id: review for review in reviews}
+    approval_by_item_id = {approval.item_id: approval for approval in approvals}
+    evidence_by_item_id: dict[str, list[EvidenceCandidate]] = {}
+    for candidate in evidence:
+        evidence_by_item_id.setdefault(candidate.item_id, []).append(candidate)
+
+    lineage: list[AnswerLineage] = []
+    for draft in sorted(drafts, key=lambda item: item.item_id):
+        question = question_by_id[draft.item_id]
+        review = review_by_answer_id.get(draft.answer_id)
+        approval = approval_by_item_id.get(draft.item_id)
+        item_evidence = evidence_by_item_id.get(draft.item_id, [])
+        included = draft.answer_id in pack.included_answer_ids
+        gate = assess_answer_gate(
+            question,
+            draft,
+            evidence,
+            review_decision=review,
+            approval_decision=approval,
+        )
+        lineage.append(
+            AnswerLineage(
+                item_id=draft.item_id,
+                answer_id=draft.answer_id,
+                steps=[
+                    LineageStep(
+                        stage="question",
+                        label="Question intake",
+                        status=f"{question.risk_level.value} risk",
+                        object_ids=[question.source_ref, question.item_id],
+                        owner=question.business_owner.value,
+                        reason=question.question_text,
+                    ),
+                    LineageStep(
+                        stage="evidence",
+                        label="Evidence set",
+                        status=_lineage_evidence_status(item_evidence),
+                        object_ids=draft.evidence_ids,
+                        owner=question.business_owner.value,
+                        reason=_lineage_evidence_reason(item_evidence),
+                    ),
+                    LineageStep(
+                        stage="draft",
+                        label="Customer-safe draft",
+                        status="draft_created",
+                        object_ids=[draft.answer_id],
+                        owner=ANSWER_DRAFTER,
+                        reason=draft.draft_text,
+                    ),
+                    LineageStep(
+                        stage="review",
+                        label="Agent review",
+                        status=review.status.value if review else ReviewStatus.NOT_STARTED.value,
+                        object_ids=[review.decision_id] if review else [],
+                        owner=review.reviewer_agent if review else COMPLIANCE_REVIEWER,
+                        reason=review.reason if review else "No reviewer decision has been recorded.",
+                    ),
+                    LineageStep(
+                        stage="approval",
+                        label="Human approval",
+                        status=approval.decision.value if approval else "missing",
+                        object_ids=[approval.decision_id] if approval else [],
+                        owner=approval.reviewer_role if approval else "policy owner",
+                        reason=approval.reason if approval else "No human approval record is attached to this answer.",
+                    ),
+                    LineageStep(
+                        stage="final_pack",
+                        label="Final pack decision",
+                        status="included" if included else "excluded",
+                        object_ids=[pack.pack_id],
+                        reason="Included in final pack."
+                        if included
+                        else "; ".join(gate.reasons) or "Excluded from final pack.",
+                    ),
+                ],
+            )
+        )
+    return lineage
+
+
+def _lineage_evidence_status(evidence: list[EvidenceCandidate]) -> str:
+    if not evidence:
+        return "missing"
+    counts: dict[str, int] = {}
+    for candidate in evidence:
+        counts[candidate.freshness_label.value] = counts.get(candidate.freshness_label.value, 0) + 1
+    return ", ".join(f"{label}:{count}" for label, count in sorted(counts.items()))
+
+
+def _lineage_evidence_reason(evidence: list[EvidenceCandidate]) -> str:
+    if not evidence:
+        return "No evidence references are attached."
+    return "Evidence refs: " + ", ".join(
+        f"{candidate.evidence_id} ({candidate.source_title})" for candidate in evidence
     )

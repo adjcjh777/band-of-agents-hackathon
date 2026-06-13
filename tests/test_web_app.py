@@ -104,3 +104,21 @@ def test_replay_route_surfaces_customer_safe_answer_copy_and_followups() -> None
     assert "No further action for the sample pack; keep bridge-letter sharing gated to approved prospects." in response.text
     assert "No further action for the sample pack; preserve the unconditional residency exclusion." in response.text
     assert "Security policy owner must confirm current incident-response notification language before customer use." in response.text
+
+
+def test_replay_route_surfaces_answer_lineage_drilldown() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert "Evidence lineage" in response.text
+    assert "Answer → Evidence → Review → Approval → Final Pack" in response.text
+    assert "Question intake" in response.text
+    assert "Customer-safe draft" in response.text
+    assert "Human approval" in response.text
+    assert "Final pack decision" in response.text
+    assert "EV-004" in response.text
+    assert "APP-Q-004" in response.text
+    assert "included" in response.text
+    assert "No human approval record is attached to this answer." in response.text
+    assert "excluded" in response.text
+    assert "high-risk answer requires human approval" in response.text

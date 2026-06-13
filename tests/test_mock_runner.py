@@ -95,6 +95,31 @@ def test_high_risk_approvals_and_blockers_have_actionable_follow_up() -> None:
     assert "Security policy owner" in reviews_by_item["Q-006"].required_follow_up
 
 
+def test_mock_runner_builds_answer_lineage_for_reviewer_drilldown() -> None:
+    result = run_mock_trustroom()
+    lineage_by_item = {lineage.item_id: lineage for lineage in result.lineage}
+
+    assert set(lineage_by_item) >= {"Q-002", "Q-004", "Q-006"}
+    assert [step.stage for step in lineage_by_item["Q-004"].steps] == [
+        "question",
+        "evidence",
+        "draft",
+        "review",
+        "approval",
+        "final_pack",
+    ]
+    q4_steps = {step.stage: step for step in lineage_by_item["Q-004"].steps}
+    assert q4_steps["evidence"].object_ids == ["EV-004", "EV-009", "EV-012-Q-004"]
+    assert q4_steps["approval"].object_ids == ["APP-Q-004"]
+    assert q4_steps["final_pack"].status == "included"
+
+    q6_steps = {step.stage: step for step in lineage_by_item["Q-006"].steps}
+    assert q6_steps["evidence"].status == "conflicting:1, current:1, stale:1"
+    assert q6_steps["approval"].status == "missing"
+    assert q6_steps["final_pack"].status == "excluded"
+    assert "high-risk answer requires human approval" in q6_steps["final_pack"].reason
+
+
 def test_final_pack_has_evidence_index_and_blockers() -> None:
     result = run_mock_trustroom()
 

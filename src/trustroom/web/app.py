@@ -68,6 +68,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
 
     review_by_item_id = {review.item_id: review for review in result.reviews}
     approval_by_item_id = {approval.item_id: approval for approval in result.approvals}
+    lineage_by_item_id = {lineage.item_id: lineage for lineage in result.lineage}
     evidence_by_item_id: dict[str, list[Any]] = defaultdict(list)
     for candidate in result.evidence:
         evidence_by_item_id[candidate.item_id].append(candidate)
@@ -109,6 +110,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
             for candidate in item_evidence
         ]
         final_pack_status = "included" if status == "ready" else "excluded"
+        lineage = lineage_by_item_id[draft.item_id]
         answers.append(
             {
                 "item_id": draft.item_id,
@@ -148,6 +150,17 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                     review_reason=review.reason if review else "",
                 ),
                 "trace_ids": trace_ids,
+                "lineage_steps": [
+                    {
+                        "stage": step.stage,
+                        "label": step.label,
+                        "status": step.status,
+                        "object_ids": step.object_ids,
+                        "owner": step.owner,
+                        "reason": step.reason,
+                    }
+                    for step in lineage.steps
+                ],
                 "answer_id": draft.answer_id,
             }
         )
