@@ -397,6 +397,181 @@
         font-size: 11px;
       }
 
+      .trace-overview {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+        gap: 14px;
+      }
+
+      .proof-grid,
+      .milestone-grid,
+      .item-trace-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .proof-point,
+      .milestone,
+      .handoff-step,
+      .item-trace-card,
+      .mini-event {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcf8;
+      }
+
+      .proof-point {
+        padding: 10px;
+      }
+
+      .proof-point strong {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 24px;
+        line-height: 1;
+      }
+
+      .milestone {
+        display: grid;
+        align-content: start;
+        gap: 6px;
+        padding: 10px;
+        border-left: 3px solid var(--steel);
+      }
+
+      .milestone.review {
+        border-left-color: var(--amber);
+      }
+
+      .milestone.blocked {
+        border-left-color: var(--red);
+      }
+
+      .milestone.passed {
+        border-left-color: var(--green);
+      }
+
+      .milestone-label {
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .handoff-chain,
+      .handoff-mini-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .handoff-step,
+      .item-trace-card,
+      .mini-event {
+        display: grid;
+        gap: 7px;
+        padding: 10px;
+      }
+
+      .handoff-step {
+        border-left: 3px solid var(--steel);
+      }
+
+      .handoff-step.review,
+      .mini-event.review {
+        border-left-color: var(--amber);
+      }
+
+      .handoff-step.human,
+      .mini-event.human {
+        border-left-color: var(--green);
+      }
+
+      .handoff-step.final,
+      .mini-event.final {
+        border-left-color: var(--steel);
+      }
+
+      .handoff-step.blocked,
+      .mini-event.blocked,
+      .item-trace-card.blocked {
+        border-left-color: var(--red);
+      }
+
+      .handoff-route,
+      .handoff-step p,
+      .mini-event p,
+      .item-trace-card p,
+      .milestone p,
+      .proof-point p {
+        overflow-wrap: anywhere;
+      }
+
+      .handoff-route {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .trace-status {
+        background: var(--steel);
+      }
+
+      .trace-status.review {
+        background: var(--amber);
+      }
+
+      .trace-status.human,
+      .trace-status.final {
+        background: var(--green);
+      }
+
+      .trace-status.blocked {
+        background: var(--red);
+      }
+
+      .item-trace-panel {
+        display: grid;
+        gap: 12px;
+      }
+
+      .item-trace-card {
+        border-left: 3px solid var(--green);
+      }
+
+      .mini-event {
+        background: var(--panel);
+        border-left: 3px solid var(--steel);
+      }
+
+      .impact-path {
+        display: grid;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid rgba(162, 58, 50, 0.25);
+        border-radius: 8px;
+        background: #fff8f6;
+      }
+
+      .impact-steps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .impact-steps span {
+        display: inline-flex;
+        align-items: center;
+        min-width: 0;
+        width: fit-content;
+        border: 1px solid rgba(162, 58, 50, 0.26);
+        border-radius: 999px;
+        padding: 4px 8px;
+        color: var(--red);
+        background: var(--panel);
+        font-size: 12px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+
       .owner-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -464,7 +639,8 @@
       @media (max-width: 980px) {
         .hero,
         .decision-strip,
-        .two-col {
+        .two-col,
+        .trace-overview {
           grid-template-columns: 1fr;
         }
 
@@ -474,7 +650,10 @@
 
         .evidence-grid,
         .lineage-grid,
-        .owner-grid {
+        .owner-grid,
+        .proof-grid,
+        .milestone-grid,
+        .item-trace-grid {
           grid-template-columns: 1fr;
         }
       }

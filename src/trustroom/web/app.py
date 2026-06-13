@@ -23,6 +23,16 @@ from trustroom.state_machine import assess_answer_gate
 
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
+TRACE_ITEM_IDS = ("Q-002", "Q-004", "Q-006")
+TRACE_EVENT_TYPES = {
+    EventType.TASK_ASSIGNED.value,
+    EventType.HANDOFF.value,
+    EventType.EVIDENCE_FOUND.value,
+    EventType.DRAFT_CREATED.value,
+    EventType.REVIEW_DECISION.value,
+    EventType.HUMAN_APPROVAL.value,
+    EventType.FINAL_PACK_CREATED.value,
+}
 
 app = FastAPI(title="RFP TrustRoom")
 templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
@@ -236,6 +246,15 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     next_actions = [answer for answer in answers if answer["status"] != "ready"]
     risk_register = _risk_register(answers)
     decision_state = _decision_state(readiness=readiness, total_questions=total_questions, next_actions=next_actions)
+    run_trace = _run_trace_summary(
+        timeline=timeline,
+        answers=answers,
+        approval_queue=approval_queue,
+        readiness=readiness,
+        total_questions=total_questions,
+        mode_label=mode.value.upper(),
+        is_replay=mode == ExecutionMode.REPLAY,
+    )
 
     return {
         "title": "RFP TrustRoom",
@@ -270,6 +289,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "risk_register": risk_register,
         "final_pack": result.final_pack,
         "answers": answers,
+        "run_trace": run_trace,
         "timeline": timeline,
         "evolution_events": evolution_events,
     }
@@ -302,6 +322,306 @@ def _decision_state(
         "summary": f"All {total_questions} answers are approved for the current final pack.",
         "primary_action": "Export the answer pack with evidence index and approval trail.",
     }
+
+
+def _run_trace_summary(
+    *,
+    timeline: list[dict[str, Any]],
+    answers: list[dict[str, Any]],
+    approval_queue: list[dict[str, Any]],
+    readiness: dict[str, int],
+    total_questions: int,
+    mode_label: str,
+    is_replay: bool,
+) -> dict[str, Any]:
+    events = [_normalize_trace_event(event) for event in timeline]
+    trace_events = [event for event in events if event["event_type"] in TRACE_EVENT_TYPES]
+    handoff_events = [event for event in events if event["event_type"] == EventType.HANDOFF.value]
+    participants = sorted(
+        {
+            agent
+            for event in trace_events
+            for agent in (event["sender"], event["receiver"])
+            if agent
+        }
+    )
+    review_loops = [
+        event
+        for event in events
+        if "review loop" in event["payload_summary"].lower()
+        or (
+            event["sender"] == "compliance-review-agent"
+            and event["receiver"] == "evidence-retriever-agent"
+        )
+    ]
+    valid_approvals = sum(1 for item in approval_queue if item["decision"] == "approved")
+    boundary = (
+        "REPLAY fallback, not live Band; redacted event refs mirror the collaboration path."
+        if is_replay
+        else "MOCK local run; use replay or verified live evidence for judge-facing claims."
+    )
+
+    return {
+        "boundary": boundary,
+        "proof_points": [
+            {
+                "label": "Roles",
+                "value": str(len(participants)),
+                "note": "agent and human handoff participants",
+            },
+            {
+                "label": "Handoffs",
+                "value": str(len(handoff_events)),
+                "note": "Band-style sender to receiver transitions",
+            },
+            {
+                "label": "Review loops",
+                "value": str(len(review_loops)),
+                "note": "reviewer challenge before final wording",
+            },
+            {
+                "label": "Valid approvals",
+                "value": str(valid_approvals),
+                "note": "scoped sample approvals",
+            },
+            {
+                "label": "Final pack",
+                "value": f"{readiness['ready']}/{total_questions}",
+                "note": f"{readiness['blocked']} blocked item excluded",
+            },
+            {
+                "label": "Mode",
+                "value": mode_label,
+                "note": "fallback trace, not autonomous live proof" if is_replay else "local deterministic run",
+            },
+        ],
+        "milestones": _business_milestones(events, readiness, total_questions),
+        "handoff_chain": _handoff_chain(events),
+        "representative_traces": _representative_item_traces(events, answers),
+        "blocked_impact_path": _blocked_impact_path(answers),
+    }
+
+
+def _normalize_trace_event(event: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "event_id": str(event.get("event_id") or event.get("band_message_ref") or ""),
+        "sender": str(event.get("sender") or ""),
+        "receiver": str(event.get("receiver") or ""),
+        "event_type": str(event.get("event_type") or ""),
+        "task_state": str(event.get("task_state") or ""),
+        "payload_summary": str(event.get("payload_summary") or ""),
+        "related_object_ids": [str(object_id) for object_id in event.get("related_object_ids", [])],
+        "band_message_ref": str(event.get("band_message_ref") or event.get("event_id") or ""),
+        "mode_label": str(event.get("mode_label") or ""),
+    }
+
+
+def _business_milestones(
+    events: list[dict[str, Any]],
+    readiness: dict[str, int],
+    total_questions: int,
+) -> list[dict[str, Any]]:
+    return [
+        {
+            "label": "Intake",
+            "status": "passed",
+            "detail": "Sample RFP, questionnaire and knowledge pack entered the room.",
+            "refs": _event_refs(events, task_state="intake"),
+        },
+        {
+            "label": "Triage",
+            "status": "passed",
+            "detail": "Orchestrator assigned owners, risk and evidence needs for 8 items.",
+            "refs": _event_refs(events, event_type=EventType.TASK_ASSIGNED.value, task_state="triage"),
+        },
+        {
+            "label": "Evidence",
+            "status": "passed",
+            "detail": "Retriever surfaced current, stale, missing and conflicting evidence.",
+            "refs": _event_refs(events, task_state="evidence")[:3],
+        },
+        {
+            "label": "Draft",
+            "status": "passed",
+            "detail": "Answer drafter created customer-safe drafts with evidence refs.",
+            "refs": _event_refs(events, event_type=EventType.DRAFT_CREATED.value)[:2],
+        },
+        {
+            "label": "Review loop",
+            "status": "review",
+            "detail": "Q-004 was challenged, sent back for clarification and rewritten.",
+            "refs": _event_refs(events, object_id="Q-004", text_contains="review")[:3],
+        },
+        {
+            "label": "Human approval",
+            "status": "review",
+            "detail": "Q-002 and Q-004 have scoped approvals; Q-006 has no valid approval.",
+            "refs": _event_refs(events, task_state="approval")[:3],
+        },
+        {
+            "label": "Final pack",
+            "status": "blocked" if readiness["blocked"] else "passed",
+            "detail": f"{readiness['ready']} of {total_questions} answers included; Q-006 stays excluded.",
+            "refs": _event_refs(events, event_type=EventType.FINAL_PACK_CREATED.value),
+        },
+    ]
+
+
+def _handoff_chain(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    selectors = [
+        ("Assign", lambda event: event["event_type"] == EventType.TASK_ASSIGNED.value),
+        (
+            "Decompose",
+            lambda event: event["sender"] == "requirement-decomposer-agent"
+            and event["receiver"] == "evidence-retriever-agent",
+        ),
+        (
+            "Retrieve Evidence",
+            lambda event: event["sender"] == "evidence-retriever-agent"
+            and event["receiver"] == "answer-drafter-agent",
+        ),
+        (
+            "Draft",
+            lambda event: event["sender"] == "answer-drafter-agent"
+            and event["receiver"] == "compliance-review-agent",
+        ),
+        (
+            "Review Loop",
+            lambda event: event["sender"] == "compliance-review-agent"
+            and event["receiver"] == "evidence-retriever-agent",
+        ),
+        ("Human Approval", lambda event: event["event_type"] == EventType.HUMAN_APPROVAL.value),
+        ("Final Pack", lambda event: event["event_type"] == EventType.FINAL_PACK_CREATED.value),
+    ]
+    chain = []
+    for label, predicate in selectors:
+        event = next((candidate for candidate in events if predicate(candidate)), None)
+        if event is None:
+            continue
+        chain.append(_trace_card(event, label=label))
+    return chain
+
+
+def _representative_item_traces(
+    events: list[dict[str, Any]],
+    answers: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    answer_by_item_id = {answer["item_id"]: answer for answer in answers}
+    labels = {
+        "Q-002": "SOC 2 approval path",
+        "Q-004": "Region review loop",
+        "Q-006": "Incident blocker path",
+    }
+    outcomes = {
+        "Q-002": "Valid scoped SME approval; included with bridge-letter boundary.",
+        "Q-004": "Reviewer challenged overbroad language; legal approved bounded pilot wording.",
+        "Q-006": "Stale/conflicting evidence plus no valid approval; final pack excluded.",
+    }
+    traces = []
+    for item_id in TRACE_ITEM_IDS:
+        answer = answer_by_item_id[item_id]
+        object_ids = {
+            item_id,
+            answer["answer_id"],
+            *answer["evidence_ids"],
+            *(trace_id for trace_id in answer["trace_ids"] if trace_id.startswith(("REV-", "APP-"))),
+        }
+        item_events = [
+            _trace_card(event)
+            for event in events
+            if object_ids.intersection(event["related_object_ids"])
+        ]
+        if item_id == "Q-004":
+            item_events = _prioritize_trace_cards(item_events, ("EVT-008", "EVT-009", "EVT-011", "EVT-014"))
+        elif item_id == "Q-006":
+            item_events = _prioritize_trace_cards(item_events, ("EVT-005", "EVT-012", "EVT-013", "EVT-014"))
+        traces.append(
+            {
+                "item_id": item_id,
+                "label": labels[item_id],
+                "status": answer["final_pack_status"],
+                "tone": "blocked" if answer["status"] == "blocked" else "ready",
+                "outcome": outcomes[item_id],
+                "events": item_events[:5],
+            }
+        )
+    return traces
+
+
+def _blocked_impact_path(answers: list[dict[str, Any]]) -> list[str]:
+    q6 = next(answer for answer in answers if answer["item_id"] == "Q-006")
+    return [
+        "stale/conflicting incident evidence",
+        q6["review_status"],
+        "no valid human approval",
+        "final pack excluded",
+        q6["next_action"],
+    ]
+
+
+def _trace_card(event: dict[str, Any], *, label: str | None = None) -> dict[str, Any]:
+    event_type = event["event_type"]
+    tone = "handoff"
+    if event_type == EventType.REVIEW_DECISION.value or "review loop" in event["payload_summary"].lower():
+        tone = "review"
+    elif event_type == EventType.HUMAN_APPROVAL.value:
+        tone = "human"
+    elif event_type == EventType.FINAL_PACK_CREATED.value:
+        tone = "final"
+    if "blocked" in event["payload_summary"].lower():
+        tone = "blocked"
+    return {
+        "label": label or _trace_label(event),
+        "sender": event["sender"],
+        "receiver": event["receiver"],
+        "event_type": event_type,
+        "task_state": event["task_state"],
+        "summary": event["payload_summary"],
+        "refs": [event["event_id"], event["band_message_ref"], *event["related_object_ids"]],
+        "tone": tone,
+    }
+
+
+def _trace_label(event: dict[str, Any]) -> str:
+    if event["event_type"] == EventType.HANDOFF.value:
+        return "Handoff"
+    if event["event_type"] == EventType.HUMAN_APPROVAL.value:
+        return "Human gate"
+    if event["event_type"] == EventType.FINAL_PACK_CREATED.value:
+        return "Final pack"
+    return event["event_type"].replace("_", " ").title()
+
+
+def _event_refs(
+    events: list[dict[str, Any]],
+    *,
+    event_type: str | None = None,
+    task_state: str | None = None,
+    object_id: str | None = None,
+    text_contains: str | None = None,
+) -> list[str]:
+    refs = []
+    for event in events:
+        if event_type is not None and event["event_type"] != event_type:
+            continue
+        if task_state is not None and event["task_state"] != task_state:
+            continue
+        if object_id is not None and object_id not in event["related_object_ids"]:
+            continue
+        if text_contains is not None and text_contains not in event["payload_summary"].lower():
+            continue
+        refs.append(event["event_id"])
+    return refs
+
+
+def _prioritize_trace_cards(
+    cards: list[dict[str, Any]],
+    preferred_refs: tuple[str, ...],
+) -> list[dict[str, Any]]:
+    by_ref = {card["refs"][0]: card for card in cards if card["refs"]}
+    prioritized = [by_ref[ref] for ref in preferred_refs if ref in by_ref]
+    rest = [card for card in cards if card not in prioritized]
+    return prioritized + rest
 
 
 def _next_action_for_item(

@@ -128,3 +128,28 @@ def test_replay_route_surfaces_answer_lineage_drilldown() -> None:
     assert "No human approval record is attached to this answer." in response.text
     assert "excluded" in response.text
     assert "high-risk answer requires human approval" in response.text
+
+
+def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert "Run Trace" in response.text
+    assert "Agent Handoff Chain" in response.text
+    assert "Business Milestones" in response.text
+    assert "Representative Item Traces" in response.text
+    assert "Blocked Impact Path" in response.text
+    assert "REPLAY fallback, not live Band" in response.text
+    assert "Sender → Receiver → Decision path" in response.text
+    assert "requirement-decomposer-agent → evidence-retriever-agent" in response.text
+    assert "evidence-retriever-agent → answer-drafter-agent" in response.text
+    assert "answer-drafter-agent → compliance-review-agent" in response.text
+    assert "compliance-review-agent → evidence-retriever-agent" in response.text
+    assert "EVT-009" in response.text
+    assert "Q-004" in response.text
+    assert "Reviewer challenged overbroad language; legal approved bounded pilot wording." in response.text
+    assert "Q-006" in response.text
+    assert "stale/conflicting incident evidence" in response.text
+    assert "no valid human approval" in response.text
+    assert "final pack excluded" in response.text
+    assert "Approval evidence refs are visible reviewer context, not a machine-enforced evidence-set gate." in response.text

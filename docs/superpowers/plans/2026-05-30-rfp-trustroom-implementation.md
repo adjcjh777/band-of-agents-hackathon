@@ -856,6 +856,48 @@ T19.1 tester close-out:
 - [x] Add a dedicated regression test for `ApprovalValidity.OUT_OF_SCOPE` so the implemented gate branch is locked down.
 - [x] Preserve current scope semantics: approved evidence refs are visible reviewer context, not a hard automated evidence-set gate.
 
+## T20: Agent Handoff Trace View
+
+Recommended model: 5.5 中 for product/read-model/UI synthesis.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Research sources:
+
+- GitHub Product Research Agent thread `019ec159-c870-71d3-bbb2-65d1f086014a` recommended a static run-level observability read model inspired by Temporal event history, Camunda milestones, Langfuse sessions and DataHub/OpenMetadata lineage.
+- Executor pre-research thread `019ec04e-8a30-7430-af1c-a192ed9c14f4` recommended deriving per-answer handoff traces from existing timeline events without adding a persisted model.
+- Tester pre-research thread `019ec04d-7ca5-7412-ba5a-cb800fabc4df` recommended a 30-second proof strip, representative Q-002/Q-004/Q-006 traces and strict replay/live boundaries.
+
+Boundary:
+
+- Allowed locked paths are `src/trustroom/web/app.py`, `src/trustroom/web/templates/base.html`, `src/trustroom/web/templates/run.html`, `tests/test_web_app.py`, this plan and `docs/agent-task-ledger.md`.
+- Do not edit live Band credentials, `README.md`, final submission docs, deployment docs, `reports/trustroom_replay.example.jsonl`, `pilotdeck/`, ignored evidence reports or public claim text in this task.
+- Keep trace wording bounded: sample/replay run observability, redacted handoff trace and business milestones; not production observability, formal audit log, durable execution or complete live autonomous Band workflow.
+
+Todo:
+
+- [x] Add derived run-level observability summary and business milestones in `web/app.py`.
+- [x] Add representative item handoff traces for Q-002, Q-004 and Q-006 using existing answer/evidence/review/approval/final-pack data plus timeline event refs.
+- [x] Render `Run Trace`, `Agent Handoff Chain`, `Business Milestones` and `Blocked Impact Path` without hiding the raw event log.
+- [x] Add responsive CSS for trace cards/chips and avoid mobile horizontal overflow.
+- [x] Add web route tests for handoff labels, Q-004 review loop, Q-006 blocked path and replay/live boundary.
+- [x] Browser smoke `/runs/demo/replay` on desktop and mobile after UI changes.
+
+Verification:
+
+- [x] `uv run pytest tests/test_web_app.py -v` passes.
+- [x] Browser smoke for `/runs/demo/replay` passes on desktop and mobile.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- A judge or enterprise reviewer can understand the orchestrator -> decomposer -> retriever -> drafter -> reviewer -> human approver -> final-pack path, the Q-004 review loop, and Q-006 fail-closed blocker without reading all 19 raw timeline events.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:
