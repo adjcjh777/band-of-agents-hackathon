@@ -851,6 +851,11 @@ Done when:
 
 - A security reviewer can see not only that a high-risk answer was approved, but exactly what sample wording/evidence the approval covers, whether it is still valid, and why unapproved or invalid approvals cannot enter the final pack.
 
+T19.1 tester close-out:
+
+- [x] Add a dedicated regression test for `ApprovalValidity.OUT_OF_SCOPE` so the implemented gate branch is locked down.
+- [x] Preserve current scope semantics: approved evidence refs are visible reviewer context, not a hard automated evidence-set gate.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:

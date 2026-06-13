@@ -254,6 +254,33 @@ def test_expired_high_risk_approval_cannot_unblock_final_pack() -> None:
     assert any("expired" in reason for reason in gate.reasons)
 
 
+def test_out_of_scope_high_risk_approval_cannot_unblock_final_pack() -> None:
+    item = make_item(item_id="Q-006", risk_level=RiskLevel.HIGH)
+    evidence = make_evidence(evidence_id="EV-006", item_id=item.item_id)
+    answer = make_answer(answer_id="A-006", item_id=item.item_id, evidence_ids=["EV-006"])
+    approval = ApprovalDecision(
+        decision_id="H-006",
+        item_id=item.item_id,
+        answer_id=answer.answer_id,
+        reviewer_role="security-policy-owner",
+        decision=ApprovalDecisionValue.APPROVE,
+        reason="Approver only covered a different support commitment.",
+        scope="Premium uptime wording only; incident notification language remains out of scope.",
+        validity=ApprovalValidity.OUT_OF_SCOPE,
+        approved_evidence_ids=["EV-010"],
+    )
+
+    gate = assess_answer_gate(
+        item,
+        answer,
+        [evidence],
+        approval_decision=approval,
+    )
+
+    assert gate.can_enter_final_pack is False
+    assert any("out of scope" in reason for reason in gate.reasons)
+
+
 def test_answer_specific_approval_cannot_unblock_changed_answer() -> None:
     item = make_item(item_id="Q-002", risk_level=RiskLevel.HIGH)
     evidence = make_evidence(evidence_id="EV-002", item_id=item.item_id)
