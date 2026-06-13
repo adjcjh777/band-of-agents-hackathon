@@ -1063,6 +1063,47 @@ Done when:
 
 - Cover image, slide deck PDF/PPTX, video script / shot list and submission copy exist in `docs/submission-assets/`, while actual public video URL remains explicitly open until recorded and uploaded.
 
+## T23.1: Submission Deck Slide 8 Polish
+
+Recommended model: 5.5 中 for controller-owned asset polish and visual QA.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Source:
+
+- Agent Bus tester thread `019ec04d-7ca5-7412-ba5a-cb800fabc4df` flagged a P2 slide 8 architecture layout overlap risk in the T23 deck export and recommended a focused polish pass before public submission.
+
+Boundary:
+
+- Allowed locked paths are `docs/submission-assets/`, `scripts/build_submission_assets.mjs`, this plan and `docs/agent-task-ledger.md`.
+- Do not change public repo, deploy Render, upload video, read secrets/private reports, touch `pilotdeck/` or alter final submission checklist readiness states.
+- Keep this as asset quality hardening only: slide geometry, regenerated PDF/PPTX and script environment hygiene.
+
+Todo:
+
+- [x] Adjust slide 8 copy/geometry so the architecture card stack no longer overlaps the title area in PDF or PPTX exports.
+- [x] Regenerate cover, screenshot crops, PDF deck and editable PPTX from the public-safe replay route.
+- [x] Harden the asset generator subprocess environment so it no longer inherits the full local process environment.
+- [x] Keep video URL, Public GitHub and Application URL blockers unchanged.
+
+Verification:
+
+- [x] `uv run python scripts/check_dual_agent_changes.py --task "T23.1 Submission deck slide 8 polish"` passes.
+- [x] PDF has 8 pages and PPTX has 8 slides.
+- [x] Page 8 PDF text extraction no longer shows title / architecture node text glued together.
+- [x] Chrome screenshot after changes is captured for the user.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `uv run python scripts/check_dual_agent_protocol.py` exits 0.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- The submission asset deck remains 8 pages/slides, slide 8 is visually and text-extraction clean, and the generator remains public-safe without broadening submission claims.
+
 ## Suggested Short Goal Prompt
 
 Use this when launching a long-running `codex goal`:

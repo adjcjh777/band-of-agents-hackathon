@@ -80,7 +80,7 @@ const deck = [
   },
   {
     kicker: "ARCHITECTURE",
-    title: "A lightweight prototype keeps the demo stable while preserving honest live boundaries.",
+    title: "A lightweight prototype keeps the demo stable without broadening live claims.",
     support: "FastAPI dashboard, public-safe mock/replay, Band REST boundary verified separately, autonomous replies remain a separate gate.",
     proof: "Architecture map and no-overclaim footer.",
   },
@@ -100,15 +100,20 @@ async function writeFile(filePath, content) {
 }
 
 function run(cmd, args, options = {}) {
+  const env = {
+    HOME: process.env.HOME || "",
+    PATH: process.env.PATH || "",
+    TMPDIR: process.env.TMPDIR || "/tmp",
+    TEMP: process.env.TEMP || process.env.TMPDIR || "/tmp",
+    TMP: process.env.TMP || process.env.TMPDIR || "/tmp",
+    NODE_PATH: [RUNTIME_NODE_MODULES, process.env.NODE_PATH].filter(Boolean).join(":"),
+    PYTHON: PYTHON_BIN,
+  };
   const result = spawnSync(cmd, args, {
     cwd: REPO_ROOT,
     encoding: "utf8",
     stdio: options.stdio || "pipe",
-    env: {
-      ...process.env,
-      NODE_PATH: [RUNTIME_NODE_MODULES, process.env.NODE_PATH].filter(Boolean).join(":"),
-      PYTHON: PYTHON_BIN,
-    },
+    env,
   });
   if (result.status !== 0) {
     throw new Error(
@@ -252,6 +257,8 @@ function coverHtml() {
 
 function slideHtml(slide, index) {
   const page = index + 1;
+  const textWidth = page === 8 ? 690 : 760;
+  const visualTop = page === 8 ? 246 : 116;
   const visual = (() => {
     if (page === 1) {
       return `<img class="proof-img" style="width:535px;height:330px;" src="${assetUrl(files.dashboardShot)}" alt="Dashboard first screen">`;
@@ -287,17 +294,17 @@ function slideHtml(slide, index) {
         <div class="metric"><strong>Refs</strong><span>redacted event IDs</span></div>
       </div>`;
     }
-    return `<div class="path" style="grid-template-columns:1fr;width:610px;gap:12px;">
+    return `<div class="path" style="grid-template-columns:1fr;width:520px;gap:12px;">
       ${["FastAPI dashboard", "Mock/replay route", "Band REST boundary", "Autonomous reply gate"].map((step, i) => `<div class="node"><strong>${step}</strong><span>${["Public-safe app shell", "Stable judge path", "Verified separately", "Not claimed until connected peer passes"][i]}</span></div>`).join("")}
     </div>`;
   })();
   return `<section class="slide">
-    <div style="position:absolute;left:58px;top:44px;width:760px;">
+    <div style="position:absolute;left:58px;top:44px;width:${textWidth}px;">
       <div class="kicker">${htmlEscape(slide.kicker)}</div>
       <h2 style="margin-top:12px;">${htmlEscape(slide.title)}</h2>
       <p style="margin-top:18px;max-width:680px;">${htmlEscape(slide.support)}</p>
     </div>
-    <div style="position:absolute;right:58px;top:116px;">${visual}</div>
+    <div style="position:absolute;right:58px;top:${visualTop}px;">${visual}</div>
     <div class="panel" style="position:absolute;left:58px;bottom:82px;width:520px;padding:16px 18px;">
       <div class="kicker">Proof object</div>
       <p style="font-size:17px;margin-top:8px;">${htmlEscape(slide.proof)}</p>
@@ -342,6 +349,8 @@ async function renderHtmlAssets() {
 
 function slideModuleSource(slide, index) {
   const slideNumber = index + 1;
+  const titleWidth = slideNumber === 8 ? 690 : 760;
+  const titleFontSize = slideNumber === 1 ? 46 : slideNumber === 8 ? 32 : 36;
   const imageForSlide =
     slideNumber === 1 ? files.dashboardShot :
     slideNumber === 4 ? files.routeShot :
@@ -351,7 +360,7 @@ function slideModuleSource(slide, index) {
   const slide = presentation.slides.add();
   ctx.addShape(slide, { x: 0, y: 0, width: 1280, height: 720, fill: "#f4f6f1" });
   ctx.addText(slide, { x: 58, y: 44, width: 220, height: 24, text: ${JSON.stringify(slide.kicker)}, fontSize: 13, bold: true, color: "#355e73" });
-  ctx.addText(slide, { x: 58, y: 82, width: 760, height: 145, text: ${JSON.stringify(slide.title)}, fontSize: ${slideNumber === 1 ? 46 : 36}, bold: true, color: "#16211a", face: ctx.fonts.title, insets: { left: 0, right: 0, top: 0, bottom: 0 } });
+  ctx.addText(slide, { x: 58, y: 82, width: ${titleWidth}, height: 145, text: ${JSON.stringify(slide.title)}, fontSize: ${titleFontSize}, bold: true, color: "#16211a", face: ctx.fonts.title, insets: { left: 0, right: 0, top: 0, bottom: 0 } });
   ctx.addText(slide, { x: 58, y: 242, width: 680, height: 92, text: ${JSON.stringify(slide.support)}, fontSize: 20, color: "#5f6b61", insets: { left: 0, right: 0, top: 0, bottom: 0 } });
   ctx.addShape(slide, { x: 58, y: 552, width: 520, height: 86, fill: "#fbfcf8", line: { style: "solid", fill: "#d9dfd5", width: 1 } });
   ctx.addText(slide, { x: 76, y: 568, width: 140, height: 18, text: "PROOF OBJECT", fontSize: 11, bold: true, color: "#355e73" });
@@ -376,9 +385,9 @@ function deckShapeSource(slideNumber) {
   return rows.map((label, i) => {
     const col = slideNumber === 3 || slideNumber === 7 ? i % 2 : 0;
     const row = slideNumber === 3 || slideNumber === 7 ? Math.floor(i / 2) : i;
-    const x = 745 + col * 245;
-    const y = 116 + row * (slideNumber === 7 ? 104 : 86);
-    const w = slideNumber === 3 || slideNumber === 7 ? 220 : 475;
+    const x = slideNumber === 8 ? 835 : 745 + col * 245;
+    const y = slideNumber === 8 ? 160 + row * 86 : 116 + row * (slideNumber === 7 ? 104 : 86);
+    const w = slideNumber === 8 ? 360 : slideNumber === 3 || slideNumber === 7 ? 220 : 475;
     const h = slideNumber === 7 ? 78 : 66;
     return `
   ctx.addShape(slide, { x: ${x}, y: ${y}, width: ${w}, height: ${h}, fill: "#fbfcf8", line: { style: "solid", fill: "#d9dfd5", width: 1 } });
