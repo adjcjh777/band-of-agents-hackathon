@@ -34,12 +34,12 @@ http://127.0.0.1:8000/runs/demo/replay
 讲解顺序：
 
 1. Case Brief: 解释 Acme RFP / security questionnaire 场景。
-2. Submission Readiness: 说明当前 run 是否可提交。
-3. Evidence Coverage: 指出哪些回答有证据，哪些是显式 gap。
-4. Approval Queue: 展示 human approval 处理高风险承诺。
-5. Risk Flags: 展示 stale / missing / unsupported evidence。
-6. Band Timeline: 解释 @mention、handoff、review loop。
-7. Final Pack: 展示 answer pack、blocked items、evidence index。
+2. Executive Decision: 先讲 7/8 可进入 draft pack，Q-006 必须 excluded，不能自动发给客户。
+3. Next Actions: 指出 policy owner 需要确认 incident response wording。
+4. Reviewer Decision Matrix: 展示每条 answer 的 draft、risk、owner、evidence title/snippet/freshness、review decision、human approval 和 final-pack status。
+5. Approval Workbench: 展示 Q-002 SOC 2 和 Q-004 region-boundary language 的 human approval basis，以及 Q-006 缺失审批的 blocker。
+6. Risk Register / Owner Load: 解释 stale、missing、conflicting evidence 如何变成 owner action，而不是被全局 coverage 隐藏。
+7. Band Timeline: 解释 @mention、handoff、review loop 和 final pack event。
 8. Governed Evolution: 展示从 reviewer friction 到改进建议和 stress test 的闭环。
 
 必须口头说明：当前页面是 REPLAY fallback，不是 live Band room。
@@ -79,7 +79,7 @@ uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requireme
 
 0:25-0:55 Solution: RFP TrustRoom 用 Band 做协作层，让 orchestrator、decomposer、retriever、drafter、reviewer 和 human approver 共享同一条审计链。
 
-0:55-2:45 Demo: 打开 dashboard 第一屏，依次展示 Submission Readiness、Evidence Coverage、Approval Queue、Risk Flags 和 Final Pack。
+0:55-2:45 Demo: 打开 dashboard 第一屏，依次展示 Executive Decision、Next Actions、Submission Readiness、Reviewer Decision Matrix、Approval Workbench 和 Final Pack exclusions。
 
 2:45-3:45 Agent Workflow: 讲 Band @mention handoff、证据检索、答案起草、review 打回和 human approval。
 

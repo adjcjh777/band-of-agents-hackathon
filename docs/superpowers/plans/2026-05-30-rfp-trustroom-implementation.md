@@ -87,8 +87,9 @@ Parallel execution rule:
 - [x] T10: Judge docs, demo runbook and evidence report
 - [ ] T11: Deployment and public submission hardening
 - [ ] T12: Final end-to-end rehearsal
-- [ ] T14: Official page refresh and multi-agent execution alignment
-- [ ] T15: Live autonomous reply smoke harness
+- [x] T14: Official page refresh and multi-agent execution alignment
+- [x] T15: Live autonomous reply smoke harness
+- [x] T16: Enterprise reviewer cockpit polish
 
 ## File Map
 
@@ -678,6 +679,52 @@ Verification:
 Done when:
 
 - Executor/controller integration returns either `DONE` with redacted evidence path / summary, or `BLOCKED` with exact missing Band/SDK/WebSocket condition. Current integration result is `DONE_WITH_CONCERNS`: harness complete, real autonomous reply still unverified.
+
+## T16: Enterprise Reviewer Cockpit Polish
+
+Recommended model: 5.5 中 for product judgment plus bounded web/test edits.
+
+Owner:
+
+- Codex controller thread `019ec041-0e14-7e23-9f27-be6890b12288`.
+
+Boundary:
+
+- Allowed locked paths are `src/trustroom/web/app.py`, `src/trustroom/web/templates/`, `tests/test_web_app.py`, `README.md`, `docs/demo-runbook.md`, `docs/demo-evidence-report.md`, this plan and `docs/agent-task-ledger.md`.
+- Do not edit `pilotdeck/`, live credentials, ignored local evidence, `agent_config.yaml` or submission assets in this task.
+- Keep the UI honest: sample evidence is fictional/redacted, replay is a fallback, and this is not a formal audit or production GRC workflow.
+
+Agent feedback integrated:
+
+- Enterprise Sales Engineer / Proposal Lead: first-screen decision strip, next actions, case brief derived from sample data, owner accountability and final-pack explanation.
+- Enterprise Security Reviewer / SME Approver: reviewer decision matrix, evidence title/snippet/freshness/confidence, approval basis, Q-006 gate reasons and per-answer trace chips.
+
+Todo:
+
+- [x] Replace hard-coded dashboard brief fields with sample-derived case, customer, materials, deadline and owner context.
+- [x] Add a first-screen decision strip that tells the proposal lead whether the pack is sendable, sendable with exclusions or blocked.
+- [x] Promote blocked next actions above raw metrics, including Q-006 policy-owner follow-up.
+- [x] Add reviewer decision matrix rows with draft, risk, evidence detail, review status, human approval basis, final-pack status and trace IDs.
+- [x] Surface stale, missing and conflicting evidence without hiding it behind global coverage counts.
+- [x] Add reviewer-facing UI contract tests for Q-002, Q-004 and Q-006.
+
+Current note:
+
+- 2026-06-13: `/runs/demo/replay` now reads as an enterprise approval cockpit: 7/8 answers can enter the pack, Q-006 is explicitly excluded, Q-002 and Q-004 show approval basis, and evidence cards show `Incident Response Policy v2024.11`, `Support Addendum Draft` and `EU Residency Gap Note` with freshness and action copy.
+
+Verification:
+
+- [x] `uv run pytest tests/test_web_app.py -v` passes.
+- [x] Browser/local server smoke confirms `/runs/demo/replay` renders the decision matrix and evidence cards.
+- [x] Mobile browser smoke confirms no horizontal overflow.
+- [x] `uv run python scripts/check_no_secrets.py` exits 0.
+- [x] `uv run python scripts/check_trustroom_readiness.py` exits 0.
+- [x] `uv run pytest -v` passes.
+- [x] `git diff --check` exits 0.
+
+Done when:
+
+- Proposal lead and SME reviewer can answer from the first two screens: can this pack move forward, what is excluded, who owns the blocker, which evidence supports each answer, and who approved high-risk language.
 
 ## Suggested Short Goal Prompt
 

@@ -14,7 +14,7 @@
 
 - 官方页已用 Chrome 重新复核：比赛截止时间为 2026-06-19 23:00 CST，提交项仍是 Public GitHub Repository、Demo Application Platform、Application URL、Video Presentation、Slide Presentation、Cover Image、short/long description 和 tags。
 - 官方奖池当前写为 `$10,000+`，除 AI/ML API partner prize 外，页面新增 Featherless AI partner resources/prize；Band Pro promo code `BANDHACK26`、Featherless promo code `BOA26` 已在页面可见。
-- 本仓库已有 mock/replay 主路径、enterprise dashboard、readiness/no-secret gates、T13 REST live smoke harness、T15 autonomous reply smoke harness 和 Chrome live verification 记录。
+- 本仓库已有 mock/replay 主路径、enterprise reviewer cockpit、readiness/no-secret gates、T13 REST live smoke harness、T15 autonomous reply smoke harness 和 Chrome live verification 记录。dashboard 已把 case brief、go/no-go decision、next actions、evidence freshness、human approval basis 和 final-pack exclusions 放到企业 reviewer 可操作的视图里。
 - 当前不能宣称完整 autonomous live Band workflow：真实 REST room / participants / @mention / event smoke 已验证，但 SDK/WebSocket Remote Agent 自动接收并回复仍未用 connected peer 跑通；新 harness 当前 dry-run 返回 `BLOCKED`。
 - 提交前最大未决项：public repo 策略、demo URL、cover image、5 分钟视频、slide deck、live autonomous replies 或明确 replay fallback 叙事。
 
@@ -115,5 +115,5 @@ uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requireme
 2. 决定 public GitHub strategy：切当前仓库 public，或创建脱敏 public submission repo。
 3. 部署 public-safe demo URL，默认只启用 mock/replay；live credentials 只放 secret store。
 4. 产出 cover image、5 分钟 video presentation 和 slide deck。
-5. 录屏主线固定为：business pain -> Band room / @mention evidence -> dashboard readiness -> risk/human approval -> final pack -> replay/live boundary。
+5. 录屏主线固定为：business pain -> Band room / @mention evidence -> reviewer cockpit decision -> evidence matrix -> risk/human approval -> final pack -> replay/live boundary。
 6. 提交前重跑 `uv run pytest -v`、`uv run python scripts/check_trustroom_readiness.py`、`uv run python scripts/check_no_secrets.py`、Chrome 官方页复核和 `git diff --check`。

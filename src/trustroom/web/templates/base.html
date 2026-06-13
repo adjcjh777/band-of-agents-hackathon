@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ title }}</title>
+    <link rel="icon" href="data:,">
     <style>
       :root {
         --ink: #17211b;
@@ -130,6 +131,41 @@
         padding: 18px;
       }
 
+      .decision-strip {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+        gap: 16px;
+        align-items: center;
+        margin: 8px 0 16px;
+        padding: 16px 18px;
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--steel);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .decision-strip.blocked {
+        border-left-color: var(--red);
+      }
+
+      .decision-strip.review {
+        border-left-color: var(--amber);
+      }
+
+      .decision-strip.ready {
+        border-left-color: var(--green);
+      }
+
+      .eyebrow {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
       .mode {
         display: inline-flex;
         align-items: center;
@@ -186,6 +222,42 @@
         gap: 14px;
       }
 
+      .tag-row,
+      .trace {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tag,
+      .trace span,
+      .freshness {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 999px;
+        padding: 3px 7px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        background: #fbfcf8;
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .action-row {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .action-row:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+
       .row {
         padding: 12px;
         display: grid;
@@ -194,6 +266,90 @@
 
       .row + .row {
         margin-top: 8px;
+      }
+
+      .row-topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .answer-draft {
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .evidence-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .evidence-card {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcf8;
+      }
+
+      .evidence-card strong,
+      .evidence-card p {
+        overflow-wrap: anywhere;
+      }
+
+      .freshness.current {
+        color: var(--green);
+        border-color: rgba(29, 122, 85, 0.32);
+      }
+
+      .freshness.stale,
+      .freshness.conflicting {
+        color: var(--amber);
+        border-color: rgba(165, 99, 24, 0.35);
+      }
+
+      .freshness.missing {
+        color: var(--red);
+        border-color: rgba(162, 58, 50, 0.35);
+      }
+
+      .matrix-note {
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: #f4f6f1;
+        color: var(--ink);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .reason-list {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .owner-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .owner-cell {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcf8;
       }
 
       .status {
@@ -246,12 +402,18 @@
 
       @media (max-width: 980px) {
         .hero,
+        .decision-strip,
         .two-col {
           grid-template-columns: 1fr;
         }
 
         .first-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .evidence-grid,
+        .owner-grid {
+          grid-template-columns: 1fr;
         }
       }
 

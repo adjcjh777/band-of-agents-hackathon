@@ -10,7 +10,7 @@
 | Replay mirror | `reports/trustroom_replay.example.jsonl` has 19 events | Ready |
 | Domain model | `src/trustroom/models.py` and `src/trustroom/state_machine.py` model run, items, evidence, review, approval, final pack, evolution | Ready |
 | Mock agents | `src/trustroom/agents/mock_runner.py` produces intake, 3+ Agent handoff, evidence, draft, review, human approval, final pack | Ready |
-| Dashboard | `/runs/demo/replay` shows Submission Readiness, Evidence Coverage, Approval Queue, Risk Flags, Final Pack, Band timeline, Governed Evolution | Ready |
+| Dashboard | `/runs/demo/replay` shows Executive Decision, Next Actions, Reviewer Decision Matrix, evidence freshness/detail, Approval Workbench, Risk Register, Final Pack, Band timeline, Governed Evolution | Ready |
 | Readiness gates | `scripts/check_trustroom_readiness.py` checks sample size, replay load, evidence coverage, high-risk gating, no-overclaim phrases | Ready |
 | No-secret gate | `scripts/check_no_secrets.py` scans for secret-like values while excluding local secret files and `pilotdeck/` | Ready |
 | Agent prompts | `src/trustroom/agents/prompts/` defines role, input contract, output schema, no-overclaim boundary and Band handoff instructions | Ready |
@@ -31,7 +31,7 @@ The replay evidence covers:
 7. Final Pack generation with evidence index and blockers.
 8. Governed Evolution proposal and challenge generation.
 
-This route is enough to show the product priority: RFP intake, 3+ Agent handoff, evidence retrieval, answer drafting, review loop, human approval, Final Pack and Governed Evolution.
+This route is enough to show the product priority: RFP intake, 3+ Agent handoff, evidence retrieval, answer drafting, review loop, human approval, Final Pack and Governed Evolution. The current dashboard also makes the enterprise reviewer decision explicit: 7/8 answers can enter the draft pack, Q-006 stays excluded, Q-002 and Q-004 show approval basis, and stale/missing/conflicting evidence is visible by answer instead of hidden in aggregate metrics.
 
 ## Validation Commands
 
