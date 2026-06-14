@@ -11,7 +11,7 @@
     </div>
   </section>
 
-  <section class="decision-strip {{ decision_state.tone }}" aria-label="Enterprise submission decision">
+  <section id="executive-decision" class="decision-strip {{ decision_state.tone }}" aria-label="Enterprise submission decision">
     <div>
       <span class="eyebrow">Executive decision</span>
       <h2>{{ decision_state.label }}</h2>
@@ -22,6 +22,24 @@
       <p>{{ decision_state.primary_action }}</p>
     </div>
   </section>
+
+  <nav class="judge-route" aria-label="Judge route and recording route">
+    <div class="judge-route-label">
+      <span class="eyebrow">Judge route</span>
+      <p class="small">Recording path for the 10-minute review</p>
+    </div>
+    <div class="judge-route-links">
+      <a href="#executive-decision">Executive Decision</a>
+      <a href="#run-trace">Run Trace</a>
+      <a href="#business-milestones">Milestones</a>
+      <a href="#agent-handoff-chain">Handoff Chain</a>
+      <a href="#representative-item-traces">Item Traces</a>
+      <a href="#blocked-impact-path">Q-006 Blocked Path</a>
+      <a href="#final-pack">Final Pack</a>
+      <a href="#replay-live-boundary">Replay Boundary</a>
+    </div>
+    <span class="route-boundary">REPLAY fallback, not live Band</span>
+  </nav>
 
   <section class="first-grid" aria-label="First viewport enterprise dashboard">
     <div class="metric">
@@ -44,14 +62,14 @@
       <strong>{{ owner_summary|length }}</strong>
       <span>Sales, security, product and legal ownership is visible by item</span>
     </div>
-    <div class="metric">
+    <div id="final-pack" class="metric">
       <h2>Final Pack</h2>
       <strong>{{ final_pack.included_answer_ids|length }}</strong>
       <span>{{ final_pack.blocked_item_ids|length }} blocker kept outside the submission pack</span>
     </div>
   </section>
 
-  <section class="section trace-overview" aria-label="Run-level agent handoff trace">
+  <section id="run-trace" class="section trace-overview" aria-label="Run-level agent handoff trace">
     <div class="panel stack">
       <div class="row-topline">
         <div>
@@ -71,7 +89,7 @@
         {% endfor %}
       </div>
 
-      <div>
+      <div id="business-milestones">
         <div class="row-topline">
           <h3>Business Milestones</h3>
           <span class="small">Intake → Evidence → Review → Approval → Final Pack</span>
@@ -94,7 +112,7 @@
       </div>
     </div>
 
-    <div class="panel stack">
+    <div id="agent-handoff-chain" class="panel stack">
       <div>
         <span class="eyebrow">Band collaboration mirror</span>
         <h2>Agent Handoff Chain</h2>
@@ -121,7 +139,7 @@
     </div>
   </section>
 
-  <section class="section panel item-trace-panel" aria-label="Representative item handoff traces">
+  <section id="representative-item-traces" class="section panel item-trace-panel" aria-label="Representative item handoff traces">
     <div class="row-topline">
       <div>
         <span class="eyebrow">Representative item traces</span>
@@ -159,7 +177,7 @@
         </article>
       {% endfor %}
     </div>
-    <div class="impact-path" aria-label="Blocked Impact Path">
+    <div id="blocked-impact-path" class="impact-path" aria-label="Q-006 Blocked Impact Path">
       <h3>Blocked Impact Path</h3>
       <div class="impact-steps">
         {% for step in run_trace.blocked_impact_path %}
@@ -384,7 +402,7 @@
         {% endfor %}
       </section>
 
-      <section class="panel">
+      <section id="replay-live-boundary" class="panel">
         <h2>Replay / Live Evidence</h2>
         <p class="small">
           {{ mode_label }} view uses redacted event references and preserves the same readiness, evidence, approval and final pack shape expected from the live Band path. Replay is a fallback, not live Band.

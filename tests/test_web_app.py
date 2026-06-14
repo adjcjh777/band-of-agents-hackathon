@@ -158,3 +158,27 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert "no valid human approval" in response.text
     assert "final pack excluded" in response.text
     assert "Approval evidence refs are visible reviewer context, not a machine-enforced evidence-set gate." in response.text
+
+
+def test_replay_route_provides_judge_recording_anchor_navigation() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert 'aria-label="Judge route and recording route"' in response.text
+    assert 'id="executive-decision"' in response.text
+    assert 'href="#executive-decision">Executive Decision</a>' in response.text
+    assert 'id="run-trace"' in response.text
+    assert 'href="#run-trace">Run Trace</a>' in response.text
+    assert 'id="business-milestones"' in response.text
+    assert 'href="#business-milestones">Milestones</a>' in response.text
+    assert 'id="agent-handoff-chain"' in response.text
+    assert 'href="#agent-handoff-chain">Handoff Chain</a>' in response.text
+    assert 'id="representative-item-traces"' in response.text
+    assert 'href="#representative-item-traces">Item Traces</a>' in response.text
+    assert 'id="blocked-impact-path"' in response.text
+    assert 'href="#blocked-impact-path">Q-006 Blocked Path</a>' in response.text
+    assert 'id="final-pack"' in response.text
+    assert 'href="#final-pack">Final Pack</a>' in response.text
+    assert 'id="replay-live-boundary"' in response.text
+    assert 'href="#replay-live-boundary">Replay Boundary</a>' in response.text
+    assert "REPLAY fallback, not live Band" in response.text
