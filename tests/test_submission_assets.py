@@ -49,6 +49,28 @@ def test_submission_copy_positive_overclaim_fails_closed(tmp_path: Path) -> None
     assert any("complete autonomous live workflow" in issue for issue in issues)
 
 
+def test_mixed_boundary_and_positive_overclaim_line_fails_closed(tmp_path: Path) -> None:
+    asset_dir = _write_valid_asset_pack(tmp_path)
+    (asset_dir / "submission-copy.md").write_text(
+        "\n".join(
+            [
+                "Replay and live boundaries are visible.",
+                "This is not just a demo; it is a production deployment.",
+                "Complete autonomous live replies remain a separate gate.",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    issues = check_submission_assets.validate_submission_assets(
+        asset_dir=asset_dir,
+        checklist_path=Path("docs/submission-checklist.md"),
+    )
+
+    assert any("production deployment" in issue for issue in issues)
+    assert not any("complete autonomous live replies" in issue for issue in issues)
+
+
 def test_pptx_embedded_object_fails_closed(tmp_path: Path) -> None:
     asset_dir = _write_valid_asset_pack(tmp_path)
     with zipfile.ZipFile(asset_dir / "rfp-trustroom-submission-deck.pptx", "a") as deck:

@@ -46,31 +46,6 @@ FORBIDDEN_POSITIVE_CLAIMS = (
     "fully automated compliance",
     "enterprise-grade compliance",
 )
-BOUNDARY_MARKERS = (
-    "not",
-    "no ",
-    "never",
-    "avoid",
-    "do not",
-    "don't",
-    "cannot",
-    "can't",
-    "must not",
-    "without",
-    "remain",
-    "separate gate",
-    "until",
-    "unless",
-    "fallback",
-    "尚未",
-    "未",
-    "不得",
-    "不能",
-    "不要",
-    "不可",
-    "不",
-    "仍",
-)
 PUBLIC_CHECKLIST_ITEMS = (
     "Video Presentation",
     "Public GitHub Repository",
@@ -229,14 +204,34 @@ def _check_forbidden_positive_claims(path: Path, text: str, issues: list[str]) -
     for line_number, line in enumerate(text.splitlines(), start=1):
         lower_line = line.lower()
         for phrase in FORBIDDEN_POSITIVE_CLAIMS:
-            if phrase in lower_line and not _line_is_boundary_context(lower_line):
+            if phrase in lower_line and not _line_is_boundary_context(lower_line, phrase):
                 issues.append(
                     f"{path}:{line_number} makes a forbidden positive claim: {phrase!r}"
                 )
 
 
-def _line_is_boundary_context(lower_line: str) -> bool:
-    return any(marker in lower_line for marker in BOUNDARY_MARKERS)
+def _line_is_boundary_context(lower_line: str, phrase: str) -> bool:
+    escaped = re.escape(phrase)
+    negated_before_phrase = (
+        rf"\b(?:do not|don't|must not|cannot|can't|never)\s+"
+        rf"(?:claim|describe|call|present|state|say|imply|use|treat as)[^.;:]*\b{escaped}\b"
+    )
+    no_phrase_claimed = rf"\b(?:no|not a|not an|not)\s+{escaped}\b"
+    phrase_separate_gate = rf"\b{escaped}\b[^.;:]*\bremain(?:s)?\s+(?:a\s+)?separate gate\b"
+    phrase_not_claimed = rf"\b{escaped}\b[^.;:]*\b(?:is|are|was|were)?\s*not\s+(?:claimed|verified|complete|available)\b"
+    conditional_gate = rf"\b{escaped}\b[^.;:]*\b(?:until|unless)\b[^.;:]*\b(?:passes?|verified|done|complete|available)\b"
+    chinese_boundary = rf"(?:不得|不能|不要|不可)[^。；：]*{escaped}|{escaped}[^。；：]*(?:仍|尚未|未)[^。；：]*(?:单独|独立|门槛|验证)"
+    return any(
+        re.search(pattern, lower_line)
+        for pattern in (
+            negated_before_phrase,
+            no_phrase_claimed,
+            phrase_separate_gate,
+            phrase_not_claimed,
+            conditional_gate,
+            chinese_boundary,
+        )
+    )
 
 
 def _check_public_completion_boundary(checklist_path: Path, issues: list[str]) -> None:
