@@ -995,7 +995,7 @@ Source:
 Boundary:
 
 - Allowed locked paths are `README.md`, `docs/deployment-notes.md`, `docs/submission-checklist.md`, this plan, `docs/agent-task-ledger.md` and `render.yaml`.
-- Do not make the current repo public, create a public repo, create a Render service, inspect secrets, read private reports, touch `pilotdeck/` or claim an Application URL exists without user authorization and public URL smoke.
+- Do not make the current repo public, create a public repo, create a Render service, inspect secrets, read private reports, touch `pilotdeck/` or claim an Application URL exists without user authorization and public URL smoke. On 2026-06-14 the user explicitly authorized current repo public and Render service creation.
 - Keep deployment language public-safe: mock/replay first, live Band credentials only via deployment secret store, replay is not live.
 
 Todo:
@@ -1004,8 +1004,8 @@ Todo:
 - [x] Update deployment notes with exact Render Blueprint values, user decision gates, public repo safety boundaries and post-deploy smoke checks.
 - [x] Update README and submission checklist so Render prep is visible while Public GitHub / Application URL remain unchecked blockers.
 - [x] Tighten draft submission copy from formal audit wording to traceable/evidence-trail wording and remove unimplemented partner-tech tags.
-- [ ] User selects public repo route and authorizes external repo / Render operations.
-- [ ] Public URL smoke passes for `/health`, `/runs/demo` and `/runs/demo/replay`.
+- [x] User selects public repo route and authorizes external repo / Render operations.
+- [x] Public URL smoke passes for `/health`, `/runs/demo` and `/runs/demo/replay`.
 
 Verification:
 
@@ -1019,7 +1019,7 @@ Verification:
 
 Done when:
 
-- The repo is ready for a public-safe Render deployment path without exposing live credentials, while the actual Public GitHub Repository and Application URL remain explicitly blocked until the user chooses and authorizes the public repo / deployment route.
+- The public repo and Render Application URL are live without exposing live credentials: https://github.com/adjcjh777/band-of-agents-hackathon and https://rfp-trustroom.onrender.com. The remaining submission blockers are public video URL, final official-page/submission gate, and optional connected-peer autonomous live replies.
 
 ## T23: Submission Asset Pack
 

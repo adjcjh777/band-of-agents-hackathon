@@ -1,6 +1,6 @@
 # Band of Agents Hackathon 参赛准备包
 
-最后更新：2026-06-13
+最后更新：2026-06-14
 
 官方入口：https://lablab.ai/ai-hackathons/band-of-agents-hackathon
 
@@ -10,15 +10,16 @@
 
 已选主线：`RFP TrustRoom`，一个面向 B2B 售前团队的 RFP / 安全问卷 / 证据同源协作室。它把客户 RFP、security questionnaire、公司知识库、合规证据放进同一个 Band room，让需求拆解、证据检索、答案起草、合规审查和人工 SME reviewer 通过 Band 完成一次可回放的提交包生成流程。
 
-## 2026-06-13 状态
+## 2026-06-14 状态
 
 - 官方页已用 Chrome 重新复核：比赛截止时间为 2026-06-19 23:00 CST，提交项仍是 Public GitHub Repository、Demo Application Platform、Application URL、Video Presentation、Slide Presentation、Cover Image、short/long description 和 tags。
 - 官方奖池当前写为 `$10,000+`，除 AI/ML API partner prize 外，页面新增 Featherless AI partner resources/prize；Band Pro promo code `BANDHACK26`、Featherless promo code `BOA26` 已在页面可见。
 - 本仓库已有 mock/replay 主路径、enterprise reviewer cockpit、T20 Run Trace / Agent Handoff Chain、readiness/no-secret gates、T13 REST live smoke harness、T15 autonomous reply smoke harness 和 Chrome live verification 记录。dashboard 已把 case brief、go/no-go decision、Run Trace proof strip、Business Milestones、Representative Item Traces、Q-006 Blocked Impact Path、evidence freshness、human approval basis 和 final-pack exclusions 放到企业 reviewer / judge 可操作的视图里。
-- T22 已补上 public-safe Render Blueprint：`render.yaml` 默认只部署 mock/replay FastAPI dashboard，使用 `/health` 作为 health check，不需要、也不保存 Band live credentials。实际 Public GitHub / Render URL 仍需用户明确选择公开仓库策略后创建。
+- Public GitHub Repository 已完成：当前仓库已公开，默认分支 `main` 已快进到最新提交，提交 URL 为 https://github.com/adjcjh777/band-of-agents-hackathon。
+- Demo Application URL 已完成：Render Web Service `rfp-trustroom` 已部署 public-safe mock/replay FastAPI dashboard，URL 为 https://rfp-trustroom.onrender.com。部署不配置 Band live credentials，`/health`、`/runs/demo` 和 `/runs/demo/replay` smoke 通过。
 - T23 已产出提交资产包：cover image、8 页 slide deck PDF/PPTX、5 分钟 video script / shot list 和提交文案，位于 `docs/submission-assets/`。
 - 当前不能宣称完整 autonomous live Band workflow：真实 REST room / participants / @mention / event smoke 已验证，但 SDK/WebSocket Remote Agent 自动接收并回复仍未用 connected peer 跑通；新 harness 当前 dry-run 返回 `BLOCKED`。
-- 提交前最大未决项：public repo 策略、demo URL、公开视频上传、final official page gate、live autonomous replies 或明确 replay fallback 叙事。
+- 提交前最大未决项：公开视频上传、final official page gate、live autonomous replies 或明确 replay fallback 叙事。
 
 ## 本地文档
 

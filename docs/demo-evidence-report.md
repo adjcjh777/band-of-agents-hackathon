@@ -90,9 +90,9 @@ Current status:
 ## Known Gaps Before Final Submission
 
 - Official deadline, exact submission fields, partner access details and submitted-competitor context must be rechecked on the official page immediately before final submission.
-- Public GitHub strategy is unresolved: make this repo public or create a sanitized public submission repo.
+- Public GitHub Repository is complete: https://github.com/adjcjh777/band-of-agents-hackathon is public and default branch `main` points at the current TrustRoom submission state.
 - Live autonomous SDK/WebSocket replies remain pending; the smoke harness is ready, but needs runtime `BAND_REST_URL` / `BAND_API_BASE` plus `TRUSTROOM_BAND_PEERS_JSON` for a connected peer.
-- Deployment URL and uploaded video are not yet final; cover image, slide deck and video script are ready in `docs/submission-assets/`.
+- Deployment URL is complete: https://rfp-trustroom.onrender.com serves the public-safe mock/replay dashboard. Uploaded video is not yet final; cover image, slide deck and video script are ready in `docs/submission-assets/`.
 - Final submission must rerun no-secret checks and review wording.
 
 ## No-Overclaim Boundary

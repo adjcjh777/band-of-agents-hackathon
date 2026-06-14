@@ -52,23 +52,32 @@
 - [x] Cover Image，建议 16:9。`docs/submission-assets/rfp-trustroom-cover.png` 为 1920x1080。
 - [ ] Video Presentation，官方指南建议 5 分钟以内。脚本和 shot list 已完成：`docs/submission-assets/video-script-shot-list.md`；公开视频 URL 尚未上传。
 - [x] Slide Presentation。`docs/submission-assets/rfp-trustroom-submission-deck.pdf` 和 `.pptx` 已生成。
-- [ ] Public GitHub Repository。当前准备仓库是 private，正式提交前需要切 public 或准备脱敏公开提交仓库。
-- [ ] Demo Application Platform。当前推荐 Render Web Service，`render.yaml` 已准备，但尚未创建服务。
-- [ ] Application URL。尚未创建 public URL。
+- [x] Public GitHub Repository。https://github.com/adjcjh777/band-of-agents-hackathon，默认分支 `main` 已更新到当前提交。
+- [x] Demo Application Platform。Render Web Service：`rfp-trustroom`。
+- [x] Application URL。https://rfp-trustroom.onrender.com，`/health`、`/runs/demo`、`/runs/demo/replay` public smoke 通过。
 - [x] README 包含 setup、architecture、demo script、known limitations。
 - [x] License 使用 MIT 或兼容 MIT。
 - [x] `docs/judge-10-minute-experience.md` 或等价材料。
 - [x] `docs/demo-runbook.md` 或等价材料。
 - [x] `reports/trustroom_replay.example.jsonl` 或录屏中可见的 Band live evidence。
 
-## 2026-06-13 当前阻塞项
+## 2026-06-14 当前阻塞项
 
-- Public GitHub Repository：需要用户决定切当前仓库 public，还是创建脱敏公开提交仓库。
-- Demo Application Platform / Application URL：`render.yaml` 已准备，尚未部署；必须等用户授权 public repo 策略和 Render / 其他平台账号操作。
 - Live Band autonomous replies：真实 Band REST smoke 已完成并生成 redacted evidence；autonomous reply smoke harness 已完成，但当前 dry-run 缺少 `BAND_REST_URL` / `BAND_API_BASE` 和 `TRUSTROOM_BAND_PEERS_JSON`，提交前仍需用 connected peer 跑通 SDK/WebSocket 远程 Agent 自动处理与回复。
 - Video Presentation：脚本已完成，但公开视频尚未录制、上传或生成 URL。
 - Partner prize strategy：AI/ML API / Featherless AI 可以作为加分项，但不要牺牲 Band 协作主线；只有真实接入并能演示时才写入主 claims。
 - Final official page gate：提交前再次用 Chrome 打开官方页确认 deadline、奖项、提交字段、partner terms 和已提交作品竞争态。
+
+## 2026-06-14 Public URL Smoke
+
+- Public GitHub Repository：`gh repo view` 确认为 `PUBLIC`，默认分支 `main` 指向 `976c89d`。
+- Public GitHub URL：https://github.com/adjcjh777/band-of-agents-hackathon。
+- Render service：`rfp-trustroom`，Free instance，branch `main`，未配置 Band live credentials。
+- Application URL：https://rfp-trustroom.onrender.com。
+- `curl -fsS https://rfp-trustroom.onrender.com/health`：200 / `{"status":"ok"}`。
+- `curl -fsS https://rfp-trustroom.onrender.com/runs/demo`：200，包含 `MOCK`、Run Trace、Agent Handoff Chain、Final Pack、replay/live boundary。
+- `curl -fsS https://rfp-trustroom.onrender.com/runs/demo/replay`：200，包含 `REPLAY`、Executive Decision、Run Trace、Representative Item Traces、Q-006 Blocked Impact Path、Final Pack、no-overclaim footer。
+- Chrome public URL smoke：desktop 1440x900 和 mobile 390x844 均无 console warning/error、无 page error、无横向溢出。截图：`/tmp/trustroom-public-render-desktop.png`、`/tmp/trustroom-public-render-mobile.png`。
 
 ## 2026-06-13 Final Rehearsal Record
 
