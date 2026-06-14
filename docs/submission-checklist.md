@@ -2,7 +2,7 @@
 
 ## 账户与社区
 
-- [ ] lablab.ai 已报名。
+- [x] lablab.ai team/profile 页面已创建：https://lablab.ai/ai-hackathons/band-of-agents-hackathon/rfp-trustroom。
 - [ ] 已加入 lablab.ai Discord。
 - [x] Band 账号已创建。
 - [ ] 已加入 Band Discord。
@@ -70,7 +70,8 @@
 
 ## 2026-06-14 Public URL Smoke
 
-- Public GitHub Repository：`gh repo view` 确认为 `PUBLIC`，默认分支 `main` 指向 `976c89d`。
+- LabLab team/profile URL：https://lablab.ai/ai-hackathons/band-of-agents-hackathon/rfp-trustroom。
+- Public GitHub Repository：`gh repo view` 确认为 `PUBLIC`，默认分支 `main` 指向最新已推送 TrustRoom submission state。
 - Public GitHub URL：https://github.com/adjcjh777/band-of-agents-hackathon。
 - Render service：`rfp-trustroom`，Free instance，branch `main`，未配置 Band live credentials。
 - Application URL：https://rfp-trustroom.onrender.com。

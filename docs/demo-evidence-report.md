@@ -90,6 +90,7 @@ Current status:
 ## Known Gaps Before Final Submission
 
 - Official deadline, exact submission fields, partner access details and submitted-competitor context must be rechecked on the official page immediately before final submission.
+- LabLab team/profile page is complete: https://lablab.ai/ai-hackathons/band-of-agents-hackathon/rfp-trustroom.
 - Public GitHub Repository is complete: https://github.com/adjcjh777/band-of-agents-hackathon is public and default branch `main` points at the current TrustRoom submission state.
 - Live autonomous SDK/WebSocket replies remain pending; the smoke harness is ready, but needs runtime `BAND_REST_URL` / `BAND_API_BASE` plus `TRUSTROOM_BAND_PEERS_JSON` for a connected peer.
 - Deployment URL is complete: https://rfp-trustroom.onrender.com serves the public-safe mock/replay dashboard. Uploaded video is not yet final; cover image, slide deck and video script are ready in `docs/submission-assets/`.

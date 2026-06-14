@@ -113,7 +113,7 @@ App Hosting & Code Repository
 - Demo Application Platform
 - Application URL
 
-注意：官方页面写的是 Public GitHub Repository。当前本地准备仓库是 private，适合赛前准备；正式提交前要么切成 public，要么准备一个脱敏公开提交仓库。
+注意：官方页面写的是 Public GitHub Repository。2026-06-14 用户已授权使用当前仓库公开提交路径，公开仓库为 https://github.com/adjcjh777/band-of-agents-hackathon；后续提交前仍需确认没有新增 secret、private report、raw live id 或无关目录进入公开分支。
 
 ## 官方资源读法
 

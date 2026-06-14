@@ -7,7 +7,7 @@
 - [x] 仓库根目录已添加 `render.yaml`，作为 public-safe Render Blueprint。
 - [x] Blueprint 默认只启动 FastAPI mock/replay dashboard，不配置 Band live credentials。
 - [x] Public GitHub Repository 已公开：https://github.com/adjcjh777/band-of-agents-hackathon。
-- [x] `main` 默认分支已快进到 `976c89d`，包含当前 RFP TrustRoom demo、submission assets 和 `render.yaml`。
+- [x] `main` 默认分支已快进到最新 TrustRoom submission state，包含当前 RFP TrustRoom demo、submission assets 和 `render.yaml`。
 - [x] Render Web Service 已创建：`rfp-trustroom`。
 - [x] Application URL 已产生并 smoke 通过：https://rfp-trustroom.onrender.com。
 
