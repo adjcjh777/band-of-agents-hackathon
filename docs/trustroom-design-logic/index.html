@@ -461,6 +461,7 @@
         <span class="tag partial">First peer: requirement-decomposer-agent</span>
         <span class="tag partial">Budget: 30s x 3 attempts</span>
         <span class="tag partial">After 3 BLOCKED: repair peer connectivity</span>
+        <span class="tag partial">Repair PASS: connected + token reply</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -556,9 +557,16 @@
     </section>
 
     <section>
+      <h2>已决策的 peer connectivity 修复完成标准</h2>
+      <div class="callout">
+        peer connectivity 修复任务的 PASS 标准必须同时包含两层：Chrome/Band dashboard 可见 `requirement-decomposer-agent` connected，且 autonomous smoke 在 30s 内看到 challenge-token reply。只满足 dashboard connected 不能算 PASS。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        peer connectivity 修复任务的完成标准是什么？我的推荐是完成标准必须包含两层：Chrome/Band dashboard 可见 `requirement-decomposer-agent` connected，且 autonomous smoke 在 30s 内看到 challenge-token reply；只满足 dashboard connected 不能算 PASS。
+        单 peer autonomous PASS 后，是否必须扩展到 `evidence-retriever-agent` 和 3-agent chain 才能继续视频/提交？我的推荐是至少再跑 `evidence-retriever-agent`；若两条 peer autonomous reply 都 PASS，再把 3-agent chain 作为加分 gate，而不是阻塞公开视频。
       </div>
     </section>
 
