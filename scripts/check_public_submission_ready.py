@@ -31,7 +31,7 @@ REQUIRED_COPY_SECTIONS = (
     "Long Description",
     "Tags",
 )
-URL_RE = re.compile(r"https?://(?![<])[^\s)>\],。；，]+")
+URL_RE = re.compile(r"https?://(?![<])[^\s)>\]}\"'`。；，：]+")
 MARKDOWN_CHECK_RE = re.compile(r"^\s*[-*]\s*\[(?P<mark>[ xX])\]\s*(?P<body>.*)$")
 FORBIDDEN_POSITIVE_CLAIMS = (
     "production deployment",
@@ -228,7 +228,7 @@ def _nearby_text_for_labels(text: str, labels: tuple[str, ...], window: int = 2)
 def _real_urls(text: str) -> list[str]:
     urls: list[str] = []
     for match in URL_RE.finditer(text):
-        url = match.group(0).rstrip(".,;:。；，")
+        url = match.group(0).rstrip(".,;:。；，：`\"'")
         if not _is_local_or_placeholder_url(url):
             urls.append(url)
     return _dedupe(urls)
@@ -434,7 +434,7 @@ def _check_public_url_reachability(
     for url in urls_to_check:
         try:
             _probe_url(url)
-        except OSError as exc:
+        except (OSError, ValueError, UnicodeError) as exc:
             issues.append(f"public URL is not reachable: {url} ({exc})")
 
 

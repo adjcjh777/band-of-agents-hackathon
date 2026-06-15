@@ -89,6 +89,44 @@ def test_positive_overclaim_fails_closed(tmp_path: Path) -> None:
     )
 
 
+def test_network_probe_uses_clean_public_urls(tmp_path: Path) -> None:
+    repo_root = _write_submission_fixture(tmp_path)
+    (repo_root / "docs" / "submission-checklist.md").write_text(
+        "\n".join(
+            [
+                "# Submission Checklist",
+                "",
+                "- [x] LabLab team/profile URL：https://lablab.ai/ai-hackathons/band-of-agents-hackathon/rfp-trustroom。",
+                "- [ ] Video Presentation，script is ready; public video URL 尚未上传。",
+                "- [x] Public GitHub Repository。https://github.com/adjcjh777/band-of-agents-hackathon。",
+                "- [x] Demo Application Platform。Render Web Service：`rfp-trustroom`。",
+                "- [x] Application URL。https://rfp-trustroom.onrender.com，public smoke passed。",
+                "- `curl -fsS https://rfp-trustroom.onrender.com/health`：200 / `{\"status\":\"ok\"}`。",
+                "- `curl -fsS https://rfp-trustroom.onrender.com/runs/demo`：200。",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    probed_urls: list[str] = []
+    original_probe = check_public_submission_ready._probe_url
+
+    def fake_probe(url: str) -> None:
+        probed_urls.append(url)
+
+    check_public_submission_ready._probe_url = fake_probe
+    try:
+        report = check_public_submission_ready.validate_public_submission(
+            repo_root,
+            skip_network=False,
+        )
+    finally:
+        check_public_submission_ready._probe_url = original_probe
+
+    assert report.blocking_issues == []
+    assert "https://rfp-trustroom.onrender.com/health" in probed_urls
+    assert all("`" not in url and "：" not in url for url in probed_urls)
+
+
 def _write_submission_fixture(
     tmp_path: Path,
     *,
