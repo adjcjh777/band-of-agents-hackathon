@@ -1,6 +1,6 @@
 # Agent Task Ledger
 
-最后更新：2026-06-14
+最后更新：2026-06-15
 
 本台账是 Codex + Claude Code 并行执行的单一事实来源。任何 agent 开始写文件前，必须先在 Active File Locks 表中拥有一条 `active` 锁。
 
@@ -50,8 +50,9 @@
 | TEST-R1 Submission package contract checks | Codex | `feature/trustroom-submission-contract-checks` | complete | `scripts/check_submission_assets.py`, `tests/test_submission_assets.py` | Codex | `uv run python scripts/check_submission_assets.py`; `uv run pytest tests/test_submission_assets.py -v`; `uv run python scripts/check_no_secrets.py`; `uv run python scripts/check_trustroom_readiness.py`; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |
 | TEST-R1.1 Mixed overclaim boundary regression | Codex | `feature/trustroom-governed-evolution-spec` | complete | `scripts/check_submission_assets.py`, `tests/test_submission_assets.py` | Codex | `uv run python scripts/check_submission_assets.py`; `uv run pytest tests/test_submission_assets.py -v`; `uv run python scripts/check_no_secrets.py`; `uv run python scripts/check_trustroom_readiness.py`; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |
 | T24 Public repo and Render Application URL gate | Codex | `feature/trustroom-governed-evolution-spec` | complete | `README.md`, `docs/deployment-notes.md`, `docs/submission-checklist.md`, `docs/demo-evidence-report.md`, `docs/agent-task-ledger.md` | Codex | `gh repo view adjcjh777/band-of-agents-hackathon`; public repo anonymous HTTP check; Render deploy; public `/health`, `/runs/demo`, `/runs/demo/replay` smoke; Chrome desktop/mobile public URL smoke; `uv run python scripts/check_submission_assets.py`; `uv run python scripts/check_no_secrets.py`; `uv run python scripts/check_trustroom_readiness.py`; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |
+| T25 Public submission readiness checker | Codex | `feature/trustroom-public-submission-readiness` | active | `scripts/check_public_submission_ready.py`, `tests/test_public_submission_ready.py` | Codex | `uv run pytest tests/test_public_submission_ready.py -v`; `uv run python scripts/check_public_submission_ready.py --skip-network`; `uv run python scripts/check_submission_assets.py`; `uv run python scripts/check_no_secrets.py`; `uv run python scripts/check_trustroom_readiness.py`; `uv run python scripts/check_dual_agent_changes.py --task "T25 Public submission readiness checker"`; `git diff --check` |
 
-当前 active lock：无。开始新写入任务前，必须先在本表新增 active lock，并重新运行 `uv run python scripts/check_dual_agent_protocol.py`。
+当前 active lock：T25 Public submission readiness checker。开始新写入任务前，必须先在本表新增 active lock，并重新运行 `uv run python scripts/check_dual_agent_protocol.py`。
 
 ## Planned TrustRoom Work Allocation
 
