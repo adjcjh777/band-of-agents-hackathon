@@ -1,16 +1,16 @@
 # RFP TrustRoom 5-Minute Video Script And Shot List
 
-Status: draft-ready for recording. Use the deployed public URL once T22 deployment is authorized; until then record the local replay route for rehearsal only.
+Status: draft-ready for recording. Record the public-safe replay route from the deployed Application URL: `https://rfp-trustroom.onrender.com/runs/demo/replay`.
 
 ## Route
 
 0:00-0:20 Hook / pain
 - Visual: cover image or slide 1.
-- Say: B2B RFP and security questionnaires are not one chatbot problem; they are cross-team evidence and approval workflows.
+- Say: B2B RFP and security questionnaires are not one chatbot or one audit dashboard problem; they are cross-team evidence, wording, approval and final-pack decision workflows.
 
 0:20-0:45 Solution / roles
 - Visual: Band coordination layer slide.
-- Say: RFP TrustRoom uses Band as the coordination layer for specialized agents and a human approver.
+- Say: RFP TrustRoom uses Band as the coordination layer for specialized agents and a human approver, carrying handoffs, shared object references, task state, reviewer challenges and approval context.
 
 0:45-1:15 Executive Decision
 - Visual: /runs/demo/replay first screen.
@@ -38,7 +38,7 @@ Status: draft-ready for recording. Use the deployed public URL once T22 deployme
 
 4:35-5:00 Boundary / value
 - Visual: replay/live boundary and no-overclaim footer.
-- Say: This is a hackathon working prototype. Replay is the public-safe fallback. Band REST room and handoff boundary were separately verified; autonomous live replies remain a separate gate.
+- Say: This is a hackathon working prototype. Replay is the public-safe fallback. Band REST room and handoff boundary were separately verified; autonomous live replies remain a separate gate. The value is the final-pack decision: the room shows what is safe to send and what must wait for policy-owner approval.
 
 ## Recording notes
 
@@ -46,4 +46,4 @@ Status: draft-ready for recording. Use the deployed public URL once T22 deployme
 - Use browser zoom around 90-100%.
 - Hide bookmarks, account tabs and anything that could expose raw ids or account data.
 - Avoid showing live Band account pages unless sanitized.
-- Do not claim public deployment until Application URL smoke has passed.
+- Do not claim more than the public-safe replay deployment. Keep live REST evidence and autonomous live replies as separate, bounded claims.
