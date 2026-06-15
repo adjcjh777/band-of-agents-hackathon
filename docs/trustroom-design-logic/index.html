@@ -457,6 +457,7 @@
         <span class="tag ready">Ready: mock / replay 主 demo</span>
         <span class="tag ready">Ready: submission assets</span>
         <span class="tag partial">Partial: REST live evidence</span>
+        <span class="tag partial">Authorized: real Band autonomous smoke</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -524,9 +525,16 @@
     </section>
 
     <section>
+      <h2>已授权的 live smoke 边界</h2>
+      <div class="callout">
+        已授权 planner/tester 使用本机 ignored Band 凭证、Chrome 登录态和真实 Band room 来跑 autonomous reply smoke。硬边界：不读取或提交 secret 原文，不把真实 room id / agent key / message id 写入 Git，只保存 redacted evidence，并把结果明确标为 PASS 或 BLOCKED。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        你是否授权 planner/tester 使用本机 ignored Band 凭证、Chrome 登录态和真实 Band room 来跑 autonomous reply smoke？我的推荐是授权，但设硬边界：不读取或提交 secret 原文，不把真实 room id / agent key / message id 写入 Git，只保存 redacted evidence，并把结果明确标为 PASS 或 BLOCKED。
+        autonomous smoke 的首个目标 peer 选谁？我的推荐是先打 `requirement-decomposer-agent`：它是第一条真实 handoff 的接收方，任务输入最小，回复可以用 challenge token 验证；通过后再扩到 `evidence-retriever-agent` 和 3-agent chain。
       </div>
     </section>
 
