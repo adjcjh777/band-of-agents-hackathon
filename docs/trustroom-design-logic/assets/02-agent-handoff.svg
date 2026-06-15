@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="860" viewBox="0 0 1500 860" role="img" aria-labelledby="title desc">
+  <title id="title">RFP TrustRoom agent handoff chain</title>
+  <desc id="desc">The agent chain from intake to final pack, showing Band handoff semantics and the human approval gate.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8faf6}
+      .title{font:700 38px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#13231a}
+      .subtitle{font:500 21px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#657068}
+      .node{fill:#fff;stroke:#d6ded5;stroke-width:2}
+      .band{fill:#eef8f4;stroke:#4b9a71;stroke-width:3}
+      .human{fill:#fff6ea;stroke:#c98a37;stroke-width:2}
+      .final{fill:#f0f5fa;stroke:#527c9c;stroke-width:2}
+      .blocked{fill:#fff1f1;stroke:#c55050;stroke-width:2}
+      .label{font:700 18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#16251c}
+      .small{font:500 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#5e6b62}
+      .tiny{font:700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#607166}
+      .arrow{stroke:#2f6049;stroke-width:3.5;fill:none;marker-end:url(#arrow)}
+      .loop{stroke:#ba6b2f;stroke-width:3;fill:none;marker-end:url(#arrowOrange);stroke-dasharray:8 7}
+      .bad{stroke:#c55050;stroke-width:3;fill:none;marker-end:url(#arrowRed)}
+      .pill{fill:#fff;stroke:#bfcabf;stroke-width:1}
+    </style>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#2f6049"/>
+    </marker>
+    <marker id="arrowOrange" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#ba6b2f"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#c55050"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1500" height="860"/>
+  <text class="title" x="70" y="86">Agent Handoff Chain</text>
+  <text class="subtitle" x="70" y="124">评委应该看到的是 sender -> receiver -> state change，而不是一个 Agent 吐出最终答案。</text>
+
+  <rect class="band" x="70" y="178" width="1360" height="470" rx="34"/>
+  <text class="label" x="106" y="226">Band Room / Collaboration Mirror</text>
+  <text class="small" x="106" y="255">@mention、handoff envelope、shared object refs、review decision、human approval event 都进入同一条可回放 timeline。</text>
+
+  <g transform="translate(105 320)">
+    <rect class="node" x="0" y="0" width="175" height="115" rx="16"/>
+    <text class="label" x="22" y="34">Orchestrator</text>
+    <text class="small" x="22" y="64">创建 run / room</text>
+    <text class="small" x="22" y="88">维护状态和最终包</text>
+  </g>
+  <g transform="translate(315 320)">
+    <rect class="node" x="0" y="0" width="175" height="115" rx="16"/>
+    <text class="label" x="22" y="34">Decomposer</text>
+    <text class="small" x="22" y="64">RFP 行拆解</text>
+    <text class="small" x="22" y="88">风险 / owner / 证据需求</text>
+  </g>
+  <g transform="translate(525 320)">
+    <rect class="node" x="0" y="0" width="175" height="115" rx="16"/>
+    <text class="label" x="22" y="34">Retriever</text>
+    <text class="small" x="22" y="64">找证据</text>
+    <text class="small" x="22" y="88">标 freshness / gap</text>
+  </g>
+  <g transform="translate(735 320)">
+    <rect class="node" x="0" y="0" width="175" height="115" rx="16"/>
+    <text class="label" x="22" y="34">Drafter</text>
+    <text class="small" x="22" y="64">基于证据起草</text>
+    <text class="small" x="22" y="88">保留 evidence ids</text>
+  </g>
+  <g transform="translate(945 320)">
+    <rect class="node" x="0" y="0" width="175" height="115" rx="16"/>
+    <text class="label" x="22" y="34">Reviewer</text>
+    <text class="small" x="22" y="64">发现过度承诺</text>
+    <text class="small" x="22" y="88">request_changes / block</text>
+  </g>
+  <g transform="translate(1155 320)">
+    <rect class="human" x="0" y="0" width="175" height="115" rx="16"/>
+    <text class="label" x="22" y="34">Human SME</text>
+    <text class="small" x="22" y="64">高风险签核</text>
+    <text class="small" x="22" y="88">批准范围和有效期</text>
+  </g>
+
+  <path class="arrow" d="M282 378 L307 378"/>
+  <path class="arrow" d="M492 378 L517 378"/>
+  <path class="arrow" d="M702 378 L727 378"/>
+  <path class="arrow" d="M912 378 L937 378"/>
+  <path class="arrow" d="M1122 378 L1147 378"/>
+
+  <text class="tiny" x="284" y="360">@mention</text>
+  <text class="tiny" x="494" y="360">QuestionItem[]</text>
+  <text class="tiny" x="704" y="360">EvidenceCandidate[]</text>
+  <text class="tiny" x="914" y="360">AnswerDraft[]</text>
+  <text class="tiny" x="1124" y="360">ReviewDecision</text>
+
+  <path class="loop" d="M1032 312 C1010 240 625 240 610 312"/>
+  <text class="tiny" x="710" y="244">Q-004: reviewer 要求补证据和改写边界语言</text>
+
+  <path class="bad" d="M1242 438 C1242 550 1060 560 990 505"/>
+  <text class="tiny" x="1026" y="560">Q-006: stale/conflicting evidence + no valid approval -> excluded</text>
+
+  <rect class="final" x="545" y="700" width="410" height="96" rx="18"/>
+  <text class="label" x="586" y="736">Final Submission Pack</text>
+  <text class="small" x="586" y="766">included answers + blocked items + evidence index + audit refs</text>
+  <path class="arrow" d="M1242 438 C1160 680 980 730 965 742"/>
+
+  <rect class="pill" x="108" y="548" width="295" height="56" rx="28"/>
+  <text class="tiny" x="136" y="582">最低演示要看见 3+ 专职 Agent</text>
+  <rect class="pill" x="430" y="548" width="295" height="56" rx="28"/>
+  <text class="tiny" x="458" y="582">人类 SME 不是伪装成 autonomous agent</text>
+  <rect class="pill" x="752" y="548" width="295" height="56" rx="28"/>
+  <text class="tiny" x="780" y="582">Replay 必须标注，不能伪装成 live</text>
+  <rect class="pill" x="1074" y="548" width="295" height="56" rx="28"/>
+  <text class="tiny" x="1102" y="582">Live autonomy 需要 challenge-token reply</text>
+</svg>

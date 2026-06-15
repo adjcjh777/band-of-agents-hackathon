@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RFP TrustRoom 设计逻辑与当前状态</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #16241c;
+      --muted: #5f6c63;
+      --line: #d9e0d6;
+      --paper: #f7f8f3;
+      --card: #ffffff;
+      --green: #27834f;
+      --blue: #4e7898;
+      --amber: #a96411;
+      --red: #b84040;
+      --shadow: 0 20px 60px rgba(36, 54, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    a { color: #255f7f; }
+
+    .page {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 56px 0 80px;
+    }
+
+    header {
+      min-height: 78vh;
+      display: grid;
+      align-items: center;
+      gap: 36px;
+      grid-template-columns: 1fr;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: #385f73;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 0;
+      font-size: clamp(44px, 7vw, 88px);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 30px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    p { margin: 0 0 14px; }
+
+    .lead {
+      max-width: 840px;
+      color: var(--muted);
+      font-size: 24px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .hero-card,
+    section,
+    figure,
+    .question {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      min-height: 128px;
+      padding: 22px;
+    }
+
+    .hero-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 24px;
+    }
+
+    .hero-card span {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    section {
+      margin: 28px 0;
+      padding: 28px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .status-grid,
+    .logic-grid,
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .logic-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mini {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfcf8;
+    }
+
+    .mini strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .mini p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: #fff;
+      color: #415047;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tag.ready { border-color: #a9ceb9; color: var(--green); }
+    .tag.partial { border-color: #dfc28d; color: var(--amber); }
+    .tag.open { border-color: #dfb0b0; color: var(--red); }
+
+    figure {
+      margin: 28px 0;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    figcaption {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .callout {
+      border-left: 4px solid var(--red);
+      background: #fff7f7;
+      padding: 16px 18px;
+      border-radius: 8px;
+      color: #703536;
+    }
+
+    .callout.green {
+      border-color: var(--green);
+      background: #f0f8f2;
+      color: #244f36;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 18px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    .step:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .step strong {
+      color: #24352a;
+    }
+
+    .step p,
+    .question p {
+      color: var(--muted);
+    }
+
+    .question {
+      padding: 18px;
+      box-shadow: none;
+    }
+
+    .recommend {
+      margin-top: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      color: #30443a;
+      font-size: 14px;
+    }
+
+    .source-list {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    code {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 2px 6px;
+      background: #fbfcf8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.92em;
+    }
+
+    footer {
+      margin-top: 44px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .split,
+      .status-grid,
+      .logic-grid,
+      .question-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        min-height: auto;
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <p class="eyebrow">RFP TrustRoom design brief · 2026-06-15</p>
+        <h1>从业务痛点到可回放多 Agent 协作室</h1>
+        <p class="lead">
+          这份文档给 planner 的入口不是“再做一个 RFP 自动填表工具”，而是解释为什么 RFP TrustRoom 必须把 Band 协作、证据同源、审查反驳、人审和 replay/live 边界放在同一条产品逻辑里。
+        </p>
+        <div class="hero-grid" aria-label="RFP TrustRoom headline facts">
+          <article class="hero-card">
+            <strong>8 items</strong>
+            <span>Acme sample pack 覆盖 RFP / security questionnaire 主线。</span>
+          </article>
+          <article class="hero-card">
+            <strong>7 included</strong>
+            <span>Final Pack 可以纳入 7 个回答，Q-006 被安全排除。</span>
+          </article>
+          <article class="hero-card">
+            <strong>3+ agents</strong>
+            <span>orchestrator、decomposer、retriever、drafter、reviewer 清楚分工。</span>
+          </article>
+          <article class="hero-card">
+            <strong>Replay first</strong>
+            <span>replay 是稳定演示基线，不能被说成 live autonomous workflow。</span>
+          </article>
+        </div>
+      </div>
+    </header>
+
+    <figure>
+      <img src="assets/01-product-logic.svg" alt="RFP TrustRoom 产品逻辑图">
+      <figcaption>图 1：产品逻辑。RFP TrustRoom 的差异化不是自动生成文字，而是把证据、角色、风险、人审和最终提交包绑定在同一条协作链上。</figcaption>
+    </figure>
+
+    <section>
+      <h2>一句话定位</h2>
+      <p>
+        RFP TrustRoom 是一个面向 B2B 售前团队的 RFP / 安全问卷 / 证据同源协作室。客户材料进入同一个 Band room 后，专职 Agent 通过 @mention 和 handoff 拆解需求、检索证据、起草回答、审查风险，并把高风险承诺交给 human SME 做 scoped approval，最后输出 answer pack、evidence index 和 replayable audit timeline。
+      </p>
+      <div class="callout green">
+        推荐 planner 固定这条叙事：Band 是协作层，不是最后通知渠道；TrustRoom 是风险受控的提交包生成流程，不是通用聊天机器人。
+      </div>
+    </section>
+
+    <section class="split">
+      <div>
+        <h2>为什么这样设计</h2>
+        <div class="timeline">
+          <div class="step">
+            <strong>问题不是写作</strong>
+            <p>RFP / security questionnaire 的核心风险在于证据是否新、承诺是否过界、审批是否可追溯。只做 answer drafting 会把最危险的部分藏起来。</p>
+          </div>
+          <div class="step">
+            <strong>Band 必须在主链路</strong>
+            <p>比赛核心是多 Agent 协作。TrustRoom 用 Band room 承载 agent identity、@mention routing、handoff、shared context 和 event timeline。</p>
+          </div>
+          <div class="step">
+            <strong>Replay 是产品资产</strong>
+            <p>replay 不是造假 fallback，而是让评委和团队在 live API 不稳时仍能检查同一条业务链路。它必须标注为 REPLAY。</p>
+          </div>
+          <div class="step">
+            <strong>最终包要 fail closed</strong>
+            <p>缺证据、过期/冲突证据、unsupported certification、高风险未人审都不应自动进入客户包。Q-006 被排除是价值证明，不是 demo 缺陷。</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2>核心对象</h2>
+        <div class="logic-grid">
+          <article class="mini">
+            <strong>Run</strong>
+            <p>一次协作流程，带 mode、state、Band room label、blockers 和 readiness。</p>
+          </article>
+          <article class="mini">
+            <strong>QuestionItem</strong>
+            <p>从 RFP / 问卷拆出的可回答问题，含 owner、risk、evidence need。</p>
+          </article>
+          <article class="mini">
+            <strong>EvidenceCandidate</strong>
+            <p>证据片段，带 source、snippet、freshness、confidence。</p>
+          </article>
+          <article class="mini">
+            <strong>AnswerDraft</strong>
+            <p>回答草稿必须保留 evidence ids 和 risk flags。</p>
+          </article>
+          <article class="mini">
+            <strong>ReviewDecision</strong>
+            <p>approved、request_changes、blocked、needs_human_approval。</p>
+          </article>
+          <article class="mini">
+            <strong>FinalSubmissionPack</strong>
+            <p>只包含通过 gate 的 answer，同时显式列出 blocked items。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <figure>
+      <img src="assets/02-agent-handoff.svg" alt="RFP TrustRoom Agent handoff 链路图">
+      <figcaption>图 2：Agent handoff。重点是 sender -> receiver -> state change，human SME 作为人审 gate，不伪装成 autonomous agent。</figcaption>
+    </figure>
+
+    <section>
+      <h2>端到端链路</h2>
+      <div class="status-grid">
+        <article class="mini">
+          <strong>1. Intake</strong>
+          <p>用户选择 Acme sample pack：RFP、security questionnaire、knowledge snippets。</p>
+        </article>
+        <article class="mini">
+          <strong>2. Decomposition</strong>
+          <p>requirement-decomposer-agent 拆出 8 个问题、风险、owner 和证据需求。</p>
+        </article>
+        <article class="mini">
+          <strong>3. Evidence</strong>
+          <p>evidence-retriever-agent 返回 current、stale、missing、conflicting 证据。</p>
+        </article>
+        <article class="mini">
+          <strong>4. Draft</strong>
+          <p>answer-drafter-agent 只基于证据生成可追踪草稿。</p>
+        </article>
+        <article class="mini">
+          <strong>5. Review loop</strong>
+          <p>compliance-review-agent 对 Q-004 request_changes，推动补证据和边界改写。</p>
+        </article>
+        <article class="mini">
+          <strong>6. Human approval</strong>
+          <p>SME / legal approval 只覆盖当前 wording 和证据范围，不泛化为永久许可。</p>
+        </article>
+        <article class="mini">
+          <strong>7. Final Pack</strong>
+          <p>7 个 answer 进入包，Q-006 因 incident evidence stale/conflicting 且无人审而排除。</p>
+        </article>
+        <article class="mini">
+          <strong>8. Governed Evolution</strong>
+          <p>从 reviewer friction 生成改进建议和 stress test，但不自动改高风险流程。</p>
+        </article>
+        <article class="mini">
+          <strong>9. Replay / live boundary</strong>
+          <p>replay、REST smoke、autonomous replies 是三层证据，不能互相替代。</p>
+        </article>
+      </div>
+    </section>
+
+    <figure>
+      <img src="assets/03-state-gates.svg" alt="RFP TrustRoom 状态机和风险门图">
+      <figcaption>图 3：状态机与 gate。Review 可以回到 evidence 或 drafting；Final Pack 的安全性来自 fail-closed gate。</figcaption>
+    </figure>
+
+    <section>
+      <h2>当前状态</h2>
+      <p>
+        下面是基于本仓库文档、实现和本轮命令核对的状态。注意：外部 public demo 在本轮 20 秒 curl smoke 内未返回，可能是 Render free instance 冷启动或外部网络等待；planner 应安排 tester 重跑 public smoke，而不是直接把今天的超时写成永久失败。
+      </p>
+      <div class="tag-row" aria-label="current status tags">
+        <span class="tag ready">Ready: mock / replay 主 demo</span>
+        <span class="tag ready">Ready: submission assets</span>
+        <span class="tag partial">Partial: REST live evidence</span>
+        <span class="tag partial">Partial: Render 本轮超时未确认</span>
+        <span class="tag open">Open: autonomous replies</span>
+        <span class="tag open">Open: public video URL</span>
+        <span class="tag open">Open: final official-page gate</span>
+      </div>
+    </section>
+
+    <figure>
+      <img src="assets/04-current-status.svg" alt="RFP TrustRoom 当前状态图">
+      <figcaption>图 4：当前状态。把 ready、partial 和 open gates 分开，避免 planner 误把局部证据当完整验收。</figcaption>
+    </figure>
+
+    <section>
+      <h2>已有视觉资产</h2>
+      <p>这些是提交包里已经存在的 public-safe 截图素材，放在这里方便 planner 和后续开发对齐真实 UI，而不是只看抽象流程图。</p>
+      <figure>
+        <img src="../submission-assets/rfp-trustroom-cover.png" alt="RFP TrustRoom 提交封面图">
+        <figcaption>现有 cover image：强调 Band handoffs、evidence-backed answers、human approval gates。</figcaption>
+      </figure>
+      <figure>
+        <img src="../submission-assets/run-trace-route.png" alt="RFP TrustRoom Run Trace route screenshot">
+        <figcaption>现有 Run Trace 路线截图：评委应先看 proof strip、Business Milestones 和 Agent Handoff Chain。</figcaption>
+      </figure>
+      <figure>
+        <img src="../submission-assets/representative-traces.png" alt="RFP TrustRoom representative traces screenshot">
+        <figcaption>现有 representative traces 截图：Q-002、Q-004、Q-006 分别展示 approved path、review loop 和 fail-closed blocker。</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>给 planner 的问题池</h2>
+      <p>按 `grill-with-docs` 的方式，真正开规划会时建议一次只问一个；这里先把问题池和推荐答案放进文档，方便复制给 planner。</p>
+      <div class="question-grid">
+        <article class="question">
+          <h3>1. 下一阶段主目标是什么？</h3>
+          <p>是优先把 autonomous live replies 跑通，还是优先完成提交录屏和 public smoke？</p>
+          <div class="recommend"><strong>推荐答案：</strong>以提交为主线：公开视频 + public smoke + final official-page gate；autonomous replies 做 focused optional gate，成功才进入主 claims。</div>
+        </article>
+        <article class="question">
+          <h3>2. live autonomous 的通过标准是什么？</h3>
+          <p>REST room / mention 是否足够？还是必须看到 Remote Agent 自主回复？</p>
+          <div class="recommend"><strong>推荐答案：</strong>必须看到 connected peer 的非 mention 消息包含 challenge token，并保存脱敏证据；否则只能说 REST boundary verified。</div>
+        </article>
+        <article class="question">
+          <h3>3. Q-006 是否允许为了 demo 好看而放行？</h3>
+          <p>incident response commitment 如果证据 stale/conflicting，要不要写成 conditional answer？</p>
+          <div class="recommend"><strong>推荐答案：</strong>不放行。Q-006 excluded 是产品价值证明，最多展示 policy owner next action。</div>
+        </article>
+        <article class="question">
+          <h3>4. 是否要接入 partner API 争奖？</h3>
+          <p>AI/ML API 或 Featherless 是否应该成为主 demo claims？</p>
+          <div class="recommend"><strong>推荐答案：</strong>除非真实接入并出现在主路径，否则只放 optional roadmap；不要牺牲 Band 协作主线。</div>
+        </article>
+        <article class="question">
+          <h3>5. Render 冷启动怎么验收？</h3>
+          <p>public URL 本轮 20 秒内未返回，planner 要给 tester 什么检查口径？</p>
+          <div class="recommend"><strong>推荐答案：</strong>重跑 `/health`、`/runs/demo`、`/runs/demo/replay`，记录 cold-start 总耗时、HTTP 状态、关键文本和 Chrome desktop/mobile 截图。</div>
+        </article>
+        <article class="question">
+          <h3>6. 后续产品开发要补哪条能力？</h3>
+          <p>是 XLSX questionnaire、知识库 connector、审批工作台，还是 live agent reliability？</p>
+          <div class="recommend"><strong>推荐答案：</strong>先补 live reliability 与提交证据链；提交后再排 XLSX / connector / richer approval workbench。</div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>建议给 planner 的首问</h2>
+      <div class="callout">
+        你希望 planner 把 2026-06-15 之后的下一阶段定义为“提交保障优先，autonomous live 作为可选 gate”，还是“必须先跑通 autonomous live replies 再继续视频和提交”？我的推荐是前者：先锁定 public smoke、录屏、官方页 final gate，同时给 autonomous replies 一个明确的 PASS/BLOCKED 验收任务。
+      </div>
+    </section>
+
+    <section>
+      <h2>依据和边界</h2>
+      <ul class="source-list">
+        <li><code>README.md</code>：项目定位、2026-06-14 状态、public repo / Render / live boundary 记录。</li>
+        <li><code>docs/project-concept.md</code>：RFP TrustRoom 概念、Agent 角色、端到端流程和成功标准。</li>
+        <li><code>docs/rfp-trustroom-prd.md</code>：PRD、状态、数据模型和风险路线图。</li>
+        <li><code>docs/demo-runbook.md</code> 与 <code>docs/judge-10-minute-experience.md</code>：评委演示路线和 no-overclaim 边界。</li>
+        <li><code>src/trustroom/models.py</code>、<code>state_machine.py</code>、<code>mock_runner.py</code>、<code>band/live_adapter.py</code>：实现层对象、gate、mock replay 和 live REST 边界。</li>
+        <li>本轮 public URL smoke：<code>curl --max-time 20 https://rfp-trustroom.onrender.com/health</code> 与 <code>/runs/demo/replay</code> 均超时，HTTP_CODE 000。</li>
+      </ul>
+    </section>
+
+    <footer>
+      这份文档是开发和规划辅助材料，不替代最终提交页复核、live Band proof 或公开视频验收。
+    </footer>
+  </main>
+</body>
+</html>

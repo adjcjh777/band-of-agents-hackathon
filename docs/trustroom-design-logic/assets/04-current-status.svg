@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title desc">
+  <title id="title">RFP TrustRoom current status map</title>
+  <desc id="desc">A three-lane status map showing ready, partial and open gates for RFP TrustRoom as of the current local review.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8faf6}
+      .title{font:700 38px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#14231b}
+      .subtitle{font:500 21px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#657068}
+      .lane{fill:#fff;stroke:#d7dfd4;stroke-width:2}
+      .ready{fill:#edf7f0;stroke:#4c9a70;stroke-width:2}
+      .partial{fill:#fff8eb;stroke:#d09243;stroke-width:2}
+      .blocked{fill:#fff1f1;stroke:#c75050;stroke-width:2}
+      .label{font:700 20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#15231a}
+      .small{font:500 15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#5f6c63}
+      .tiny{font:700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#607166}
+      .stamp{font:800 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:1px}
+    </style>
+  </defs>
+  <rect class="bg" width="1500" height="900"/>
+  <text class="title" x="70" y="82">当前状态图</text>
+  <text class="subtitle" x="70" y="120">把“已完成的产品面”、“有证据但不能过度宣称的 live 面”和“仍需 planner 安排的 gate”分开。</text>
+
+  <rect class="lane" x="70" y="175" width="420" height="610" rx="22"/>
+  <text class="stamp" x="105" y="223" fill="#23824f">READY</text>
+  <text class="label" x="105" y="260">可作为主 demo 基线</text>
+  <g transform="translate(105 302)">
+    <rect class="ready" x="0" y="0" width="350" height="74" rx="14"/>
+    <text class="label" x="24" y="32">Mock / replay 主路径</text>
+    <text class="small" x="24" y="56">8 questions，19 replay events，清楚标注 REPLAY</text>
+  </g>
+  <g transform="translate(105 396)">
+    <rect class="ready" x="0" y="0" width="350" height="74" rx="14"/>
+    <text class="label" x="24" y="32">Dashboard judge route</text>
+    <text class="small" x="24" y="56">Executive Decision -> Run Trace -> Final Pack</text>
+  </g>
+  <g transform="translate(105 490)">
+    <rect class="ready" x="0" y="0" width="350" height="74" rx="14"/>
+    <text class="label" x="24" y="32">Submission assets</text>
+    <text class="small" x="24" y="56">cover，8-slide deck，script，submission copy</text>
+  </g>
+  <g transform="translate(105 584)">
+    <rect class="ready" x="0" y="0" width="350" height="74" rx="14"/>
+    <text class="label" x="24" y="32">Local gates</text>
+    <text class="small" x="24" y="56">readiness / no-secret / tests / asset checks 已有</text>
+  </g>
+
+  <rect class="lane" x="540" y="175" width="420" height="610" rx="22"/>
+  <text class="stamp" x="575" y="223" fill="#b06a17">PARTIAL</text>
+  <text class="label" x="575" y="260">已有证据，但不能扩大战果</text>
+  <g transform="translate(575 302)">
+    <rect class="partial" x="0" y="0" width="350" height="84" rx="14"/>
+    <text class="label" x="24" y="32">Band REST live smoke</text>
+    <text class="small" x="24" y="58">文档记录真实 room / participants / mention / event</text>
+  </g>
+  <g transform="translate(575 410)">
+    <rect class="partial" x="0" y="0" width="350" height="84" rx="14"/>
+    <text class="label" x="24" y="32">Render URL</text>
+    <text class="small" x="24" y="58">仓库记录已部署；本轮 20s curl smoke 超时</text>
+  </g>
+  <g transform="translate(575 518)">
+    <rect class="partial" x="0" y="0" width="350" height="84" rx="14"/>
+    <text class="label" x="24" y="32">Public repo / LabLab page</text>
+    <text class="small" x="24" y="58">README 记录完成；最终提交前仍要复核</text>
+  </g>
+  <g transform="translate(575 626)">
+    <rect class="partial" x="0" y="0" width="350" height="84" rx="14"/>
+    <text class="label" x="24" y="32">Partner prize lanes</text>
+    <text class="small" x="24" y="58">只能在真实接入后进入主叙事</text>
+  </g>
+
+  <rect class="lane" x="1010" y="175" width="420" height="610" rx="22"/>
+  <text class="stamp" x="1045" y="223" fill="#b93939">OPEN GATES</text>
+  <text class="label" x="1045" y="260">planner 需要安排的下一步</text>
+  <g transform="translate(1045 302)">
+    <rect class="blocked" x="0" y="0" width="350" height="84" rx="14"/>
+    <text class="label" x="24" y="32">Autonomous replies</text>
+    <text class="small" x="24" y="58">需要 connected peer + challenge-token reply</text>
+  </g>
+  <g transform="translate(1045 410)">
+    <rect class="blocked" x="0" y="0" width="350" height="84" rx="14"/>
+    <text class="label" x="24" y="32">Public video URL</text>
+    <text class="small" x="24" y="58">脚本 ready，录制 / 上传 / URL 尚需确认</text>
+  </g>
+  <g transform="translate(1045 518)">
+    <rect class="blocked" x="0" y="0" width="350" height="84" rx="14"/>
+    <text class="label" x="24" y="32">Final official-page gate</text>
+    <text class="small" x="24" y="58">提交字段、deadline、partner terms 必须再用 Chrome 复核</text>
+  </g>
+  <g transform="translate(1045 626)">
+    <rect class="blocked" x="0" y="0" width="350" height="84" rx="14"/>
+    <text class="label" x="24" y="32">No-overclaim release copy</text>
+    <text class="small" x="24" y="58">最终稿保持 demo / prototype / replay boundary</text>
+  </g>
+</svg>

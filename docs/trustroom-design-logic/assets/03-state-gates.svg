@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title desc">
+  <title id="title">RFP TrustRoom state and gate model</title>
+  <desc id="desc">A state machine showing how TrustRoom moves from intake to final pack, with review loops and fail-closed gates.</desc>
+  <defs>
+    <style>
+      .bg{fill:#fafaf6}
+      .title{font:700 38px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#14221a}
+      .subtitle{font:500 21px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#657068}
+      .state{fill:#ffffff;stroke:#d4dcd2;stroke-width:2}
+      .ok{fill:#f0f7f2;stroke:#4b9a71;stroke-width:2}
+      .warn{fill:#fff8ed;stroke:#d09243;stroke-width:2}
+      .stop{fill:#fff1f1;stroke:#c75050;stroke-width:2}
+      .label{font:700 18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#15231a}
+      .small{font:500 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#5f6c63}
+      .tiny{font:700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#607166}
+      .arrow{stroke:#2f6049;stroke-width:3.2;fill:none;marker-end:url(#arrow)}
+      .loop{stroke:#b46a26;stroke-width:3;fill:none;marker-end:url(#arrowOrange);stroke-dasharray:8 7}
+      .bad{stroke:#c75050;stroke-width:3;fill:none;marker-end:url(#arrowRed)}
+    </style>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#2f6049"/>
+    </marker>
+    <marker id="arrowOrange" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#b46a26"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#c75050"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1500" height="900"/>
+  <text class="title" x="70" y="82">状态机和风险门</text>
+  <text class="subtitle" x="70" y="120">TrustRoom 的关键不是“跑完流程”，而是让不安全的答案无法安静地混进 Final Pack。</text>
+
+  <g transform="translate(80 210)">
+    <rect class="state" x="0" y="0" width="150" height="82" rx="15"/>
+    <text class="label" x="28" y="34">Intake</text>
+    <text class="small" x="28" y="60">材料进入 room</text>
+  </g>
+  <g transform="translate(250 210)">
+    <rect class="state" x="0" y="0" width="150" height="82" rx="15"/>
+    <text class="label" x="32" y="34">Triage</text>
+    <text class="small" x="32" y="60">owner / risk</text>
+  </g>
+  <g transform="translate(420 210)">
+    <rect class="state" x="0" y="0" width="170" height="82" rx="15"/>
+    <text class="label" x="24" y="34">Decomposition</text>
+    <text class="small" x="24" y="60">QuestionItem[]</text>
+  </g>
+  <g transform="translate(620 210)">
+    <rect class="state" x="0" y="0" width="150" height="82" rx="15"/>
+    <text class="label" x="28" y="34">Evidence</text>
+    <text class="small" x="28" y="60">freshness / gap</text>
+  </g>
+  <g transform="translate(800 210)">
+    <rect class="state" x="0" y="0" width="150" height="82" rx="15"/>
+    <text class="label" x="28" y="34">Drafting</text>
+    <text class="small" x="28" y="60">evidence-linked</text>
+  </g>
+  <g transform="translate(980 210)">
+    <rect class="warn" x="0" y="0" width="150" height="82" rx="15"/>
+    <text class="label" x="33" y="34">Review</text>
+    <text class="small" x="33" y="60">approve / changes</text>
+  </g>
+  <g transform="translate(1160 210)">
+    <rect class="warn" x="0" y="0" width="150" height="82" rx="15"/>
+    <text class="label" x="28" y="34">Approval</text>
+    <text class="small" x="28" y="60">human gate</text>
+  </g>
+
+  <path class="arrow" d="M230 251 L242 251"/>
+  <path class="arrow" d="M400 251 L412 251"/>
+  <path class="arrow" d="M590 251 L612 251"/>
+  <path class="arrow" d="M770 251 L792 251"/>
+  <path class="arrow" d="M950 251 L972 251"/>
+  <path class="arrow" d="M1130 251 L1152 251"/>
+
+  <path class="loop" d="M1055 203 C1035 128 670 128 695 203"/>
+  <text class="tiny" x="735" y="138">Review -> Evidence：补证据，例如 Q-004 region-processing clarification</text>
+  <path class="loop" d="M1055 300 C1048 380 870 380 875 300"/>
+  <text class="tiny" x="865" y="392">Review -> Drafting：改写成 bounded customer-safe wording</text>
+
+  <g transform="translate(190 485)">
+    <rect class="ok" x="0" y="0" width="300" height="130" rx="18"/>
+    <text class="label" x="28" y="38">Ready Gate</text>
+    <text class="small" x="28" y="72">有 current evidence，review 通过，</text>
+    <text class="small" x="28" y="100">或高风险项已有有效 scoped approval。</text>
+  </g>
+  <g transform="translate(600 485)">
+    <rect class="warn" x="0" y="0" width="300" height="130" rx="18"/>
+    <text class="label" x="28" y="38">Review Loop Gate</text>
+    <text class="small" x="28" y="72">request_changes 会把问题退回</text>
+    <text class="small" x="28" y="100">证据或起草阶段，保留事件 refs。</text>
+  </g>
+  <g transform="translate(1010 485)">
+    <rect class="stop" x="0" y="0" width="300" height="130" rx="18"/>
+    <text class="label" x="28" y="38">Fail-Closed Gate</text>
+    <text class="small" x="28" y="72">缺证据、过期/冲突证据、</text>
+    <text class="small" x="28" y="100">高风险未人审 -> 不进入最终包。</text>
+  </g>
+
+  <g transform="translate(500 710)">
+    <rect class="state" x="0" y="0" width="500" height="90" rx="18"/>
+    <text class="label" x="34" y="38">Submission Pack</text>
+    <text class="small" x="34" y="66">当前样例：7 个 answer included，Q-006 excluded；这不是失败，而是安全边界起作用。</text>
+  </g>
+  <path class="arrow" d="M1235 300 C1235 705 1010 748 1008 748"/>
+  <path class="bad" d="M1160 616 C1120 700 1035 730 1005 740"/>
+</svg>

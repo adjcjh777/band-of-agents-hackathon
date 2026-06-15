@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">RFP TrustRoom product logic map</title>
+  <desc id="desc">A visual map showing how scattered RFP work becomes a traceable answer pack through a Band room, agent handoffs, evidence review and human approval.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f7f8f3}
+      .title{font:700 38px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#17251d}
+      .subtitle{font:500 22px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#5e6b61}
+      .label{font:700 20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#17251d}
+      .small{font:500 16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#5e6b61}
+      .tiny{font:600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#6b746b}
+      .card{fill:#ffffff;stroke:#d7ddd2;stroke-width:2}
+      .pain{fill:#fff8f0;stroke:#e3b36b;stroke-width:2}
+      .room{fill:#eef7f1;stroke:#58a373;stroke-width:2.5}
+      .risk{fill:#fff3f3;stroke:#cc5a5a;stroke-width:2}
+      .out{fill:#f0f5fa;stroke:#4f7897;stroke-width:2}
+      .arrow{stroke:#2f5f47;stroke-width:4;fill:none;marker-end:url(#arrow)}
+      .thin{stroke:#9aa79a;stroke-width:2;fill:none;marker-end:url(#arrowLight)}
+      .pill{fill:#ffffff;stroke:#b8c5b8;stroke-width:1.5}
+    </style>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#2f5f47"/>
+    </marker>
+    <marker id="arrowLight" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#9aa79a"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1400" height="820"/>
+  <text class="title" x="70" y="84">RFP TrustRoom 的设计逻辑</text>
+  <text class="subtitle" x="70" y="122">不是通用 chatbot，而是把售前响应变成可追踪、可审查、可回放的 Band 协作室。</text>
+
+  <rect class="pain" x="70" y="190" width="300" height="320" rx="18"/>
+  <text class="label" x="100" y="238">1. 原始痛点</text>
+  <text class="small" x="100" y="284">RFP / 安全问卷回答散落在</text>
+  <text class="small" x="100" y="312">邮件、知识库、政策、历史答案</text>
+  <text class="small" x="100" y="340">和 SME 经验里。</text>
+  <rect class="pill" x="100" y="382" width="220" height="42" rx="21"/>
+  <text class="tiny" x="124" y="409">证据过期</text>
+  <rect class="pill" x="100" y="434" width="220" height="42" rx="21"/>
+  <text class="tiny" x="124" y="461">过度承诺</text>
+  <rect class="pill" x="100" y="486" width="220" height="42" rx="21"/>
+  <text class="tiny" x="124" y="513">审批不可追溯</text>
+
+  <path class="arrow" d="M392 350 C430 350 438 350 475 350"/>
+
+  <rect class="room" x="500" y="168" width="400" height="366" rx="24"/>
+  <text class="label" x="540" y="216">2. Band Room 作为协作层</text>
+  <text class="small" x="540" y="260">Orchestrator 创建 room，专职 Agent</text>
+  <text class="small" x="540" y="288">通过 @mention、handoff、共享对象</text>
+  <text class="small" x="540" y="316">和状态事件推进同一条 run。</text>
+  <g>
+    <rect class="card" x="535" y="358" width="150" height="52" rx="12"/>
+    <text class="tiny" x="558" y="390">拆解需求</text>
+    <rect class="card" x="715" y="358" width="150" height="52" rx="12"/>
+    <text class="tiny" x="738" y="390">检索证据</text>
+    <rect class="card" x="535" y="430" width="150" height="52" rx="12"/>
+    <text class="tiny" x="558" y="462">起草回答</text>
+    <rect class="card" x="715" y="430" width="150" height="52" rx="12"/>
+    <text class="tiny" x="738" y="462">审查风险</text>
+  </g>
+
+  <path class="arrow" d="M922 350 C960 350 968 350 1005 350"/>
+
+  <rect class="out" x="1030" y="190" width="300" height="320" rx="18"/>
+  <text class="label" x="1060" y="238">3. 输出不是一段答案</text>
+  <text class="small" x="1060" y="284">最终产物是 answer pack、</text>
+  <text class="small" x="1060" y="312">evidence index、review trail、</text>
+  <text class="small" x="1060" y="340">human approval 和 replay。</text>
+  <rect class="pill" x="1060" y="382" width="220" height="42" rx="21"/>
+  <text class="tiny" x="1084" y="409">7/8 可进入包</text>
+  <rect class="pill" x="1060" y="434" width="220" height="42" rx="21"/>
+  <text class="tiny" x="1084" y="461">Q-006 保持排除</text>
+  <rect class="pill" x="1060" y="486" width="220" height="42" rx="21"/>
+  <text class="tiny" x="1084" y="513">不伪装成生产系统</text>
+
+  <rect class="risk" x="285" y="610" width="830" height="110" rx="18"/>
+  <text class="label" x="325" y="652">核心边界</text>
+  <text class="small" x="325" y="688">Replay 是稳定评审路径；REST live smoke 证明真实 Band REST room / mention / event；</text>
+  <text class="small" x="325" y="716">autonomous SDK/WebSocket replies 必须单独验证，不能用前两者替代。</text>
+  <path class="thin" d="M700 535 L700 602"/>
+</svg>
