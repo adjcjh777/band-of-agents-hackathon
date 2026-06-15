@@ -453,6 +453,7 @@
         下面是基于本仓库文档、实现和本轮命令核对的状态。注意：外部 public demo 在本轮 20 秒 curl smoke 内未返回，可能是 Render free instance 冷启动或外部网络等待；planner 应安排 tester 重跑 public smoke，而不是直接把今天的超时写成永久失败。
       </p>
       <div class="tag-row" aria-label="current status tags">
+        <span class="tag open">Priority: autonomous replies first</span>
         <span class="tag ready">Ready: mock / replay 主 demo</span>
         <span class="tag ready">Ready: submission assets</span>
         <span class="tag partial">Partial: REST live evidence</span>
@@ -491,8 +492,8 @@
       <div class="question-grid">
         <article class="question">
           <h3>1. 下一阶段主目标是什么？</h3>
-          <p>是优先把 autonomous live replies 跑通，还是优先完成提交录屏和 public smoke？</p>
-          <div class="recommend"><strong>推荐答案：</strong>以提交为主线：公开视频 + public smoke + final official-page gate；autonomous replies 做 focused optional gate，成功才进入主 claims。</div>
+          <p>已决策：必须先跑通 autonomous live replies，再继续视频和最终提交包装。</p>
+          <div class="recommend"><strong>当前答案：</strong>autonomous-first。planner 应先安排 connected peer、challenge-token reply、脱敏证据保存和 PASS/BLOCKED 验收；未通过前不得把完整 live autonomous workflow 写入主 claims。</div>
         </article>
         <article class="question">
           <h3>2. live autonomous 的通过标准是什么？</h3>
@@ -523,9 +524,9 @@
     </section>
 
     <section>
-      <h2>建议给 planner 的首问</h2>
+      <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        你希望 planner 把 2026-06-15 之后的下一阶段定义为“提交保障优先，autonomous live 作为可选 gate”，还是“必须先跑通 autonomous live replies 再继续视频和提交”？我的推荐是前者：先锁定 public smoke、录屏、官方页 final gate，同时给 autonomous replies 一个明确的 PASS/BLOCKED 验收任务。
+        你是否授权 planner/tester 使用本机 ignored Band 凭证、Chrome 登录态和真实 Band room 来跑 autonomous reply smoke？我的推荐是授权，但设硬边界：不读取或提交 secret 原文，不把真实 room id / agent key / message id 写入 Git，只保存 redacted evidence，并把结果明确标为 PASS 或 BLOCKED。
       </div>
     </section>
 
