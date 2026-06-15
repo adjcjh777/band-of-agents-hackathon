@@ -458,6 +458,7 @@
         <span class="tag ready">Ready: submission assets</span>
         <span class="tag partial">Partial: REST live evidence</span>
         <span class="tag partial">Authorized: real Band autonomous smoke</span>
+        <span class="tag partial">First peer: requirement-decomposer-agent</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -532,9 +533,16 @@
     </section>
 
     <section>
+      <h2>已决策的 autonomous smoke 首个 peer</h2>
+      <div class="callout">
+        首个目标 peer 已选 `requirement-decomposer-agent`。执行入口应优先使用 `uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent`；它是第一条真实 handoff 的接收方，任务输入最小，回复可以用 challenge token 验证。通过后再扩到 `evidence-retriever-agent` 和 3-agent chain。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        autonomous smoke 的首个目标 peer 选谁？我的推荐是先打 `requirement-decomposer-agent`：它是第一条真实 handoff 的接收方，任务输入最小，回复可以用 challenge token 验证；通过后再扩到 `evidence-retriever-agent` 和 3-agent chain。
+        首轮 autonomous smoke 的 timeout / retry budget 设多少？我的推荐是先用 `--timeout-seconds 60 --poll-interval-seconds 2` 跑一次；若 BLOCKED 且 Chrome 显示 peer disconnected，则先修连接状态再重跑一次，不做无限重试。
       </div>
     </section>
 
