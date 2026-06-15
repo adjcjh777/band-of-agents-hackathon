@@ -459,6 +459,7 @@
         <span class="tag partial">Partial: REST live evidence</span>
         <span class="tag partial">Authorized: real Band autonomous smoke</span>
         <span class="tag partial">First peer: requirement-decomposer-agent</span>
+        <span class="tag partial">Budget: 30s x 3 attempts</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -540,9 +541,16 @@
     </section>
 
     <section>
+      <h2>已决策的 autonomous smoke budget</h2>
+      <div class="callout">
+        首轮 autonomous smoke budget 已定为每次 `--timeout-seconds 30 --poll-interval-seconds 2`，最多 3 次。建议执行时每次都保存 redacted evidence；如果三次都没有 challenge-token reply，则停止重试并按 BLOCKED 处理，不做无限等待。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        首轮 autonomous smoke 的 timeout / retry budget 设多少？我的推荐是先用 `--timeout-seconds 60 --poll-interval-seconds 2` 跑一次；若 BLOCKED 且 Chrome 显示 peer disconnected，则先修连接状态再重跑一次，不做无限重试。
+        如果 3 次 autonomous smoke 都是 BLOCKED，下一步是否立即进入 peer connectivity 修复任务？我的推荐是是：先用 Chrome/Band dashboard 确认 `requirement-decomposer-agent` connected 状态和 room 消息可见性，再修 SDK/WebSocket 接收链路；在修复前不推进视频和最终提交 claims。
       </div>
     </section>
 
