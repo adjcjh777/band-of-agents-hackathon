@@ -116,6 +116,10 @@ _Avoid_: customer answer body, unmarked exception list, hidden review-only cavea
 The explicit human or business-owner decision that allows a Review Appendix to be attached to a Customer Export. It controls appendix visibility only; it is not Human Approval, does not make exceptions customer-submittable, and cannot be made automatically by an Agent.
 _Avoid_: agent-added appendix, automatic exception export, treating appendix inclusion as answer approval.
 
+**Review Appendix Export Record**:
+The minimum audit record for a Review Appendix Export Decision. It contains decision, owner role, reason, and scope, tying appendix visibility to a specific human or business-owner choice and Customer Export boundary.
+_Avoid_: reasonless appendix inclusion, agent-only export setting, broad reusable appendix permission.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.

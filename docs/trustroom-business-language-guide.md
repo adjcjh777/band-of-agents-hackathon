@@ -56,6 +56,7 @@
 | Customer Export | 从 Final Pack 生成的客户可提交输出；正文默认只含 Included Answers | customer-facing export、submission body | blocked / pending items in answer body、unmarked exceptions |
 | Review Appendix | Customer Export 或 reviewer package 里的非提交附录，用于透明展示 Final Pack Exceptions | customer transparency appendix、internal review package | unlabeled exception list、customer-submittable answer body |
 | Review Appendix Export Decision | human/business owner 对是否随 Customer Export 附带 Review Appendix 的显式决定；只控制附录可见性，不审批答案 | export settings、customer transparency、audit trail | agent-added appendix、appendix as approval |
+| Review Appendix Export Record | Review Appendix Export Decision 的最小审计记录：decision、owner_role、reason、scope | export settings、audit trail、customer transparency | reasonless inclusion、agent-only export setting |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -369,6 +370,19 @@ Review Appendix Export Decision 标准句式：
 
 > Review Appendix Export Decision: Security Policy Owner selected `include_appendix` for customer transparency; Q-006 remains not customer-submittable and excluded from the answer body.
 
+Review Appendix Export Record 最少只需要 4 个字段：
+
+| Field | 含义 | 示例 |
+|---|---|---|
+| `decision` | 是否随 Customer Export 附带 Review Appendix | `include_appendix` or `omit_appendix` |
+| `owner_role` | 做出决定的人类或业务 owner 角色 | Security Policy Owner |
+| `reason` | 一句业务原因 | Customer wants transparency on excluded questionnaire items. |
+| `scope` | 该决定适用的 Customer Export、run、exception 边界 | Applies only to Customer Export `CE-ACME-v1` and Q-006 exception. |
+
+Review Appendix Export Record 标准句式：
+
+> Review Appendix Export Record: `include_appendix`; owner_role: Security Policy Owner; reason: customer transparency on excluded questionnaire items; scope: Customer Export `CE-ACME-v1`, Q-006 only.
+
 Final Pack 总结标准句式：
 
 > Final Pack includes 7 of 8 answers with evidence refs and approval trail; Q-006 is excluded because stale/conflicting evidence and missing valid approval fail the gate.
@@ -414,7 +428,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 | 人审 | Legal approver gave scoped approval for Q-004 pilot wording until the stated expiry. | Legal approved the whole product. |
 | 阻塞 | Q-006 stays out of the Final Pack because evidence is stale/conflicting and no valid approval exists. | The system failed Q-006. |
 | 客户导出 | Customer Export answer body contains only Included Answers; Q-006 appears only in the Review Appendix as not customer-submittable. | Customer Export includes all questions, including blocked drafts. |
-| 导出附录 | Security Policy Owner selected `include_appendix`; Q-006 remains not customer-submittable. | Agent automatically attached blocked items to the Customer Export. |
+| 导出附录 | Review Appendix Export Record: `include_appendix`; owner_role: Security Policy Owner; scope: Customer Export `CE-ACME-v1`, Q-006 only. | Agent automatically attached blocked items to the Customer Export. |
 | Replay | This is a replay fallback that mirrors the collaboration path with redacted refs. | This is live autonomous Band proof. |
 
 ## 14. 文案检查清单
@@ -428,6 +442,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 - 是否说明哪些内容进入 Final Pack，哪些被排除？
 - Customer Export answer body 是否只包含 Included Answers，且 Review Appendix 是否标记 `not customer-submittable`？
 - Review Appendix 是否有 human / business owner 的显式 Export Decision，而不是 Agent 自动附加？
+- Review Appendix Export Record 是否包含 `decision`、`owner_role`、`reason`、`scope`？
 - 是否把 blocker 写成 fail-closed，而不是模糊失败？
 - 是否保留 replay/live 边界？
 - 是否避免生产部署、法律意见、合规认证、enterprise-grade compliance 等 overclaim？
