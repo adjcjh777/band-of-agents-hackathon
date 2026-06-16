@@ -96,6 +96,10 @@ _Avoid_: approval without scope, permanent approval by implication, generic sign
 The formal decision value inside a Human Approval Record. It should only be approved, request_changes, or rejected, keeping intermediate suggestion and review-loop states out of the approval gate.
 _Avoid_: pending approval as permission, mixing suggestion status into approval, ambiguous soft approval.
 
+**Final Pack Inclusion**:
+The customer-delivery disposition of a Question Item or answer relative to the Final Pack. It uses only included, excluded, or pending: included means required evidence, review, and approval gates are satisfied; excluded means the item is deliberately kept out by a blocker or rejected approval; pending means the item is waiting on evidence, owner review, or Human Approval.
+_Avoid_: passed/failed language, silent omission, pretending pending work is complete.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.

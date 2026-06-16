@@ -51,6 +51,7 @@
 | Human Approval | 允许高风险 Question Item / answer 进入 Final Pack 的正式人类 gate | approval workbench、Final Pack gate、audit trail | suggestion acceptance、informal comment、blanket approval |
 | Human Approval Record | Human Approval 的最小正式记录：approver_role + decision + scope + reason + validity | approval workbench、Final Pack gate、audit trail | scopeless approval、permanent-by-implication approval |
 | Human Approval Decision | Human Approval Record 里的正式审批值，只能是 approved / request_changes / rejected | approval workbench、Final Pack gate、audit trail | pending-as-permission、suggestion status mixed into approval |
+| Final Pack Inclusion | Question Item / answer 相对于 Final Pack 的交付处置，只能是 included / excluded / pending | Final Pack、item trace、answer table、demo ending | passed / failed、silent omission |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -315,6 +316,16 @@ Final Pack 是客户提交包，不是“生成结果”。它必须说明：
 - approval basis。
 - remaining next actions。
 - replay/live boundary if used in demo context。
+
+Final Pack Inclusion 只使用三种值：
+
+| Inclusion | 含义 | 推荐说法 |
+|---|---|---|
+| `included` | required evidence、review、approval gate 已满足，可以进入 Final Pack | Q-002 is included in the Final Pack with current evidence refs. |
+| `excluded` | 因 blocker、rejected approval、缺失或过期证据被 fail-closed 排除 | Q-006 is excluded from the Final Pack because stale/conflicting evidence and missing valid approval fail the gate. |
+| `pending` | 正在等待 evidence、owner review 或 Human Approval，尚不能视为完成 | Q-004 is pending Human Approval and cannot enter the Final Pack yet. |
+
+不要使用 `passed` / `failed` 描述 Final Pack Inclusion。`excluded` 表示受控排除，不是系统失败；`pending` 表示等待外部或人类 gate，不是假装完成。
 
 标准句式：
 
