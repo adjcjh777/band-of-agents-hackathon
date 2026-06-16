@@ -55,6 +55,7 @@
 | Final Pack Exceptions | Final Pack 旁边的例外区块，展示 excluded / pending items 的原因、owner、next action | Final Pack view、reviewer view、demo full picture | mixing into included answers、hidden blocked items |
 | Customer Export | 从 Final Pack 生成的客户可提交输出；正文默认只含 Included Answers | customer-facing export、submission body | blocked / pending items in answer body、unmarked exceptions |
 | Review Appendix | Customer Export 或 reviewer package 里的非提交附录，用于透明展示 Final Pack Exceptions | customer transparency appendix、internal review package | unlabeled exception list、customer-submittable answer body |
+| Review Appendix Export Decision | human/business owner 对是否随 Customer Export 附带 Review Appendix 的显式决定；只控制附录可见性，不审批答案 | export settings、customer transparency、audit trail | agent-added appendix、appendix as approval |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -357,6 +358,17 @@ Review Appendix 标准句式：
 
 > Review Appendix: Q-006 is not customer-submittable; it is excluded from the answer body until the Security Policy Owner provides current evidence or approves scoped wording.
 
+Review Appendix Export Decision 权限规则：
+
+- Agent 可以建议是否附带 Review Appendix，并说明透明度理由。
+- 只有 human / business owner 可以显式选择 `include_appendix` 或 `omit_appendix`。
+- `include_appendix` 只表示附录随 Customer Export 出现，不改变任何 Question Item 的 Final Pack Inclusion。
+- 如果没有显式 Review Appendix Export Decision，Customer Export answer body 仍只包含 Included Answers，Review Appendix 不随客户导出出现。
+
+Review Appendix Export Decision 标准句式：
+
+> Review Appendix Export Decision: Security Policy Owner selected `include_appendix` for customer transparency; Q-006 remains not customer-submittable and excluded from the answer body.
+
 Final Pack 总结标准句式：
 
 > Final Pack includes 7 of 8 answers with evidence refs and approval trail; Q-006 is excluded because stale/conflicting evidence and missing valid approval fail the gate.
@@ -402,6 +414,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 | 人审 | Legal approver gave scoped approval for Q-004 pilot wording until the stated expiry. | Legal approved the whole product. |
 | 阻塞 | Q-006 stays out of the Final Pack because evidence is stale/conflicting and no valid approval exists. | The system failed Q-006. |
 | 客户导出 | Customer Export answer body contains only Included Answers; Q-006 appears only in the Review Appendix as not customer-submittable. | Customer Export includes all questions, including blocked drafts. |
+| 导出附录 | Security Policy Owner selected `include_appendix`; Q-006 remains not customer-submittable. | Agent automatically attached blocked items to the Customer Export. |
 | Replay | This is a replay fallback that mirrors the collaboration path with redacted refs. | This is live autonomous Band proof. |
 
 ## 14. 文案检查清单
@@ -414,6 +427,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 - 是否有 evidence freshness、review status 或 approval basis？
 - 是否说明哪些内容进入 Final Pack，哪些被排除？
 - Customer Export answer body 是否只包含 Included Answers，且 Review Appendix 是否标记 `not customer-submittable`？
+- Review Appendix 是否有 human / business owner 的显式 Export Decision，而不是 Agent 自动附加？
 - 是否把 blocker 写成 fail-closed，而不是模糊失败？
 - 是否保留 replay/live 边界？
 - 是否避免生产部署、法律意见、合规认证、enterprise-grade compliance 等 overclaim？

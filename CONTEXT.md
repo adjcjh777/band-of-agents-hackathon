@@ -112,6 +112,10 @@ _Avoid_: exporting blocked or pending items as answer body, unlabeled exceptions
 A non-submittable appendix used with a Customer Export or reviewer package to disclose Final Pack Exceptions for transparency. It labels each exception as not customer-submittable and keeps the reason, owner, and next action visible.
 _Avoid_: customer answer body, unmarked exception list, hidden review-only caveat.
 
+**Review Appendix Export Decision**:
+The explicit human or business-owner decision that allows a Review Appendix to be attached to a Customer Export. It controls appendix visibility only; it is not Human Approval, does not make exceptions customer-submittable, and cannot be made automatically by an Agent.
+_Avoid_: agent-added appendix, automatic exception export, treating appendix inclusion as answer approval.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.
