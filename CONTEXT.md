@@ -40,9 +40,9 @@ _Avoid_: default raw log view, hidden proof, unrelated debug detail.
 A permissioned backend view for authorized operators who need deeper diagnostic trace than the normal user interface exposes. It can include message payloads, object references, tool inputs and outputs, timestamps, redacted provider metadata, and decision summaries, while keeping secrets and private raw internals out of the public demo surface.
 _Avoid_: public chain-of-thought display, unrestricted log access, secret-bearing debug dump.
 
-**Judge Full-Picture View**:
-The competition-facing view that lets judges understand the complete TrustRoom workflow from Human Request through Visible Handoff Chain, evidence review, human approval, Final Pack, and replay/live boundary. It should include enough redacted evidence and backend-audit excerpts to prove the system shape without exposing secrets, private raw internals, or unrestricted debug logs.
-_Avoid_: partial demo path, opaque final answer, secret-bearing backend access.
+**Full-Picture Workflow View**:
+The normal TrustRoom product experience should let enterprise users, judges, and demo viewers understand the complete workflow from Human Request through Visible Handoff Chain, evidence review, human approval, Final Pack, and replay/live boundary. It can expose redacted evidence and backend-audit excerpts in context, but it is not a separate judge-only page or unrestricted backend access.
+_Avoid_: judge-only page, partial demo path, opaque final answer, secret-bearing backend access.
 
 **Final Pack**:
 The customer-facing answer package produced after decomposition, evidence retrieval, drafting, review, and required human approval. It contains only answers that pass the evidence and approval gates for the sample run.
