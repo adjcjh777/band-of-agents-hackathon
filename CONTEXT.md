@@ -36,6 +36,10 @@ _Avoid_: crowded card, full transcript, internal trace dump.
 The expanded view of a handoff, used when a user or judge wants to inspect the supporting message evidence, object references, timing, decision reason, evidence freshness, or approval context behind the summary.
 _Avoid_: default raw log view, hidden proof, unrelated debug detail.
 
+**Backend Audit Access**:
+A permissioned backend view for authorized operators who need deeper diagnostic trace than the normal user interface exposes. It can include message payloads, object references, tool inputs and outputs, timestamps, redacted provider metadata, and decision summaries, while keeping secrets and private raw internals out of the public demo surface.
+_Avoid_: public chain-of-thought display, unrestricted log access, secret-bearing debug dump.
+
 **Final Pack**:
 The customer-facing answer package produced after decomposition, evidence retrieval, drafting, review, and required human approval. It contains only answers that pass the evidence and approval gates for the sample run.
 _Avoid_: report, chatbot answer, generated summary.
