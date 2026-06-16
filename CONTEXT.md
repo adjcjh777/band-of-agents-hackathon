@@ -104,6 +104,14 @@ _Avoid_: passed/failed language, silent omission, pretending pending work is com
 A separate section beside the Final Pack that lists Question Items with excluded or pending Final Pack Inclusion. It shows why the item is not deliverable yet, who owns the next action, and what must change without treating the item as an included answer.
 _Avoid_: mixing exceptions into included answers, hiding blocked items, treating exceptions as customer-approved content.
 
+**Customer Export**:
+The customer-submittable output produced from the Final Pack. By default its answer body contains only included answers; Final Pack Exceptions can appear only in a clearly marked Review Appendix when transparency is required.
+_Avoid_: exporting blocked or pending items as answer body, unlabeled exceptions, treating review notes as customer-submittable content.
+
+**Review Appendix**:
+A non-submittable appendix used with a Customer Export or reviewer package to disclose Final Pack Exceptions for transparency. It labels each exception as not customer-submittable and keeps the reason, owner, and next action visible.
+_Avoid_: customer answer body, unmarked exception list, hidden review-only caveat.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.
