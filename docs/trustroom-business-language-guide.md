@@ -52,6 +52,7 @@
 | Human Approval Record | Human Approval 的最小正式记录：approver_role + decision + scope + reason + validity | approval workbench、Final Pack gate、audit trail | scopeless approval、permanent-by-implication approval |
 | Human Approval Decision | Human Approval Record 里的正式审批值，只能是 approved / request_changes / rejected | approval workbench、Final Pack gate、audit trail | pending-as-permission、suggestion status mixed into approval |
 | Final Pack Inclusion | Question Item / answer 相对于 Final Pack 的交付处置，只能是 included / excluded / pending | Final Pack、item trace、answer table、demo ending | passed / failed、silent omission |
+| Final Pack Exceptions | Final Pack 旁边的例外区块，展示 excluded / pending items 的原因、owner、next action | Final Pack view、reviewer view、demo full picture | mixing into included answers、hidden blocked items |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -327,7 +328,20 @@ Final Pack Inclusion 只使用三种值：
 
 不要使用 `passed` / `failed` 描述 Final Pack Inclusion。`excluded` 表示受控排除，不是系统失败；`pending` 表示等待外部或人类 gate，不是假装完成。
 
-标准句式：
+Final Pack 视图分成两个区块：
+
+| 区块 | 包含内容 | 边界 |
+|---|---|---|
+| Included Answers | `included` items 的客户可交付回答、evidence refs、approval trail | 可以进入客户提交包 |
+| Final Pack Exceptions | `excluded` / `pending` items 的 item id、reason / blocker、owner、next action | 不是客户可交付回答，不能伪装成已批准内容 |
+
+Final Pack Exceptions 默认出现在产品审阅、demo 和评委查看路径里，用来证明 TrustRoom 没有隐藏风险项。真正的客户导出可以只导出 Included Answers；如果需要完整透明度，Exceptions 应作为附录或审阅区出现，而不是混入答案正文。
+
+Final Pack Exceptions 标准句式：
+
+> Final Pack Exceptions: Q-006 is excluded because incident-response evidence is stale/conflicting and no valid approval exists; owner: Security Policy Owner; next action: provide current evidence or approve scoped wording.
+
+Final Pack 总结标准句式：
 
 > Final Pack includes 7 of 8 answers with evidence refs and approval trail; Q-006 is excluded because stale/conflicting evidence and missing valid approval fail the gate.
 

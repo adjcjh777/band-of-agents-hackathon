@@ -100,10 +100,14 @@ _Avoid_: pending approval as permission, mixing suggestion status into approval,
 The customer-delivery disposition of a Question Item or answer relative to the Final Pack. It uses only included, excluded, or pending: included means required evidence, review, and approval gates are satisfied; excluded means the item is deliberately kept out by a blocker or rejected approval; pending means the item is waiting on evidence, owner review, or Human Approval.
 _Avoid_: passed/failed language, silent omission, pretending pending work is complete.
 
+**Final Pack Exceptions**:
+A separate section beside the Final Pack that lists Question Items with excluded or pending Final Pack Inclusion. It shows why the item is not deliverable yet, who owns the next action, and what must change without treating the item as an included answer.
+_Avoid_: mixing exceptions into included answers, hiding blocked items, treating exceptions as customer-approved content.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.
 
 **Final Pack**:
-The customer-facing answer package produced after decomposition, evidence retrieval, drafting, review, and required human approval. It contains only answers that pass the evidence and approval gates for the sample run.
+The customer-facing answer package produced after decomposition, evidence retrieval, drafting, review, and required human approval. It contains only included answers; excluded or pending items appear separately as Final Pack Exceptions when full workflow visibility is needed.
 _Avoid_: report, chatbot answer, generated summary.
