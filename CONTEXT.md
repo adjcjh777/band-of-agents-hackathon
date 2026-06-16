@@ -44,6 +44,10 @@ _Avoid_: public chain-of-thought display, unrestricted log access, secret-bearin
 The normal TrustRoom product experience should let enterprise users, judges, and demo viewers understand the complete workflow from Human Request through Visible Handoff Chain, evidence review, human approval, Final Pack, and replay/live boundary. It can expose redacted evidence and backend-audit excerpts in context, but it is not a separate judge-only page or unrestricted backend access.
 _Avoid_: judge-only page, partial demo path, opaque final answer, secret-bearing backend access.
 
+**Full-Picture First View**:
+The first screen of the normal TrustRoom product experience. It should show the Human Request, current submission state, key blocker, and the opening steps of the Visible Handoff Chain so viewers immediately understand what happened, where the workflow stands, and how agents are collaborating.
+_Avoid_: metric wall, chat wall, disconnected executive summary.
+
 **Final Pack**:
 The customer-facing answer package produced after decomposition, evidence retrieval, drafting, review, and required human approval. It contains only answers that pass the evidence and approval gates for the sample run.
 _Avoid_: report, chatbot answer, generated summary.
