@@ -24,6 +24,10 @@ _Avoid_: simplified system, toy demo, loose workflow.
 The enterprise-facing operating standard for TrustRoom: every customer-facing answer needs traceable intent, evidence, review status, approval basis when required, and an explicit final-pack decision. The product can feel easy to use while still failing closed on missing evidence, stale evidence, overclaims, or unapproved high-risk commitments.
 _Avoid_: casual automation, best-effort answer generation, unchecked draft.
 
+**TrustRoom Business Language**:
+The controlled product language used to describe TrustRoom runs across UI, demo narration, agent handoffs, docs, and audit surfaces. It starts from the Human Request, names the acting role, shared business object, state change, evidence or approval basis, and final-pack outcome without exposing private chain-of-thought or overstating live/production readiness.
+_Avoid_: generic AI workflow, internal debug language, judge-only framing, production compliance claims.
+
 **Band Handoff**:
 A visible transfer of task context from one participant to another in the TrustRoom flow, normally expressed as an @mention, shared object reference, review decision, or state update in Band. It is the evidence that Band is coordinating the work rather than merely receiving the final answer.
 _Avoid_: background automation, notification, log entry.

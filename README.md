@@ -29,6 +29,7 @@
 - [提交清单](docs/submission-checklist.md)
 - [推荐项目概念：RFP TrustRoom](docs/project-concept.md)
 - [RFP TrustRoom PRD](docs/rfp-trustroom-prd.md)
+- [RFP TrustRoom 业务语言说明书](docs/trustroom-business-language-guide.md)
 - [RFP TrustRoom Enterprise Governed Evolution Spec](docs/superpowers/specs/2026-05-30-trustroom-governed-evolution-design.md)
 - [RFP TrustRoom 实现任务计划](docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md)
 - [Codex + Claude Code 双 Agent 协作协议](docs/dual-agent-operating-protocol.md)
