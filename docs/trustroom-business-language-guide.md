@@ -43,6 +43,7 @@
 | Handoff Evidence Detail | 单次 handoff 展开后的证据细节 | drill-down、审计证明、评委检查 | chain-of-thought、unredacted logs |
 | Rigorous Workflow | 企业级运行标准：意图、证据、审查、审批、最终纳入都可追溯 | 产品价值、企业用户说明 | casual automation、unchecked draft |
 | Full-Picture First View | 第一屏展示 Human Request、submission state、key blocker、开头 handoff | reviewer cockpit 首页 | metric wall、chat wall |
+| First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
 | Backend Audit Access | 授权后台诊断视图，展示脱敏 payload、object refs、tool outputs、timestamps、decision summaries | 运维/审计说明 | public CoT、secret dump |
@@ -56,6 +57,16 @@
 > Q-006 这个客户问题，从需求拆解到证据检索、回答起草、合规审查、人类审批阻塞和 Final Pack 排除，经历了哪些 handoff、证据状态和决策。
 
 这样用户看到的是“这个客户问题为什么能答或不能答”，评委看到的是“Band 如何让 Agent 围绕共享业务对象互相 @、交接和更新状态”。
+
+### 第一屏代表路径规则
+
+Full-Picture First View 默认不展示全部 Question Items。第一屏只展示三条代表性 Question Item 路径，用来快速说明 TrustRoom 的 outcome diversity：
+
+- ready / approved item：证明系统能产出可提交答案。
+- request_changes item：证明 agent 间存在审查、反驳和返工。
+- blocked item：证明 fail-closed gate 会阻止不安全答案进入 Final Pack。
+
+完整 Question Item 列表放在展开区或后续 section。第一屏的目标是让用户先理解全貌，而不是被全量表格淹没。
 
 ## 4. 角色命名规范
 
@@ -227,7 +238,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 
 | 层级 | 默认用户 | 展示内容 | 不展示 |
 |---|---|---|---|
-| Full-Picture First View | 企业用户、评委、demo viewer | Human Request、submission state、key blocker、开头 handoff | metric wall、raw chat wall |
+| Full-Picture First View | 企业用户、评委、demo viewer | Human Request、submission state、key blocker、三条 First-Screen Representative Paths | metric wall、raw chat wall、全量 item 表 |
 | Full-Picture Workflow View | 企业用户、评委、demo viewer | Visible Handoff Chain、evidence review、approval、Final Pack、replay/live boundary | judge-only path |
 | Handoff Evidence Detail | reviewer、评委、operator | 单次 handoff 的证据摘要、object refs、approval context | chain-of-thought、secret |
 | Backend Audit Access | 授权 operator | 脱敏 payload、tool I/O 摘要、timestamps、decision summaries | public raw logs、secret dump |

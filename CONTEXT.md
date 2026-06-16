@@ -64,6 +64,10 @@ _Avoid_: judge-only page, partial demo path, opaque final answer, secret-bearing
 The first screen of the normal TrustRoom product experience. It should show the Human Request, current submission state, key blocker, and the opening steps of the Visible Handoff Chain so viewers immediately understand what happened, where the workflow stands, and how agents are collaborating.
 _Avoid_: metric wall, chat wall, disconnected executive summary.
 
+**First-Screen Representative Paths**:
+The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
+_Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.
+
 **Final Pack**:
 The customer-facing answer package produced after decomposition, evidence retrieval, drafting, review, and required human approval. It contains only answers that pass the evidence and approval gates for the sample run.
 _Avoid_: report, chatbot answer, generated summary.
