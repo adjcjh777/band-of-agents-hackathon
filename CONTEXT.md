@@ -24,6 +24,10 @@ _Avoid_: casual automation, best-effort answer generation, unchecked draft.
 A visible transfer of task context from one participant to another in the TrustRoom flow, normally expressed as an @mention, shared object reference, review decision, or state update in Band. It is the evidence that Band is coordinating the work rather than merely receiving the final answer.
 _Avoid_: background automation, notification, log entry.
 
+**Visible Handoff Chain**:
+The user-facing view of agent-to-agent work in TrustRoom, showing who asked whom to do what, which shared object moved forward, what state changed, and what decision or blocker resulted. It should make the collaboration process visible instead of hiding the agents behind a final answer or a raw event log.
+_Avoid_: hidden agent run, raw logs only, outcome-only dashboard.
+
 **Final Pack**:
 The customer-facing answer package produced after decomposition, evidence retrieval, drafting, review, and required human approval. It contains only answers that pass the evidence and approval gates for the sample run.
 _Avoid_: report, chatbot answer, generated summary.
