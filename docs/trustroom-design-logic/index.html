@@ -464,6 +464,7 @@
         <span class="tag partial">Repair PASS: connected + token reply</span>
         <span class="tag open">Required: 3-agent chain PASS</span>
         <span class="tag open">Fixed chain: Decomposer -> Retriever -> Drafter</span>
+        <span class="tag open">Evidence schema: redacted fields only</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -580,9 +581,16 @@
     </section>
 
     <section>
+      <h2>已决策的 3-agent chain redacted evidence 字段</h2>
+      <div class="callout">
+        3-agent chain 的 redacted evidence 最小字段已固定：每个 Agent 至少保留 target agent name、attempt index、redacted room/message refs、challenge token hash 或 redacted token marker、reply seen timestamp、latency、PASS/BLOCKED status、blocker reason；不保存真实 room id、agent key、message id 或 secret 原文。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        3-agent chain 的 redacted evidence 最小字段是什么？我的推荐是每个 Agent 至少保留：target agent name、attempt index、redacted room/message refs、challenge token hash 或 redacted token marker、reply seen timestamp、latency、PASS/BLOCKED status、blocker reason；不保存真实 room id、agent key、message id 或 secret 原文。
+        3-agent chain 的证据产物如何落盘和提交？我的推荐是 full redacted JSON 继续写入 ignored `reports/`，不进 Git；若需要给 planner / judge 跟踪，只提交一份人工复核后的 sanitized summary，且必须先跑 `check_no_secrets.py`。
       </div>
     </section>
 
