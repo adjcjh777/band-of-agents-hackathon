@@ -49,6 +49,7 @@
 | Owner Review Decision | owner 对 Agent 建议的最小回应记录：decision + reason + scope | owner response、approval workbench、audit trail | reasonless decision、blanket approval、long memo |
 | Owner Review Reason | Owner Review Decision 里的短原因原文，前台不强制固定选项 | owner response、demo proof、audit trail | mandatory dropdown taxonomy、empty approval |
 | Human Approval | 允许高风险 Question Item / answer 进入 Final Pack 的正式人类 gate | approval workbench、Final Pack gate、audit trail | suggestion acceptance、informal comment、blanket approval |
+| Human Approval Record | Human Approval 的最小正式记录：approver_role + decision + scope + reason + validity | approval workbench、Final Pack gate、audit trail | scopeless approval、permanent-by-implication approval |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -145,6 +146,22 @@ Owner Review Decision 和 Human Approval 不是同一件事。
 标准句式：
 
 > Owner accepted the Agent suggestion for Q-006 as useful, but Human Approval is still missing; Q-006 remains excluded from the Final Pack until scoped approval is recorded.
+
+Human Approval Record 最少只需要 5 个字段：
+
+| Field | 含义 | 示例 |
+|---|---|---|
+| `approver_role` | 做出正式审批的业务角色 | Security Policy Owner |
+| `decision` | 正式审批结果 | `approved`, `request_changes`, or `rejected` |
+| `scope` | 审批覆盖的 Question Item、wording、evidence 边界 | Applies only to Q-006 scoped wording and evidence `EV-IR-2026`. |
+| `reason` | 一句业务原因 | Current policy supports the scoped incident-response statement. |
+| `validity` | 有效性或过期/越界状态 | valid until the policy review date; expired; out_of_scope |
+
+`scope` 防止把一句话的审批误读成整个产品承诺；`validity` 防止把当前审批误读成永久审批。
+
+标准句式：
+
+> Human Approval Record: Security Policy Owner approved Q-006 scoped wording because current incident-response policy supports it; scope is limited to evidence `EV-IR-2026`; validity ends at the next policy review.
 
 ## 4. 角色命名规范
 

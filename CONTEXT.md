@@ -88,6 +88,10 @@ _Avoid_: mandatory dropdown taxonomy, empty approval, hiding the owner’s origi
 The formal human gate that allows a high-risk Question Item or answer to enter the Final Pack within a stated scope, evidence set, and validity boundary. It is separate from Owner Review Decision; accepting an Agent suggestion does not grant Human Approval.
 _Avoid_: suggestion acceptance, informal owner comment, blanket approval.
 
+**Human Approval Record**:
+The minimum formal approval record for a high-risk Question Item or answer to enter the Final Pack. It contains approver role, decision, scope, reason, and validity, so the approval is tied to a specific business owner, wording, evidence set, and time or scope boundary.
+_Avoid_: approval without scope, permanent approval by implication, generic sign-off.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.
