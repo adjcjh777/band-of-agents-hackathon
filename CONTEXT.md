@@ -28,6 +28,14 @@ _Avoid_: background automation, notification, log entry.
 The user-facing view of agent-to-agent work in TrustRoom, showing who asked whom to do what, which shared object moved forward, what state changed, and what decision or blocker resulted. It combines a readable overview of the sequence and status with drill-down message evidence, so collaboration is visible without forcing users to parse raw logs first.
 _Avoid_: hidden agent run, raw logs only, outcome-only dashboard.
 
+**Handoff Summary**:
+The collapsed view of one Band handoff. It should only show six canonical fields: From, To, Task, Shared Object, State Change, and Result / Blocker.
+_Avoid_: crowded card, full transcript, internal trace dump.
+
+**Handoff Evidence Detail**:
+The expanded view of a handoff, used when a user or judge wants to inspect the supporting message evidence, object references, timing, decision reason, evidence freshness, or approval context behind the summary.
+_Avoid_: default raw log view, hidden proof, unrelated debug detail.
+
 **Final Pack**:
 The customer-facing answer package produced after decomposition, evidence retrieval, drafting, review, and required human approval. It contains only answers that pass the evidence and approval gates for the sample run.
 _Avoid_: report, chatbot answer, generated summary.
