@@ -44,6 +44,10 @@ _Avoid_: hidden agent run, raw logs only, outcome-only dashboard.
 The collapsed view of one Band handoff. It should only show six canonical fields: From, To, Task, Shared Object, State Change, and Result / Blocker.
 _Avoid_: crowded card, full transcript, internal trace dump.
 
+**Multi-Item Handoff**:
+A single Band Handoff whose task affects more than one Question Item. Its Handoff Summary still uses the six canonical fields, while the expanded view lists the affected Question Items and each item's evidence status, risk status, and final-pack impact.
+_Avoid_: adding extra default fields, hiding affected items, splitting one business handoff into noisy raw-message cards.
+
 **Handoff Evidence Detail**:
 The expanded view of a handoff, used when a user or judge wants to inspect the supporting message evidence, object references, timing, decision reason, evidence freshness, or approval context behind the summary.
 _Avoid_: default raw log view, hidden proof, unrelated debug detail.

@@ -39,6 +39,7 @@
 | TrustRoom Canonical Flow | Human Request -> Orchestrator -> Requirement Decomposer -> Evidence Retriever -> Answer Drafter -> Compliance Reviewer -> Human Approver -> Final Pack | 产品解释、评委路径、说明书 | internal pipeline、magic workflow |
 | Visible Handoff Chain | 用户可见的 agent-to-agent 交接链路 | Agent Handoff Chain、录屏、judge route | hidden agent run、raw logs only |
 | Handoff Summary | 单次 handoff 的折叠摘要，只含六字段 | 默认卡片、timeline compact view | full transcript、debug dump |
+| Multi-Item Handoff | 一次影响多个 Question Item 的 handoff，折叠态仍保持六字段 | batch decomposition、batch evidence retrieval、review challenge affecting multiple items | crowded default card、hidden affected items |
 | Handoff Evidence Detail | 单次 handoff 展开后的证据细节 | drill-down、审计证明、评委检查 | chain-of-thought、unredacted logs |
 | Rigorous Workflow | 企业级运行标准：意图、证据、审查、审批、最终纳入都可追溯 | 产品价值、企业用户说明 | casual automation、unchecked draft |
 | Full-Picture First View | 第一屏展示 Human Request、submission state、key blocker、开头 handoff | reviewer cockpit 首页 | metric wall、chat wall |
@@ -108,9 +109,15 @@
 | State Change | run 或 item 的业务状态变化 | `intake -> decomposition` |
 | Result / Blocker | 交接结果、阻塞原因或下一步 | 8 items created; Q-006 flagged high risk. |
 
-标准句式：
+单 item 标准句式：
 
 > `trustroom-orchestrator` @ `requirement-decomposer-agent`: decompose the Acme questionnaire into answerable items; shared object `CASE-ACME-001`; state changed from `intake` to `decomposition`; result: 8 items and 3 high-risk flags.
+
+如果一次 handoff 同时影响多个 Question Item，默认仍展示一个 Handoff Summary，不新增第七个默认字段。展开后显示 affected Question Items 列表，并为每个 item 标出 evidence status、risk status 和 Final Pack impact。
+
+多 item 标准句式：
+
+> Multi-item handoff: `requirement-decomposer-agent` @ `evidence-retriever-agent`; task: retrieve evidence for 8 questionnaire items; shared object: `Q-001..Q-008`; state changed from `decomposition` to `evidence`; result: Q-001/Q-002 current, Q-006 stale/conflicting and needs review.
 
 ## 7. Handoff Evidence Detail 展开项
 
