@@ -25,7 +25,7 @@ A visible transfer of task context from one participant to another in the TrustR
 _Avoid_: background automation, notification, log entry.
 
 **Visible Handoff Chain**:
-The user-facing view of agent-to-agent work in TrustRoom, showing who asked whom to do what, which shared object moved forward, what state changed, and what decision or blocker resulted. It should make the collaboration process visible instead of hiding the agents behind a final answer or a raw event log.
+The user-facing view of agent-to-agent work in TrustRoom, showing who asked whom to do what, which shared object moved forward, what state changed, and what decision or blocker resulted. It combines a readable overview of the sequence and status with drill-down message evidence, so collaboration is visible without forcing users to parse raw logs first.
 _Avoid_: hidden agent run, raw logs only, outcome-only dashboard.
 
 **Final Pack**:
