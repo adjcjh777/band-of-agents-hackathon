@@ -12,6 +12,10 @@ _Avoid_: starting the story from dashboards, risk matrices, governed evolution, 
 The human-originated business ask and materials that start a TrustRoom run, such as an RFP, security questionnaire, deadline, and company knowledge snippets. It is the source of intent before any agent work begins.
 _Avoid_: generic prompt, raw upload, ticket.
 
+**Request Summary**:
+The first-screen explanation of what TrustRoom understood from the Human Request. It should show customer goal, input materials, deadline, expected output, risk hints, and the agent chain being started.
+_Avoid_: hidden classifier result, vague intent label, raw upload list.
+
 **Plain Explanation**:
 A communication style for explaining TrustRoom to the project owner, judges, or enterprise users in ordinary language. It must make the workflow easier to understand without weakening the underlying evidence, approval, audit, or no-overclaim rules.
 _Avoid_: simplified system, toy demo, loose workflow.
