@@ -460,8 +460,8 @@
         <span class="tag partial">Authorized: real Band autonomous smoke</span>
         <span class="tag partial">First peer: requirement-decomposer-agent</span>
         <span class="tag partial">Budget: 5s x 3 attempts</span>
-        <span class="tag partial">After 3 BLOCKED: repair peer connectivity</span>
-        <span class="tag partial">Repair PASS: connected + token reply</span>
+        <span class="tag partial">After 3 BLOCKED: chain remains blocked</span>
+        <span class="tag partial">Separate repair PASS: connected + token reply</span>
         <span class="tag open">Required: 3-agent chain PASS</span>
         <span class="tag open">Fixed chain: Decomposer -> Retriever -> Drafter</span>
         <span class="tag open">Evidence schema: redacted fields only</span>
@@ -550,21 +550,21 @@
     <section>
       <h2>已决策的 autonomous smoke budget</h2>
       <div class="callout">
-        企业场景的 autonomous smoke 成功门槛已收紧为每次 `--timeout-seconds 5 --poll-interval-seconds 1`，最多 3 次。建议执行时每次都保存 redacted evidence；如果三次都没有 challenge-token reply，则停止重试并按 BLOCKED 处理，不做无限等待。`30s` 只可作为故障诊断等待，不再作为 PASS 门槛。
+        企业场景的 autonomous smoke 成功门槛已收紧为每次 `--timeout-seconds 5 --poll-interval-seconds 1 --max-attempts 3`。失败策略是同一 target agent 直接 fail-fast retry；如果三次都没有 challenge-token reply，则停止重试并按 BLOCKED 处理，不做无限等待。`30s` 只可作为故障诊断等待，不再作为 PASS 门槛。
       </div>
     </section>
 
     <section>
-      <h2>已决策的 BLOCKED 后处置</h2>
+      <h2>已决策的超时失败处置</h2>
       <div class="callout">
-        如果 3 次 autonomous smoke 都是 BLOCKED，立即进入 peer connectivity 修复任务。先用 Chrome/Band dashboard 确认 `requirement-decomposer-agent` connected 状态和 room 消息可见性，再修 SDK/WebSocket 接收链路；在修复前不推进视频和最终提交 claims。
+        如果 5s 内没有回复，不切换角色、不替换 peer，也不立刻做 peer repair；先对同一 target agent 进行下一次 smoke retry。原因是三人组角色定位固定，peer repair 可能改变连接/接收状态并污染这次业务链路证据。三次同角色 retry 都 BLOCKED 后，链路保持 BLOCKED，peer connectivity repair 只能作为独立基础设施诊断任务进入。
       </div>
     </section>
 
     <section>
       <h2>已决策的 peer connectivity 修复完成标准</h2>
       <div class="callout">
-        peer connectivity 修复任务的 PASS 标准必须同时包含两层：Chrome/Band dashboard 可见 `requirement-decomposer-agent` connected，且 autonomous smoke 在 5s 左右看到 challenge-token reply。只满足 dashboard connected 不能算 PASS。
+        peer connectivity repair 不是 autonomous chain 的自动兜底，也不能替代任一固定 Agent。修复任务的 PASS 标准必须同时包含两层：Chrome/Band dashboard 可见对应 target agent connected，且重新跑同一 target agent 的 autonomous smoke 在 5s 左右看到 challenge-token reply。只满足 dashboard connected 不能算 PASS。
       </div>
     </section>
 

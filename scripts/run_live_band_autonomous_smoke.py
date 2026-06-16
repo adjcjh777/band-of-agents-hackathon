@@ -184,7 +184,13 @@ def write_evidence_report(evidence: dict[str, Any], *, reports_dir: Path) -> Pat
     return path
 
 
-def run_autonomous_smoke(
+def _attempt_run_id(run_id: str, attempt_index: int) -> str:
+    if attempt_index == 1:
+        return run_id
+    return f"{run_id}-retry-{attempt_index}"
+
+
+def _run_autonomous_smoke_once(
     *,
     env: Mapping[str, str] | None = None,
     adapter_factory: AdapterFactory | None = None,
@@ -192,14 +198,13 @@ def run_autonomous_smoke(
     target_agent: str | None = None,
     timeout_seconds: float = 5.0,
     poll_interval_seconds: float = 1.0,
-    write_report: bool = True,
-    reports_dir: Path = Path("reports"),
-    run_id: str | None = None,
+    run_id: str,
+    smoke_attempt_index: int,
+    max_smoke_attempts: int,
     case_name: str = "Acme Security RFP autonomous reply smoke",
 ) -> dict[str, Any]:
     source = dict(env or os.environ)
     generated_at = datetime.now(UTC).isoformat()
-    run_id = run_id or f"live-autonomous-smoke-{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}"
     status = autonomous_credential_status(source, target_agent=target_agent)
     if not status["ready"]:
         return {
@@ -207,6 +212,8 @@ def run_autonomous_smoke(
             "mode": "live",
             "generated_at": generated_at,
             "run_id": run_id,
+            "smoke_attempt_index": smoke_attempt_index,
+            "max_smoke_attempts": max_smoke_attempts,
             "rest_smoke": _status("BLOCKED", credential_status=status),
             "band_room_evidence": _status("NOT_RUN"),
             "autonomous_replies": _status("NOT_RUN"),
@@ -222,6 +229,8 @@ def run_autonomous_smoke(
             "mode": "live",
             "generated_at": generated_at,
             "run_id": run_id,
+            "smoke_attempt_index": smoke_attempt_index,
+            "max_smoke_attempts": max_smoke_attempts,
             "target_agent": status["target_agent"],
             "rest_smoke": _status("BLOCKED", credential_status=status, blocker=str(exc)),
             "band_room_evidence": _status("NOT_RUN"),
@@ -264,6 +273,8 @@ def run_autonomous_smoke(
             "mode": "live",
             "generated_at": generated_at,
             "run_id": run_id,
+            "smoke_attempt_index": smoke_attempt_index,
+            "max_smoke_attempts": max_smoke_attempts,
             "target_agent": target,
             "rest_smoke": _status("BLOCKED", blocker=str(exc)),
             "band_room_evidence": _status("NOT_RUN"),
@@ -302,18 +313,90 @@ def run_autonomous_smoke(
         expected_token=token,
         timeout_seconds=timeout_seconds,
         poll_interval_seconds=poll_interval_seconds,
+        smoke_attempt_index=smoke_attempt_index,
+        max_smoke_attempts=max_smoke_attempts,
+        retry_strategy="fail_fast_same_agent",
         **reply_probe,
     )
-    evidence = {
+    return {
         "status": "DONE" if reply_probe["reply_seen"] else "BLOCKED",
         "mode": "live",
         "generated_at": generated_at,
         "run_id": run_id,
+        "smoke_attempt_index": smoke_attempt_index,
+        "max_smoke_attempts": max_smoke_attempts,
         "target_agent": target,
         "rest_smoke": rest_status,
         "band_room_evidence": room_status,
         "autonomous_replies": autonomous_status,
     }
+
+
+def _should_retry_autonomous_reply(evidence: Mapping[str, Any]) -> bool:
+    return (
+        evidence.get("status") == "BLOCKED"
+        and isinstance(evidence.get("rest_smoke"), Mapping)
+        and evidence["rest_smoke"].get("status") == "PASSED"
+        and isinstance(evidence.get("band_room_evidence"), Mapping)
+        and evidence["band_room_evidence"].get("status") == "PASSED"
+        and isinstance(evidence.get("autonomous_replies"), Mapping)
+        and evidence["autonomous_replies"].get("status") == "BLOCKED"
+    )
+
+
+def run_autonomous_smoke(
+    *,
+    env: Mapping[str, str] | None = None,
+    adapter_factory: AdapterFactory | None = None,
+    peer_provider: PeerProvider | None = None,
+    target_agent: str | None = None,
+    timeout_seconds: float = 5.0,
+    poll_interval_seconds: float = 1.0,
+    max_attempts: int = 3,
+    write_report: bool = True,
+    reports_dir: Path = Path("reports"),
+    run_id: str | None = None,
+    case_name: str = "Acme Security RFP autonomous reply smoke",
+) -> dict[str, Any]:
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be at least 1")
+    base_run_id = run_id or f"live-autonomous-smoke-{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}"
+    attempt_evidence: list[dict[str, Any]] = []
+    final_evidence: dict[str, Any] | None = None
+
+    for attempt_index in range(1, max_attempts + 1):
+        final_evidence = _run_autonomous_smoke_once(
+            env=env,
+            adapter_factory=adapter_factory,
+            peer_provider=peer_provider,
+            target_agent=target_agent,
+            timeout_seconds=timeout_seconds,
+            poll_interval_seconds=poll_interval_seconds,
+            run_id=_attempt_run_id(base_run_id, attempt_index),
+            smoke_attempt_index=attempt_index,
+            max_smoke_attempts=max_attempts,
+            case_name=case_name,
+        )
+        attempt_evidence.append(final_evidence)
+        if final_evidence["status"] == "DONE" or not _should_retry_autonomous_reply(final_evidence):
+            break
+
+    assert final_evidence is not None
+    evidence = dict(final_evidence)
+    evidence["run_id"] = base_run_id
+    evidence["attempts_executed"] = len(attempt_evidence)
+    evidence["max_attempts"] = max_attempts
+    evidence["retry_policy"] = _status(
+        "PASSED"
+        if final_evidence["status"] == "DONE"
+        else "EXHAUSTED"
+        if len(attempt_evidence) == max_attempts and _should_retry_autonomous_reply(final_evidence)
+        else "STOPPED",
+        strategy="fail_fast_same_agent",
+        peer_repair="diagnostic_only_after_retry_exhaustion",
+        target_agent=final_evidence.get("target_agent"),
+    )
+    evidence["attempt_evidence"] = attempt_evidence
     if write_report:
         report_path = write_evidence_report(evidence, reports_dir=reports_dir)
         evidence["report_path"] = str(report_path)
@@ -330,6 +413,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--target-agent")
     parser.add_argument("--timeout-seconds", type=float, default=5.0)
     parser.add_argument("--poll-interval-seconds", type=float, default=1.0)
+    parser.add_argument("--max-attempts", type=int, default=3)
     parser.add_argument("--no-write", action="store_true")
     return parser
 
@@ -354,6 +438,7 @@ def main(
             target_agent=target_agent,
             timeout_seconds=args.timeout_seconds,
             poll_interval_seconds=args.poll_interval_seconds,
+            max_attempts=args.max_attempts,
             write_report=not args.no_write,
             reports_dir=args.reports_dir,
         )

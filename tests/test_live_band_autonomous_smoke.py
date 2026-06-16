@@ -26,32 +26,46 @@ class FakeBandHTTPClient:
         self.reply = reply
         self.requests: list[tuple[str, dict[str, object], str]] = []
         self.get_requests: list[tuple[str, str]] = []
-        self.responses: list[dict[str, object]] = [
-            {"data": {"id": "chat-raw-id"}},
-            {"data": {"id": "participant-raw-id"}},
-            {"data": {"id": "mention-message-raw-id"}},
-        ]
+        self.chat_count = 0
+        self.participant_count = 0
+        self.message_count = 0
+        self.mentions_by_chat: dict[str, str] = {}
 
     def post(self, path: str, payload: dict[str, object], *, api_key: str) -> dict[str, object]:
         self.requests.append((path, payload, api_key))
-        if not self.responses:
-            raise AssertionError(f"no fake response queued for {path}")
-        return self.responses.pop(0)
+        if path == "/api/v1/agent/chats":
+            self.chat_count += 1
+            return {"data": {"id": f"chat-raw-id-{self.chat_count}"}}
+        if path.endswith("/participants"):
+            self.participant_count += 1
+            return {"data": {"id": f"participant-raw-id-{self.participant_count}"}}
+        if path.endswith("/messages"):
+            self.message_count += 1
+            chat_id = path.split("/chats/", 1)[1].split("/", 1)[0]
+            message = payload.get("message")
+            if isinstance(message, dict) and isinstance(message.get("content"), str):
+                self.mentions_by_chat[chat_id] = message["content"]
+            return {"data": {"id": f"mention-message-raw-id-{self.message_count}"}}
+        raise AssertionError(f"unexpected fake post path {path}")
 
     def get(self, path: str, *, api_key: str) -> dict[str, object]:
         self.get_requests.append((path, api_key))
-        token = "TRUSTROOM_AUTONOMOUS_ACK_run-autonomous"
+        chat_id = path.split("/chats/", 1)[1].split("/", 1)[0]
+        mention_content = self.mentions_by_chat[chat_id]
+        token_start = mention_content.index("TRUSTROOM_AUTONOMOUS_ACK_")
+        token_end = mention_content.index(".", token_start)
+        token = mention_content[token_start:token_end]
         messages: list[dict[str, object]] = [
             {
-                "id": "mention-message-raw-id",
+                "id": f"mention-message-raw-id-{chat_id}",
                 "sender_id": "agent-self-raw",
-                "content": f"@requirement-decomposer-agent {token}",
+                "content": mention_content,
             }
         ]
         if self.reply:
             messages.append(
                 {
-                    "id": "reply-message-raw-id",
+                    "id": f"reply-message-raw-id-{chat_id}",
                     "sender_id": "peer-decomposer-raw",
                     "content": token,
                 }
@@ -93,6 +107,7 @@ def test_autonomous_smoke_defaults_to_enterprise_latency_gate() -> None:
 
     assert args.timeout_seconds == 5.0
     assert args.poll_interval_seconds == 1.0
+    assert args.max_attempts == 3
 
 
 def test_autonomous_smoke_success_separates_rest_room_and_reply_statuses() -> None:
@@ -115,9 +130,11 @@ def test_autonomous_smoke_success_separates_rest_room_and_reply_statuses() -> No
     assert evidence["band_room_evidence"]["status"] == "PASSED"
     assert evidence["autonomous_replies"]["status"] == "PASSED"
     assert evidence["autonomous_replies"]["reply_seen"] is True
+    assert evidence["attempts_executed"] == 1
+    assert evidence["retry_policy"]["status"] == "PASSED"
     assert evidence["autonomous_replies"]["reply_message_ref"].startswith("band-ref:")
     assert fake_http.get_requests == [
-        ("/api/v1/agent/chats/chat-raw-id/messages", "dummy-key"),
+        ("/api/v1/agent/chats/chat-raw-id-1/messages", "dummy-key"),
     ]
     dumped = json.dumps(evidence)
     for raw_value in [
@@ -152,6 +169,18 @@ def test_autonomous_smoke_blocks_when_reply_never_appears() -> None:
     assert evidence["rest_smoke"]["status"] == "PASSED"
     assert evidence["band_room_evidence"]["status"] == "PASSED"
     assert evidence["autonomous_replies"]["status"] == "BLOCKED"
+    assert evidence["attempts_executed"] == 3
+    assert evidence["retry_policy"]["status"] == "EXHAUSTED"
+    assert evidence["retry_policy"]["strategy"] == "fail_fast_same_agent"
+    assert evidence["retry_policy"]["peer_repair"] == "diagnostic_only_after_retry_exhaustion"
+    assert [attempt["run_id"] for attempt in evidence["attempt_evidence"]] == [
+        "run-autonomous",
+        "run-autonomous-retry-2",
+        "run-autonomous-retry-3",
+    ]
+    assert {
+        attempt["target_agent"] for attempt in evidence["attempt_evidence"]
+    } == {"requirement-decomposer-agent"}
     assert "SDK/WebSocket" in evidence["autonomous_replies"]["blocker"]
 
 

@@ -109,10 +109,10 @@ export TRUSTROOM_BAND_PEERS_JSON='{"requirement-decomposer-agent":"@owner/requir
 
 ```bash
 uv run python scripts/run_live_band_autonomous_smoke.py --dry-run-check
-uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent
+uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent --timeout-seconds 5 --poll-interval-seconds 1 --max-attempts 3
 ```
 
-该 harness 只有在 Band messages 中看到非 @mention 消息包含挑战 token 时才返回 `DONE`；缺少凭证、peer directory、peer handle 解析失败或超时无回复都会返回 `BLOCKED`。当前本机 ignored env dry-run 仍因缺少 REST base / peer directory 返回 `BLOCKED`，不能把它描述成完整 live autonomous workflow。
+该 harness 只有在 Band messages 中看到非 @mention 消息包含挑战 token 时才返回 `DONE`；缺少凭证、peer directory、peer handle 解析失败或 3 次同 target agent 的 5s fail-fast retry 都超时无回复都会返回 `BLOCKED`。当前本机 ignored env dry-run 仍因缺少 REST base / peer directory 返回 `BLOCKED`，不能把它描述成完整 live autonomous workflow。
 
 ## 不可妥协的验收点
 

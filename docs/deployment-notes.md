@@ -73,10 +73,10 @@ Autonomous reply verification:
 
 ```bash
 uv run python scripts/run_live_band_autonomous_smoke.py --dry-run-check
-uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent
+uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent --timeout-seconds 5 --poll-interval-seconds 1 --max-attempts 3
 ```
 
-只有当 smoke 输出 `status: DONE` 且 `autonomous_replies.status: PASSED` 时，部署说明或提交材料才能说 SDK/WebSocket Remote Agent autonomous replies 已验证。
+只有当 smoke 输出 `status: DONE` 且 `autonomous_replies.status: PASSED` 时，部署说明或提交材料才能说 SDK/WebSocket Remote Agent autonomous replies 已验证。5s miss 只对同一 target agent 做 fail-fast retry；三次耗尽后保持 `BLOCKED`，peer repair 作为独立基础设施诊断，不替代 proof attempt。
 
 ## Known Blockers Before Final Submission
 

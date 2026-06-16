@@ -94,7 +94,8 @@ When the live autonomous chain is tested, full redacted JSON evidence stays unde
 Pending summary shape:
 
 - Status: `pending` until `requirement-decomposer-agent`, `evidence-retriever-agent`, and `answer-drafter-agent` each produce at least one challenge-token autonomous reply within the enterprise `5s x 3 attempts` budget. A slower reply can be recorded as diagnostic evidence, but it is not enough to mark the chain `passed`.
-- Required sanitized fields per agent: target agent name, attempt index, redacted room/message refs, challenge token hash or redacted token marker, reply seen timestamp, latency, PASS/BLOCKED status, and blocker reason.
+- Retry policy: a 5s miss retries the same target agent directly, up to 3 attempts; it must not switch roles, substitute peers or run peer repair inside the proof attempt. If all 3 same-agent attempts fail, keep the chain `BLOCKED`; peer connectivity repair becomes a separate infrastructure diagnosis before a new proof run.
+- Required sanitized fields per agent: target agent name, attempt index, redacted room/message refs, challenge token hash or redacted token marker, reply seen timestamp, latency, PASS/BLOCKED status, retry policy, and blocker reason.
 - Forbidden fields: true room id, true message id, agent key, API key, raw secret values, private logs, or customer data.
 - Public wording boundary: until all three required agents pass, keep describing the autonomous chain as `pending` or `BLOCKED`; do not call it a complete live autonomous Band workflow.
 

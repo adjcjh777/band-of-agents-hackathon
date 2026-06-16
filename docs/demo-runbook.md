@@ -69,10 +69,10 @@ Live 讲解顺序与 replay 相同，但需要额外展示 Band room 中的 @men
 
 ```bash
 uv run python scripts/run_live_band_autonomous_smoke.py --dry-run-check
-uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent
+uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent --timeout-seconds 5 --poll-interval-seconds 1 --max-attempts 3
 ```
 
-只有第二条命令返回 `DONE` 且输出中 `autonomous_replies.status` 为 `PASSED` 时，才能在录屏中说 autonomous Remote Agent replies 已验证。
+只有第二条命令返回 `DONE` 且输出中 `autonomous_replies.status` 为 `PASSED` 时，才能在录屏中说 autonomous Remote Agent replies 已验证。5s miss 只允许对同一 target agent 直接 retry；三次耗尽后保持 `BLOCKED`，不要在同一次 proof attempt 里切换角色或做 peer repair。
 
 ## Five-Minute Video Structure
 
