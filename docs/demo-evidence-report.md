@@ -87,6 +87,17 @@ Current status:
 - Not verified: SDK/WebSocket Remote Agents autonomously receiving @mentions and replying. Peer agents were still shown as Disconnected during the latest Chrome verification, and the new harness has not produced a real reply confirmation.
 - Submission wording must keep these separate: REST live boundary is verified; replay fallback is stable; complete autonomous live Band workflow remains a gate.
 
+### Future 3-Agent Autonomous Chain Summary
+
+When the live autonomous chain is tested, full redacted JSON evidence stays under ignored `reports/` and does not enter Git. This report is the canonical place for the human-reviewed sanitized summary after `check_no_secrets.py` passes.
+
+Pending summary shape:
+
+- Status: `pending` until `requirement-decomposer-agent`, `evidence-retriever-agent`, and `answer-drafter-agent` each produce at least one challenge-token autonomous reply within the `30s x 3 attempts` budget.
+- Required sanitized fields per agent: target agent name, attempt index, redacted room/message refs, challenge token hash or redacted token marker, reply seen timestamp, latency, PASS/BLOCKED status, and blocker reason.
+- Forbidden fields: true room id, true message id, agent key, API key, raw secret values, private logs, or customer data.
+- Public wording boundary: until all three required agents pass, keep describing the autonomous chain as `pending` or `BLOCKED`; do not call it a complete live autonomous Band workflow.
+
 ## Known Gaps Before Final Submission
 
 - Official deadline, exact submission fields, partner access details and submitted-competitor context must be rechecked on the official page immediately before final submission.

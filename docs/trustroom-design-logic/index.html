@@ -466,6 +466,7 @@
         <span class="tag open">Fixed chain: Decomposer -> Retriever -> Drafter</span>
         <span class="tag open">Evidence schema: redacted fields only</span>
         <span class="tag open">Storage: ignored reports + sanitized summary</span>
+        <span class="tag open">Summary target: demo-evidence-report.md</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -596,9 +597,16 @@
     </section>
 
     <section>
+      <h2>已决策的 sanitized summary 位置</h2>
+      <div class="callout">
+        sanitized summary 追加到 `docs/demo-evidence-report.md` 的 live/autonomous evidence 区域，而不是新建提交资产；这样它继承现有 no-overclaim 边界，也方便最终 runbook 和 submission checklist 引用。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        sanitized summary 应该写到哪里？我的推荐是追加到 `docs/demo-evidence-report.md` 的 live/autonomous evidence 区域，而不是新建提交资产；这样它继承现有 no-overclaim 边界，也方便最终 runbook 和 submission checklist 引用。
+        sanitized summary 什么时候可以从 `pending` 改成 `passed`？我的推荐是只有 3-agent chain 三个目标都在 30s x 3 budget 内至少一次 PASS，并且 `check_no_secrets.py` 通过后，才能把 summary 状态改成 passed。
       </div>
     </section>
 
