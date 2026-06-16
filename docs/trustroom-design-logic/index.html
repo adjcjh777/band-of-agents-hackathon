@@ -465,6 +465,7 @@
         <span class="tag open">Required: 3-agent chain PASS</span>
         <span class="tag open">Fixed chain: Decomposer -> Retriever -> Drafter</span>
         <span class="tag open">Evidence schema: redacted fields only</span>
+        <span class="tag open">Storage: ignored reports + sanitized summary</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -588,9 +589,16 @@
     </section>
 
     <section>
+      <h2>已决策的 3-agent chain 证据落盘和提交策略</h2>
+      <div class="callout">
+        full redacted JSON 继续写入 ignored `reports/`，不进 Git；若需要给 planner / judge 跟踪，只提交一份人工复核后的 sanitized summary，且必须先跑 `check_no_secrets.py`。即使是 redacted JSON，也默认当作运行证据而不是公开材料。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        3-agent chain 的证据产物如何落盘和提交？我的推荐是 full redacted JSON 继续写入 ignored `reports/`，不进 Git；若需要给 planner / judge 跟踪，只提交一份人工复核后的 sanitized summary，且必须先跑 `check_no_secrets.py`。
+        sanitized summary 应该写到哪里？我的推荐是追加到 `docs/demo-evidence-report.md` 的 live/autonomous evidence 区域，而不是新建提交资产；这样它继承现有 no-overclaim 边界，也方便最终 runbook 和 submission checklist 引用。
       </div>
     </section>
 
