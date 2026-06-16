@@ -18,6 +18,7 @@ SPEC.loader.exec_module(run_live_band_autonomous_smoke)
 
 main = run_live_band_autonomous_smoke.main
 run_autonomous_smoke = run_live_band_autonomous_smoke.run_autonomous_smoke
+build_parser = run_live_band_autonomous_smoke.build_parser
 
 
 class FakeBandHTTPClient:
@@ -85,6 +86,13 @@ def test_dry_run_missing_credentials_reports_blocked_names_without_values(capsys
     assert "BAND_AGENT_ID" in captured.out
     assert "dummy-key" not in captured.out
     assert "https://platform.dev.band.ai" not in captured.out
+
+
+def test_autonomous_smoke_defaults_to_enterprise_latency_gate() -> None:
+    args = build_parser().parse_args([])
+
+    assert args.timeout_seconds == 5.0
+    assert args.poll_interval_seconds == 1.0
 
 
 def test_autonomous_smoke_success_separates_rest_room_and_reply_statuses() -> None:

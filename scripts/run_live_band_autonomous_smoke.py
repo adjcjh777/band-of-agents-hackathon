@@ -190,8 +190,8 @@ def run_autonomous_smoke(
     adapter_factory: AdapterFactory | None = None,
     peer_provider: PeerProvider | None = None,
     target_agent: str | None = None,
-    timeout_seconds: float = 30.0,
-    poll_interval_seconds: float = 2.0,
+    timeout_seconds: float = 5.0,
+    poll_interval_seconds: float = 1.0,
     write_report: bool = True,
     reports_dir: Path = Path("reports"),
     run_id: str | None = None,
@@ -328,8 +328,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
     parser.add_argument("--reports-dir", type=Path, default=Path("reports"))
     parser.add_argument("--target-agent")
-    parser.add_argument("--timeout-seconds", type=float, default=30.0)
-    parser.add_argument("--poll-interval-seconds", type=float, default=2.0)
+    parser.add_argument("--timeout-seconds", type=float, default=5.0)
+    parser.add_argument("--poll-interval-seconds", type=float, default=1.0)
     parser.add_argument("--no-write", action="store_true")
     return parser
 

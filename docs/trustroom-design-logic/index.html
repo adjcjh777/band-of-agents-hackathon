@@ -459,7 +459,7 @@
         <span class="tag partial">Partial: REST live evidence</span>
         <span class="tag partial">Authorized: real Band autonomous smoke</span>
         <span class="tag partial">First peer: requirement-decomposer-agent</span>
-        <span class="tag partial">Budget: 30s x 3 attempts</span>
+        <span class="tag partial">Budget: 5s x 3 attempts</span>
         <span class="tag partial">After 3 BLOCKED: repair peer connectivity</span>
         <span class="tag partial">Repair PASS: connected + token reply</span>
         <span class="tag open">Required: 3-agent chain PASS</span>
@@ -550,7 +550,7 @@
     <section>
       <h2>已决策的 autonomous smoke budget</h2>
       <div class="callout">
-        首轮 autonomous smoke budget 已定为每次 `--timeout-seconds 30 --poll-interval-seconds 2`，最多 3 次。建议执行时每次都保存 redacted evidence；如果三次都没有 challenge-token reply，则停止重试并按 BLOCKED 处理，不做无限等待。
+        企业场景的 autonomous smoke 成功门槛已收紧为每次 `--timeout-seconds 5 --poll-interval-seconds 1`，最多 3 次。建议执行时每次都保存 redacted evidence；如果三次都没有 challenge-token reply，则停止重试并按 BLOCKED 处理，不做无限等待。`30s` 只可作为故障诊断等待，不再作为 PASS 门槛。
       </div>
     </section>
 
@@ -564,7 +564,7 @@
     <section>
       <h2>已决策的 peer connectivity 修复完成标准</h2>
       <div class="callout">
-        peer connectivity 修复任务的 PASS 标准必须同时包含两层：Chrome/Band dashboard 可见 `requirement-decomposer-agent` connected，且 autonomous smoke 在 30s 内看到 challenge-token reply。只满足 dashboard connected 不能算 PASS。
+        peer connectivity 修复任务的 PASS 标准必须同时包含两层：Chrome/Band dashboard 可见 `requirement-decomposer-agent` connected，且 autonomous smoke 在 5s 左右看到 challenge-token reply。只满足 dashboard connected 不能算 PASS。
       </div>
     </section>
 
@@ -606,7 +606,7 @@
     <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        sanitized summary 什么时候可以从 `pending` 改成 `passed`？我的推荐是只有 3-agent chain 三个目标都在 30s x 3 budget 内至少一次 PASS，并且 `check_no_secrets.py` 通过后，才能把 summary 状态改成 passed。
+        sanitized summary 什么时候可以从 `pending` 改成 `passed`？我的推荐是只有 3-agent chain 三个目标都在 5s x 3 budget 内至少一次 PASS，并且 `check_no_secrets.py` 通过后，才能把 summary 状态改成 passed。超过 5s 的回复可记录为诊断信息，但不能解锁企业场景 PASS。
       </div>
     </section>
 
