@@ -50,6 +50,7 @@
 | Owner Review Reason | Owner Review Decision 里的短原因原文，前台不强制固定选项 | owner response、demo proof、audit trail | mandatory dropdown taxonomy、empty approval |
 | Human Approval | 允许高风险 Question Item / answer 进入 Final Pack 的正式人类 gate | approval workbench、Final Pack gate、audit trail | suggestion acceptance、informal comment、blanket approval |
 | Human Approval Record | Human Approval 的最小正式记录：approver_role + decision + scope + reason + validity | approval workbench、Final Pack gate、audit trail | scopeless approval、permanent-by-implication approval |
+| Human Approval Decision | Human Approval Record 里的正式审批值，只能是 approved / request_changes / rejected | approval workbench、Final Pack gate、audit trail | pending-as-permission、suggestion status mixed into approval |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -162,6 +163,16 @@ Human Approval Record 最少只需要 5 个字段：
 标准句式：
 
 > Human Approval Record: Security Policy Owner approved Q-006 scoped wording because current incident-response policy supports it; scope is limited to evidence `EV-IR-2026`; validity ends at the next policy review.
+
+Human Approval Decision 只保留 3 个正式值：
+
+| Decision | 含义 | Final Pack 影响 |
+|---|---|---|
+| `approved` | 在指定 scope / validity 内允许该高风险答案进入后续 Final Pack gate | 可纳入，但仍要保持 evidence refs 和 no-overclaim 边界 |
+| `request_changes` | 需要改 wording、补 evidence 或缩小 scope | 不能纳入，回到 drafting / evidence / review |
+| `rejected` | 明确不允许当前答案进入 Final Pack | 不能纳入，保持 blocked 或另起新建议 |
+
+不要把 `proposed`、`accepted`、`needs_revision` 等 Owner Review Suggestion 状态混入 Human Approval Decision。正式 approval gate 只回答“是否允许客户交付”。
 
 ## 4. 角色命名规范
 
