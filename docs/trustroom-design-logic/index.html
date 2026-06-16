@@ -462,6 +462,7 @@
         <span class="tag partial">Budget: 30s x 3 attempts</span>
         <span class="tag partial">After 3 BLOCKED: repair peer connectivity</span>
         <span class="tag partial">Repair PASS: connected + token reply</span>
+        <span class="tag open">Required: 3-agent chain PASS</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -564,9 +565,16 @@
     </section>
 
     <section>
+      <h2>已决策的 3-agent chain gate</h2>
+      <div class="callout">
+        比赛要求是 3-agent chain，因此单 peer autonomous PASS 不能解锁视频/提交 claims。planner/tester 必须把 autonomous reply proof 扩展到 3 个 Agent 的连续链路，并用 redacted evidence 证明每个 Agent 都真实接收、处理并回复。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        单 peer autonomous PASS 后，是否必须扩展到 `evidence-retriever-agent` 和 3-agent chain 才能继续视频/提交？我的推荐是至少再跑 `evidence-retriever-agent`；若两条 peer autonomous reply 都 PASS，再把 3-agent chain 作为加分 gate，而不是阻塞公开视频。
+        3-agent chain 的最小三人组是否固定为 `requirement-decomposer-agent` -> `evidence-retriever-agent` -> `answer-drafter-agent`？我的推荐是固定这三者：它们覆盖拆解、证据、起草三段核心业务链；`compliance-review-agent` 可作为第四个强化 gate，但不替代前三段。
       </div>
     </section>
 
