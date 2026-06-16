@@ -463,6 +463,7 @@
         <span class="tag partial">After 3 BLOCKED: repair peer connectivity</span>
         <span class="tag partial">Repair PASS: connected + token reply</span>
         <span class="tag open">Required: 3-agent chain PASS</span>
+        <span class="tag open">Fixed chain: Decomposer -> Retriever -> Drafter</span>
         <span class="tag partial">Partial: Render 本轮超时未确认</span>
         <span class="tag open">Open: autonomous replies</span>
         <span class="tag open">Open: public video URL</span>
@@ -572,9 +573,16 @@
     </section>
 
     <section>
+      <h2>已决策的 3-agent chain 最小三人组</h2>
+      <div class="callout">
+        3-agent chain 的最小三人组固定为 `requirement-decomposer-agent` -> `evidence-retriever-agent` -> `answer-drafter-agent`。它们覆盖拆解、证据、起草三段核心业务链；`compliance-review-agent` 可作为第四个强化 gate，但不替代前三段。
+      </div>
+    </section>
+
+    <section>
       <h2>建议给 planner 的下一问</h2>
       <div class="callout">
-        3-agent chain 的最小三人组是否固定为 `requirement-decomposer-agent` -> `evidence-retriever-agent` -> `answer-drafter-agent`？我的推荐是固定这三者：它们覆盖拆解、证据、起草三段核心业务链；`compliance-review-agent` 可作为第四个强化 gate，但不替代前三段。
+        3-agent chain 的 redacted evidence 最小字段是什么？我的推荐是每个 Agent 至少保留：target agent name、attempt index、redacted room/message refs、challenge token hash 或 redacted token marker、reply seen timestamp、latency、PASS/BLOCKED status、blocker reason；不保存真实 room id、agent key、message id 或 secret 原文。
       </div>
     </section>
 
