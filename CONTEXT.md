@@ -80,6 +80,10 @@ _Avoid_: heavyweight workflow state machine, treating accepted as approval, forc
 The minimum owner response record for an Owner Review Suggestion. It contains decision, reason, and scope, using a short business reason rather than a long approval memo; the scope keeps any acceptance or rejection tied to a specific Question Item, wording, evidence set, or time boundary.
 _Avoid_: reasonless decision, broad blanket approval, long legal memo.
 
+**Owner Review Reason**:
+The short free-text business reason inside an Owner Review Decision. The user-facing workflow should not force fixed reason options; backend audit may derive a reason category later, while the original reason text remains visible for review.
+_Avoid_: mandatory dropdown taxonomy, empty approval, hiding the owner’s original wording.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.

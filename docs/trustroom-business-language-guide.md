@@ -47,6 +47,7 @@
 | Owner Review Suggestion | Agent 给 human/business owner 的审核建议，不是审批 | blocker next action、approval workbench、handoff detail | agent approval、automatic sign-off |
 | Owner Review Suggestion Status | Agent 建议的轻量审核状态，只跟踪建议本身 | expanded suggestion detail、audit trail | heavyweight workflow、accepted-as-approval |
 | Owner Review Decision | owner 对 Agent 建议的最小回应记录：decision + reason + scope | owner response、approval workbench、audit trail | reasonless decision、blanket approval、long memo |
+| Owner Review Reason | Owner Review Decision 里的短原因原文，前台不强制固定选项 | owner response、demo proof、audit trail | mandatory dropdown taxonomy、empty approval |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -118,6 +119,16 @@ Owner 对 Agent 建议做出 `accepted`、`rejected` 或 `needs_revision` 时，
 标准句式：
 
 > Owner Review Decision: accepted; reason: current incident-response policy covers the scoped Q-006 wording; scope: applies only to Q-006 and evidence `EV-IR-2026`, not a blanket incident-response commitment.
+
+Owner Review Reason 默认是短自由文本，不强制 owner 从固定选项里选择。后台或 audit 可以派生 reason category，但前台和 demo 应展示 reason 原文，证明这不是空审批。
+
+推荐规则：
+
+- UI：一句短 reason + scope。
+- Backend / audit：可派生 reason category。
+- Demo：展示 reason 原文。
+
+避免让 owner 先选一堆下拉分类；分类服务于审计，不应该成为第一层用户负担。
 
 ## 4. 角色命名规范
 
