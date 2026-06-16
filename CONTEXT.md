@@ -72,6 +72,10 @@ _Avoid_: latest blocker, easiest technical issue, multiple competing first-scree
 An Agent-proposed recommendation attached to a Key Blocker or Question Item for a human or business owner to review. It can suggest scoped wording, replacement evidence, approval questions, or next actions, but it does not approve the item or make it eligible for the Final Pack without owner review.
 _Avoid_: agent approval, automatic sign-off, silent final-pack inclusion.
 
+**Owner Review Suggestion Status**:
+The lightweight review state of an Owner Review Suggestion: proposed, accepted, rejected, or needs_revision. The status tracks the suggestion only; accepted means the owner accepts the recommendation as useful, not that the Question Item has final approval or Final Pack permission.
+_Avoid_: heavyweight workflow state machine, treating accepted as approval, forcing all statuses onto the first screen.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.

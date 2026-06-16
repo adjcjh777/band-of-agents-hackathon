@@ -45,6 +45,7 @@
 | Full-Picture First View | 第一屏展示 Human Request、submission state、key blocker、开头 handoff | reviewer cockpit 首页 | metric wall、chat wall |
 | Key Blocker | 第一屏展示的单个最高客户交付影响 blocker | first viewport blocker card、submission state | latest blocker、easy technical issue、multiple first-screen blockers |
 | Owner Review Suggestion | Agent 给 human/business owner 的审核建议，不是审批 | blocker next action、approval workbench、handoff detail | agent approval、automatic sign-off |
+| Owner Review Suggestion Status | Agent 建议的轻量审核状态，只跟踪建议本身 | expanded suggestion detail、audit trail | heavyweight workflow、accepted-as-approval |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -93,6 +94,17 @@ Key Blocker 的 next action 第一责任人必须是 human / business owner。Ag
 Owner Review Suggestion 标准句式：
 
 > Agent suggestion for owner review: evidence-retriever-agent found a current incident-response policy candidate and recommends the Security Policy Owner review whether it covers Q-006 scoped wording; Final Pack inclusion remains blocked until owner approval.
+
+Owner Review Suggestion 只需要 4 个轻量状态。它们用于展开区和审计，不要求第一屏展示完整状态机：
+
+| Status | 含义 | 边界 |
+|---|---|---|
+| `proposed` | Agent 已提出建议，等待 owner 审核 | 不能进入 Final Pack |
+| `accepted` | owner 接受该建议作为可用方向 | 不等于最终 approval |
+| `rejected` | owner 明确拒绝该建议 | item 继续 blocked 或返工 |
+| `needs_revision` | owner 要 Agent 补证据、改措辞或缩小 scope | 回到 evidence / drafting / review |
+
+默认 UI 只需要显示当前 status、owner、next action；完整状态历史放在展开项或 backend audit。这样底层严谨，但用户不会被流程细节拖慢。
 
 ## 4. 角色命名规范
 
