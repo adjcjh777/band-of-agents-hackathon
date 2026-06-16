@@ -35,6 +35,7 @@
 |---|---|---|---|
 | Human Request | 人类发起的业务请求和材料，包括 RFP、安全问卷、截止时间、输出要求、知识片段 | 第一屏、demo 开头、run 创建 | prompt、ticket、raw upload |
 | Request Summary | TrustRoom 对 Human Request 的业务理解摘要 | 第一屏、intake 结果、录屏主线 | classifier result、upload list |
+| Question Item / Requirement Item | TrustRoom 默认追踪的最小客户问题或需求单位 | Handoff Chain、item trace、review blocker、Final Pack inclusion | whole RFP tracking、raw chat message、anonymous agent step |
 | TrustRoom Canonical Flow | Human Request -> Orchestrator -> Requirement Decomposer -> Evidence Retriever -> Answer Drafter -> Compliance Reviewer -> Human Approver -> Final Pack | 产品解释、评委路径、说明书 | internal pipeline、magic workflow |
 | Visible Handoff Chain | 用户可见的 agent-to-agent 交接链路 | Agent Handoff Chain、录屏、judge route | hidden agent run、raw logs only |
 | Handoff Summary | 单次 handoff 的折叠摘要，只含六字段 | 默认卡片、timeline compact view | full transcript、debug dump |
@@ -44,6 +45,16 @@
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
 | Backend Audit Access | 授权后台诊断视图，展示脱敏 payload、object refs、tool outputs、timestamps、decision summaries | 运维/审计说明 | public CoT、secret dump |
+
+### Visible Handoff Chain 的追踪单位
+
+默认以 Question Item / Requirement Item 组织 handoff 链路，而不是以整份 RFP、单条聊天消息或单个 Agent run 组织。
+
+推荐展示逻辑：
+
+> Q-006 这个客户问题，从需求拆解到证据检索、回答起草、合规审查、人类审批阻塞和 Final Pack 排除，经历了哪些 handoff、证据状态和决策。
+
+这样用户看到的是“这个客户问题为什么能答或不能答”，评委看到的是“Band 如何让 Agent 围绕共享业务对象互相 @、交接和更新状态”。
 
 ## 4. 角色命名规范
 

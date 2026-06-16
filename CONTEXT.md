@@ -16,6 +16,10 @@ _Avoid_: generic prompt, raw upload, ticket.
 The first-screen explanation of what TrustRoom understood from the Human Request. It should show customer goal, input materials, deadline, expected output, risk hints, and the agent chain being started.
 _Avoid_: hidden classifier result, vague intent label, raw upload list.
 
+**Question Item**:
+The smallest customer-facing requirement or questionnaire unit that TrustRoom tracks through the Visible Handoff Chain. A Question Item carries the business question, evidence need, owner or reviewer context, risk status, and final-pack outcome, so users can understand why a specific customer ask is ready, needs changes, or is blocked.
+_Avoid_: whole RFP as the tracking unit, raw chat message, anonymous agent step.
+
 **Plain Explanation**:
 A communication style for explaining TrustRoom to the project owner, judges, or enterprise users in ordinary language. It must make the workflow easier to understand without weakening the underlying evidence, approval, audit, or no-overclaim rules.
 _Avoid_: simplified system, toy demo, loose workflow.
