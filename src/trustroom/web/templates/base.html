@@ -263,6 +263,28 @@
         margin: 8px 0;
       }
 
+      .metric-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .metric-actions a {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 7px;
+        background: #fbfcf8;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.2;
+        text-decoration: none;
+      }
+
       .metric span,
       .small {
         color: var(--muted);
@@ -273,6 +295,11 @@
       .stack {
         display: grid;
         gap: 14px;
+      }
+
+      .stack-tight {
+        display: grid;
+        gap: 8px;
       }
 
       .section {
@@ -433,6 +460,18 @@
       .suggestion-detail p,
       .suggestion-detail strong {
         overflow-wrap: anywhere;
+      }
+
+      details {
+        display: grid;
+        gap: 8px;
+      }
+
+      summary {
+        cursor: pointer;
+        color: var(--steel);
+        font-size: 13px;
+        font-weight: 750;
       }
 
       .lineage {

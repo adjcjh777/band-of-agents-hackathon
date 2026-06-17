@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from trustroom.agents.mock_runner import run_mock_trustroom
+from trustroom.customer_export import build_customer_export
 from trustroom.models import (
     AnswerDraft,
     ApprovalDecision,
@@ -66,14 +67,118 @@ def replay_run(request: Request):
     return _render_run(request, mode=ExecutionMode.REPLAY)
 
 
+@app.get("/api/runs/demo/customer-export")
+def demo_customer_export_api(include_review_appendix: bool = False) -> JSONResponse:
+    return _customer_export_response(
+        mode=ExecutionMode.MOCK,
+        include_review_appendix=include_review_appendix,
+    )
+
+
+@app.get("/api/runs/demo/replay/customer-export")
+def replay_customer_export_api(include_review_appendix: bool = False) -> JSONResponse:
+    return _customer_export_response(
+        mode=ExecutionMode.REPLAY,
+        include_review_appendix=include_review_appendix,
+    )
+
+
+@app.get("/runs/demo/customer-export")
+def demo_customer_export_page(request: Request, include_review_appendix: bool = False):
+    return _render_customer_export(
+        request,
+        mode=ExecutionMode.MOCK,
+        include_review_appendix=include_review_appendix,
+    )
+
+
+@app.get("/runs/demo/replay/customer-export")
+def replay_customer_export_page(request: Request, include_review_appendix: bool = False):
+    return _render_customer_export(
+        request,
+        mode=ExecutionMode.REPLAY,
+        include_review_appendix=include_review_appendix,
+    )
+
+
 def _render_run(request: Request, *, mode: ExecutionMode):
     context = _dashboard_context(mode=mode)
     return templates.TemplateResponse(request, "run.html", context)
 
 
-def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
+def _customer_export_response(
+    *,
+    mode: ExecutionMode,
+    include_review_appendix: bool,
+) -> JSONResponse:
+    export = _customer_export_for_mode(
+        mode=mode,
+        include_review_appendix=include_review_appendix,
+    )
+    return JSONResponse(export.model_dump(mode="json"))
+
+
+def _render_customer_export(
+    request: Request,
+    *,
+    mode: ExecutionMode,
+    include_review_appendix: bool,
+):
+    export = _customer_export_for_mode(
+        mode=mode,
+        include_review_appendix=include_review_appendix,
+    )
+    return templates.TemplateResponse(
+        request,
+        "customer_export.html",
+        {
+            "title": "RFP TrustRoom · Customer Export",
+            "export": export,
+            "mode_label": mode.value.upper(),
+            "is_replay": mode == ExecutionMode.REPLAY,
+            "dashboard_path": "/runs/demo/replay" if mode == ExecutionMode.REPLAY else "/runs/demo",
+            "appendix_toggle_path": _customer_export_path(
+                mode=mode,
+                include_review_appendix=not include_review_appendix,
+            ),
+            "api_path": _customer_export_api_path(
+                mode=mode,
+                include_review_appendix=include_review_appendix,
+            ),
+            "include_review_appendix": include_review_appendix,
+            "sample_boundary": "Sample evidence is fictional and redacted; it demonstrates review traceability, not a formal audit.",
+        },
+    )
+
+
+def _customer_export_for_mode(
+    *,
+    mode: ExecutionMode,
+    include_review_appendix: bool,
+):
+    result = _mock_result_for_mode(mode=mode)
+    return build_customer_export(
+        result,
+        include_review_appendix=include_review_appendix,
+    )
+
+
+def _mock_result_for_mode(*, mode: ExecutionMode):
     sample = load_default_sample_pack()
     result = run_mock_trustroom(sample)
+    if mode != ExecutionMode.REPLAY:
+        return result
+    return result.model_copy(
+        update={
+            "run": result.run.model_copy(update={"mode": ExecutionMode.REPLAY}),
+            "final_pack": result.final_pack.model_copy(update={"mode": ExecutionMode.REPLAY}),
+        }
+    )
+
+
+def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
+    sample = load_default_sample_pack()
+    result = _mock_result_for_mode(mode=mode)
     case = sample.case
     question_by_id = {question.item_id: question for question in result.questions}
     draft_by_item_id = {draft.item_id: draft for draft in result.drafts}
@@ -349,6 +454,18 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "risk_register": risk_register,
         "final_pack": result.final_pack,
         "review_appendix_visibility_mode": result.final_pack.visibility_mode.value,
+        "customer_export_path": _customer_export_path(
+            mode=mode,
+            include_review_appendix=False,
+        ),
+        "customer_export_appendix_path": _customer_export_path(
+            mode=mode,
+            include_review_appendix=True,
+        ),
+        "customer_export_api_path": _customer_export_api_path(
+            mode=mode,
+            include_review_appendix=True,
+        ),
         "owner_review_suggestions": [
             {
                 "suggestion_id": suggestion.suggestion_id,
@@ -369,6 +486,20 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "timeline": timeline,
         "evolution_events": evolution_events,
     }
+
+
+def _customer_export_path(*, mode: ExecutionMode, include_review_appendix: bool) -> str:
+    path = "/runs/demo/replay/customer-export" if mode == ExecutionMode.REPLAY else "/runs/demo/customer-export"
+    if include_review_appendix:
+        return f"{path}?include_review_appendix=true"
+    return path
+
+
+def _customer_export_api_path(*, mode: ExecutionMode, include_review_appendix: bool) -> str:
+    path = "/api/runs/demo/replay/customer-export" if mode == ExecutionMode.REPLAY else "/api/runs/demo/customer-export"
+    if include_review_appendix:
+        return f"{path}?include_review_appendix=true"
+    return path
 
 
 def _decision_state(

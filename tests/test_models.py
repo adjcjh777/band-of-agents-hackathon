@@ -28,6 +28,7 @@ from trustroom.models import (
     ProposalType,
     QuestionCategory,
     QuestionItem,
+    ReviewAppendixExceptionItem,
     ReviewDecision,
     ReviewStatus,
     RiskLevel,
@@ -110,6 +111,17 @@ def test_owner_review_suggestion_starts_as_proposed() -> None:
     assert suggestion.status == OwnerReviewSuggestionStatus.PROPOSED
     assert suggestion.suggested_evidence_ids == ["EV-013"]
     assert suggestion.replaces_evidence_ids == ["EV-006", "EV-010"]
+
+
+def test_review_appendix_exception_rejects_included_inclusion() -> None:
+    with pytest.raises(ValidationError):
+        ReviewAppendixExceptionItem(
+            question_item="Q-006",
+            inclusion="included",
+            reason_or_blocker="Included items must stay in the answer body, not exceptions.",
+            owner="Security Policy Owner",
+            next_action="No action.",
+        )
 
 
 def test_confidence_must_be_between_zero_and_one() -> None:

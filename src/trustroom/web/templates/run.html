@@ -66,6 +66,10 @@
       <h2>Final Pack</h2>
       <strong>{{ final_pack.included_answer_ids|length }}</strong>
       <span>{{ final_pack.blocked_item_ids|length }} blocker kept outside · appendix {{ review_appendix_visibility_mode }}</span>
+      <div class="metric-actions">
+        <a href="{{ customer_export_path }}">Customer Export</a>
+        <a href="{{ customer_export_appendix_path }}">With Appendix</a>
+      </div>
     </div>
   </section>
 
@@ -447,6 +451,7 @@
         <p class="small">
           {{ mode_label }} view uses redacted event references and preserves the same readiness, evidence, approval and final pack shape expected from the live Band path. Replay is a fallback, not live Band.
         </p>
+        <p class="small">Customer Export API: {{ customer_export_api_path }}</p>
         <p class="small">{{ sample_boundary }}</p>
       </section>
     </div>

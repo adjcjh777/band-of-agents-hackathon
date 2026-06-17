@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="hero run-hero">
+    <div>
+      <span class="mode {% if is_replay %}replay{% endif %}">{{ mode_label }}</span>
+      <h1>Customer Export</h1>
+      <p class="subcopy">
+        {{ export.export_id }} · {{ export.answer_body|length }} included answers · Final Pack {{ export.final_pack_id }}
+      </p>
+    </div>
+  </section>
+
+  <section class="decision-strip {% if export.review_appendix %}review{% else %}ready{% endif %}" aria-label="Customer export decision">
+    <div>
+      <span class="eyebrow">Export body</span>
+      <h2>Included Answers only</h2>
+      <p>Blocked or pending items stay outside the customer-submittable answer body.</p>
+    </div>
+    <div class="stack-tight">
+      <span class="eyebrow">Review Appendix</span>
+      {% if export.review_appendix %}
+        <p>{{ export.review_appendix.visibility_mode.value }} · not customer-submittable</p>
+      {% else %}
+        <p>Omitted until an owner export record is present.</p>
+      {% endif %}
+      <div class="tag-row">
+        <a class="button" href="{{ dashboard_path }}">Dashboard</a>
+        <a class="button" href="{{ appendix_toggle_path }}">
+          {% if include_review_appendix %}Hide Appendix{% else %}Show Appendix{% endif %}
+        </a>
+        <a class="button" href="{{ api_path }}">JSON</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section two-col">
+    <div class="panel">
+      <div class="row-topline">
+        <h2>Answer Body</h2>
+        <span class="status ready">{{ export.answer_body|length }} included</span>
+      </div>
+      {% for answer in export.answer_body %}
+        <article class="row export-answer">
+          <div class="row-topline">
+            <span class="status ready">{{ answer.item_id }}</span>
+            <span class="small">rollup {{ answer.freshness_rollup.value }}</span>
+          </div>
+          <h3>{{ answer.question }}</h3>
+          <p class="answer-draft">{{ answer.answer_text }}</p>
+          <div class="trace compact" aria-label="{{ answer.item_id }} customer export refs">
+            {% for ref in answer.evidence_refs %}
+              <span>{{ ref }}</span>
+            {% endfor %}
+            {% for ref in answer.approval_refs %}
+              <span>{{ ref }}</span>
+            {% endfor %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    <div class="panel">
+      <div class="row-topline">
+        <h2>Review Appendix</h2>
+        {% if export.review_appendix %}
+          <span class="status review">{{ export.review_appendix.visibility_mode.value }}</span>
+        {% else %}
+          <span class="status ready">omitted</span>
+        {% endif %}
+      </div>
+
+      {% if export.review_appendix_export_record %}
+        <section class="appendix-detail">
+          <span class="eyebrow">Export record</span>
+          <strong>{{ export.review_appendix_export_record.record_id }} · {{ export.review_appendix_export_record.decision.value }}</strong>
+          <p class="small">Owner: {{ export.review_appendix_export_record.owner_role }}</p>
+          <p class="small">Reason: {{ export.review_appendix_export_record.reason }}</p>
+          <p class="small">Scope: {{ export.review_appendix_export_record.scope }}</p>
+        </section>
+      {% endif %}
+
+      {% if export.review_appendix %}
+        {% for item in export.review_appendix.exceptions %}
+          <article class="row export-exception">
+            <div class="row-topline">
+              <span class="status blocked">{{ item.question_item }}</span>
+              <span class="small">{{ item.inclusion }} · not customer-submittable</span>
+            </div>
+            <p class="small"><strong>Owner:</strong> {{ item.owner }}</p>
+            <p class="small"><strong>Blocker:</strong> {{ item.reason_or_blocker }}</p>
+            <p class="small"><strong>Next:</strong> {{ item.next_action }}</p>
+            {% if item.detail %}
+              <details>
+                <summary>Appendix detail</summary>
+                <div class="appendix-detail">
+                  <p class="small">{{ item.detail.supporting_agent }} · {{ item.detail.handoff_summary }}</p>
+                  <p class="small">{{ item.detail.decision_reason_detail }}</p>
+                  <div class="trace compact" aria-label="{{ item.question_item }} appendix evidence refs">
+                    {% for evidence in item.detail.evidence_references %}
+                      <span>{{ evidence.ref }} · {{ evidence.freshness_label.value }}</span>
+                    {% endfor %}
+                  </div>
+                  <div class="trace compact" aria-label="{{ item.question_item }} redacted audit refs">
+                    {% for ref in item.detail.redacted_audit_refs %}
+                      <span>{{ ref }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+              </details>
+            {% endif %}
+          </article>
+        {% endfor %}
+      {% else %}
+        <p class="small">No appendix is attached to this customer export.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <p class="footer-note">
+    {{ sample_boundary }} Hackathon demo / working prototype only.
+  </p>
+{% endblock %}

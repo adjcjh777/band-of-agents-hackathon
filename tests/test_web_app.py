@@ -181,6 +181,65 @@ def test_replay_route_surfaces_review_appendix_visibility_and_owner_suggestion()
     assert "raw customer policy text" not in response.text
 
 
+def test_customer_export_api_defaults_to_included_answer_body_only() -> None:
+    response = client.get("/api/runs/demo/replay/customer-export")
+
+    assert response.status_code == 200
+    payload = response.json()
+    item_ids = {answer["item_id"] for answer in payload["answer_body"]}
+
+    assert payload["mode"] == "replay"
+    assert payload["review_appendix"] is None
+    assert payload["review_appendix_export_record"] is None
+    assert "Q-006" not in item_ids
+    assert "Q-004" in item_ids
+    assert "should not commit to an incident-response notification target" not in str(payload["answer_body"])
+
+
+def test_customer_export_api_includes_customer_safe_appendix_only_when_requested() -> None:
+    response = client.get("/api/runs/demo/replay/customer-export?include_review_appendix=true")
+
+    assert response.status_code == 200
+    payload = response.json()
+    q6_exception = next(
+        item
+        for item in payload["review_appendix"]["exceptions"]
+        if item["question_item"] == "Q-006"
+    )
+
+    assert payload["review_appendix"]["visibility_mode"] == "customer-safe"
+    assert payload["review_appendix"]["not_customer_submittable"] is True
+    assert payload["review_appendix_export_record"]["decision"] == "include_appendix"
+    assert payload["review_appendix_export_record"]["owner_role"] == "Security Policy Owner"
+    assert q6_exception["inclusion"] == "excluded"
+    assert q6_exception["owner"] == "Security Policy Owner"
+    assert "conflicting evidence EV-010 blocks final pack entry" in q6_exception["reason_or_blocker"]
+    assert "should not commit to an incident-response notification target" not in str(payload["answer_body"])
+
+
+def test_customer_export_page_keeps_appendix_out_by_default() -> None:
+    response = client.get("/runs/demo/replay/customer-export")
+
+    assert response.status_code == 200
+    assert "Customer Export" in response.text
+    assert "Included Answers only" in response.text
+    assert "No appendix is attached to this customer export." in response.text
+    assert "A current SOC 2 Type II summary is available for approved prospects" in response.text
+    assert "should not commit to an incident-response notification target" not in response.text
+
+
+def test_customer_export_page_marks_requested_appendix_as_non_submittable() -> None:
+    response = client.get("/runs/demo/replay/customer-export?include_review_appendix=true")
+
+    assert response.status_code == 200
+    assert "Review Appendix" in response.text
+    assert "not customer-submittable" in response.text
+    assert "RAER-CE-ACME-v1" in response.text
+    assert "Q-006" in response.text
+    assert "EV-013 · current" in response.text
+    assert "should not commit to an incident-response notification target" not in response.text
+
+
 def test_replay_route_provides_judge_recording_anchor_navigation() -> None:
     response = client.get("/runs/demo/replay")
 

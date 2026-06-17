@@ -374,6 +374,20 @@ Customer Export 默认规则：
 | Customer Export answer body | Included Answers only | 不放入正文 |
 | Review Appendix | 可选透明度附录 | 每个 exception 必须标记 `not customer-submittable` |
 
+Customer Export API / renderer 合同：
+
+| Endpoint / View | 默认行为 | 显式附录行为 |
+|---|---|---|
+| `/api/runs/demo/customer-export` | `answer_body` 只包含 `included_answer_ids`；`review_appendix` 为 `null` | `?include_review_appendix=true` 时附带 `customer-safe` Review Appendix 和 Review Appendix Export Record |
+| `/api/runs/demo/replay/customer-export` | 与 mock contract 相同，但 `mode` 标记为 `replay` | 用于评委复看 replay fallback；不得宣称 live Band proof |
+| `/runs/demo/.../customer-export` | HTML renderer 只渲染 Included Answers 正文 | 可展开附录只展示 exception fields、freshness labels、redacted audit refs |
+
+工程实现必须保持三条不变量：
+
+- `CustomerExport.answer_body` 只能由 `FinalSubmissionPack.included_answer_ids` 生成。
+- `ReviewAppendix.exceptions` 只能解释 `blocked_item_ids` / `pending` 项，且必须标记 `not_customer_submittable`。
+- `ReviewAppendixExportRecord` 只控制附录可见性，不改变任何 Final Pack Inclusion，也不能让 blocked draft 文本进入客户正文。
+
 Review Appendix 标准句式：
 
 > Review Appendix: Q-006 is not customer-submittable; it is excluded from the answer body until the Security Policy Owner provides current evidence or approves scoped wording.

@@ -10,6 +10,8 @@ from pydantic import BaseModel, ConfigDict, Field
 ReadinessSummary = Literal["ready", "needs_review", "blocked"]
 Visibility = Literal["judge_view", "technical_appendix"]
 LineageStage = Literal["question", "evidence", "draft", "review", "approval", "final_pack"]
+FinalPackInclusion = Literal["included", "excluded", "pending"]
+FinalPackExceptionInclusion = Literal["excluded", "pending"]
 
 
 class TrustRoomModel(BaseModel):
@@ -63,6 +65,11 @@ class EvidenceFreshness(str, Enum):
 class ReviewAppendixVisibilityMode(str, Enum):
     CUSTOMER_SAFE = "customer-safe"
     INTERNAL_REVIEW = "internal-review"
+
+
+class ReviewAppendixExportDecisionValue(str, Enum):
+    INCLUDE_APPENDIX = "include_appendix"
+    OMIT_APPENDIX = "omit_appendix"
 
 
 class ReviewStatus(str, Enum):
@@ -298,6 +305,70 @@ class FinalSubmissionPack(TrustRoomModel):
     visibility_mode: ReviewAppendixVisibilityMode = ReviewAppendixVisibilityMode.CUSTOMER_SAFE
     audit_event_ids: list[str] = Field(default_factory=list)
     mode: ExecutionMode
+
+
+class CustomerExportAnswer(TrustRoomModel):
+    item_id: str
+    answer_id: str
+    question: str
+    answer_text: str
+    evidence_refs: list[str] = Field(default_factory=list)
+    approval_refs: list[str] = Field(default_factory=list)
+    freshness_rollup: EvidenceFreshness
+    final_pack_inclusion: FinalPackInclusion = "included"
+
+
+class ReviewAppendixEvidenceReference(TrustRoomModel):
+    ref: str
+    freshness_label: EvidenceFreshness
+    freshness_marked_by: str
+    freshness_marked_at: datetime
+
+
+class ReviewAppendixExceptionDetail(TrustRoomModel):
+    supporting_agent: str
+    evidence_references: list[ReviewAppendixEvidenceReference] = Field(default_factory=list)
+    handoff_summary: str
+    decision_reason_detail: str
+    timestamp: datetime = Field(default_factory=utc_now)
+    redacted_audit_refs: list[str] = Field(default_factory=list)
+
+
+class ReviewAppendixExceptionItem(TrustRoomModel):
+    question_item: str
+    inclusion: FinalPackExceptionInclusion
+    reason_or_blocker: str
+    owner: str
+    next_action: str
+    detail: ReviewAppendixExceptionDetail | None = None
+
+
+class ReviewAppendix(TrustRoomModel):
+    visibility_mode: ReviewAppendixVisibilityMode = ReviewAppendixVisibilityMode.CUSTOMER_SAFE
+    not_customer_submittable: bool = True
+    exceptions: list[ReviewAppendixExceptionItem] = Field(default_factory=list)
+
+
+class ReviewAppendixExportRecord(TrustRoomModel):
+    record_id: str
+    export_id: str
+    decision: ReviewAppendixExportDecisionValue
+    owner_role: str
+    reason: str
+    scope: str
+    visibility_mode: ReviewAppendixVisibilityMode = ReviewAppendixVisibilityMode.CUSTOMER_SAFE
+    decided_at: datetime = Field(default_factory=utc_now)
+
+
+class CustomerExport(TrustRoomModel):
+    export_id: str
+    run_id: str
+    final_pack_id: str
+    generated_at: datetime = Field(default_factory=utc_now)
+    mode: ExecutionMode
+    answer_body: list[CustomerExportAnswer] = Field(default_factory=list)
+    review_appendix: ReviewAppendix | None = None
+    review_appendix_export_record: ReviewAppendixExportRecord | None = None
 
 
 class LineageStep(TrustRoomModel):
