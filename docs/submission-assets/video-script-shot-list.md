@@ -6,7 +6,7 @@ Status: draft-ready for recording. Record the public-safe replay route from the 
 
 0:00-0:20 Hook / pain
 - Visual: cover image or slide 1.
-- Say: B2B RFP and security questionnaires are not one chatbot or one audit dashboard problem; they are cross-team evidence, wording, approval and final-pack decision workflows.
+- Say: B2B RFP and security questionnaires are not one chatbot or one audit dashboard problem; they are cross-team evidence, wording, approval and final-pack decision workflows. RFP TrustRoom makes every answer carry evidence, review, approval and final-pack decision context, so risky commitments stay out of the customer package.
 
 0:20-0:45 Solution / roles
 - Visual: Band coordination layer slide.
@@ -38,7 +38,7 @@ Status: draft-ready for recording. Record the public-safe replay route from the 
 
 4:35-5:00 Boundary / value
 - Visual: replay/live boundary and no-overclaim footer.
-- Say: This is a hackathon working prototype. Replay is the public-safe fallback. Band REST room and handoff boundary were separately verified; autonomous live replies remain a separate gate. The value is the final-pack decision: the room shows what is safe to send and what must wait for policy-owner approval.
+- Say: This is a hackathon working prototype. Replay is the public-safe fallback. Band REST room and handoff boundary were separately verified; autonomous live replies remain a separate gate. The value is the final-pack decision: every answer keeps evidence, review and approval context attached, so the room shows what is safe to send and what must wait for policy-owner approval.
 
 ## Recording notes
 

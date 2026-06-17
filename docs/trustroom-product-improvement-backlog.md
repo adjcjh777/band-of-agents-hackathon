@@ -13,7 +13,7 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 | Priority | ID | Work item | Product outcome | Owner | Status |
 |---|---|---|---|---|---|
 | P0 | PM-01 | Make Final Pack Decision the primary product moment | A reviewer instantly sees what can be sent, what is held back and who must unblock it | Codex controller | complete |
-| P0 | PM-02 | Compress the product promise into one verifiable sentence | All public copy and video narration align around evidence, review, approval and safe final-pack decision | Codex controller | queued |
+| P0 | PM-02 | Compress the product promise into one verifiable sentence | All public copy and video narration align around evidence, review, approval and safe final-pack decision | Codex controller | complete |
 | P0 | PM-03 | Turn Q-006 into the memorable buyer-safe story | The demo's strongest moment is the unsafe answer being excluded, not merely flagged | Codex controller + UI/UX review | queued |
 | P1 | PM-04 | Add responsibility / SLA / next-step queue semantics | The dashboard feels like a workbench teams can use the next morning | Codex controller | queued |
 | P1 | PM-05 | Make Approval Workbench read like an approval product | Reviewers see scope, expiry, allowed wording, prohibited wording, evidence refs and owner | Codex controller | queued |
@@ -47,14 +47,16 @@ Acceptance:
 
 ### PM-02 Compress The Product Promise Into One Verifiable Sentence
 
+Status: complete in PM-R2.
+
 Goal: align README, submission copy, video script and dashboard around the same promise:
 
 > Every answer carries evidence, review, approval and final-pack decision context, so risky commitments stay out of the customer package.
 
 Acceptance:
 
-- Submission copy and video script use this frame or an equivalent sentence.
-- No formal audit / production compliance language is introduced.
+- [x] Submission copy and video script use this frame or an equivalent sentence.
+- [x] No formal audit / production compliance language is introduced.
 
 ### PM-03 Turn Q-006 Into The Memorable Buyer-Safe Story
 
