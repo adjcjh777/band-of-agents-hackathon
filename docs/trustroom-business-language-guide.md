@@ -56,7 +56,8 @@
 | Customer Export | 从 Final Pack 生成的客户可提交输出；正文默认只含 Included Answers | customer-facing export、submission body | blocked / pending items in answer body、unmarked exceptions |
 | Review Appendix | Customer Export 或 reviewer package 里的非提交附录，用于透明展示 Final Pack Exceptions | customer transparency appendix、internal review package | unlabeled exception list、customer-submittable answer body |
 | Review Appendix Exception Item | Review Appendix 中单个 excluded / pending Question Item 的最小可见记录 | appendix item、reviewer view、customer transparency | raw log row、included answer、customer-submittable content |
-| Review Appendix Exception Detail | Review Appendix Exception Item 的展开详情，可展示 supporting_agent、evidence refs、handoff summary、redacted audit refs | appendix drill-down、reviewer view、judge inspection | supporting_agent in collapsed item、raw logs |
+| Review Appendix Exception Detail | Review Appendix Exception Item 的展开详情，可展示 supporting_agent、Review Appendix Evidence Reference、handoff summary、redacted audit refs | appendix drill-down、reviewer view、judge inspection | supporting_agent in collapsed item、raw logs |
+| Review Appendix Evidence Reference | Review Appendix Exception Detail 里的 public-safe / redacted evidence pointer | appendix drill-down、evidence trail、judge inspection | raw customer docs、secret-bearing refs、unredacted ids |
 | Review Appendix Exception Owner | Review Appendix Exception Item 下一步动作的 accountable human / business owner | appendix item、reviewer view、next action | agent owner、automated accountability |
 | Review Appendix Export Decision | human/business owner 对是否随 Customer Export 附带 Review Appendix 的显式决定；只控制附录可见性，不审批答案 | export settings、customer transparency、audit trail | agent-added appendix、appendix as approval |
 | Review Appendix Export Record | Review Appendix Export Decision 的最小审计记录：decision、owner_role、reason、scope | export settings、audit trail、customer transparency | reasonless inclusion、agent-only export setting |
@@ -384,7 +385,7 @@ Review Appendix Exception Item 标准句式：
 Review Appendix Exception Detail 可展示：
 
 - `supporting_agent`
-- evidence refs
+- Review Appendix Evidence Reference
 - handoff summary
 - decision reason detail
 - timestamp / elapsed time
@@ -392,9 +393,23 @@ Review Appendix Exception Detail 可展示：
 
 Review Appendix Exception Detail 仍然不能展示 raw logs、chain-of-thought、secret、真实 room id、agent key 或未脱敏 provider metadata。`supporting_agent` 只能说明谁提供了证据、建议或 handoff，不进入折叠态，也不改变 `owner`。
 
+Review Appendix Evidence Reference 只能展示 public-safe / redacted refs：
+
+| Allowed ref type | 示例 |
+|---|---|
+| sanitized evidence id | `EV-IR-2026` |
+| redacted Band / audit ref | `band-ref:*` |
+| document section pointer without private content | `policy:incident-response#review-date` |
+
+Review Appendix Evidence Reference 不能展示 raw customer docs、private file content、secret、真实 room id、agent key 或未脱敏 provider metadata。它证明“证据链存在并可追溯”，不是把证据原文直接交给客户或评委。
+
+Review Appendix Evidence Reference 标准句式：
+
+> Review Appendix Evidence Reference: Q-006 uses `EV-IR-2026` and redacted `band-ref:*`; raw customer policy text is not shown.
+
 Review Appendix Exception Detail 标准句式：
 
-> Review Appendix Exception Detail: supporting_agent evidence-retriever-agent provided evidence refs `EV-IR-2026` and flagged stale/conflicting policy dates; owner remains Security Policy Owner.
+> Review Appendix Exception Detail: supporting_agent evidence-retriever-agent provided Review Appendix Evidence Reference `EV-IR-2026` and redacted `band-ref:*`, then flagged stale/conflicting policy dates; owner remains Security Policy Owner.
 
 Review Appendix Exception Owner 责任规则：
 
@@ -497,7 +512,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 | 阻塞 | Q-006 stays out of the Final Pack because evidence is stale/conflicting and no valid approval exists. | The system failed Q-006. |
 | 客户导出 | Customer Export answer body contains only Included Answers; Q-006 appears only in the Review Appendix as not customer-submittable. | Customer Export includes all questions, including blocked drafts. |
 | 附录单项 | Review Appendix Exception Item: Q-006; inclusion: `excluded`; owner: Security Policy Owner; next_action: provide current evidence. | Show the raw agent logs for Q-006. |
-| 附录展开 | Review Appendix Exception Detail: supporting_agent evidence-retriever-agent provided evidence refs; owner remains Security Policy Owner. | Add supporting_agent to the collapsed exception item. |
+| 附录展开 | Review Appendix Exception Detail: supporting_agent evidence-retriever-agent provided public-safe refs `EV-IR-2026` and redacted `band-ref:*`; owner remains Security Policy Owner. | Add supporting_agent to the collapsed exception item or show raw customer docs. |
 | 附录责任 | Review Appendix Exception Owner: Security Policy Owner owns Q-006 next action; supporting_agent: evidence-retriever-agent. | owner: evidence-retriever-agent. |
 | 导出附录 | Review Appendix Export Record: `include_appendix`; owner_role: Security Policy Owner; scope: Customer Export `CE-ACME-v1`, Q-006 only. | Agent automatically attached blocked items to the Customer Export. |
 | 记录复用 | Customer Export `CE-ACME-v2` changed evidence refs, so the previous Review Appendix Export Record is not valid and a new owner decision is required. | Reuse the last appendix decision for the updated export. |
@@ -515,6 +530,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 - Customer Export answer body 是否只包含 Included Answers，且 Review Appendix 是否标记 `not customer-submittable`？
 - Review Appendix Exception Item 是否包含 `question_item`、`inclusion`、`reason_or_blocker`、`owner`、`next_action`？
 - `supporting_agent` 是否只出现在 Review Appendix Exception Detail，而不是折叠态 Exception Item？
+- Review Appendix Evidence Reference 是否只展示 public-safe / redacted refs，且不包含 raw docs、secret、真实 room id / agent key？
 - Review Appendix Exception Item 的 `owner` 是否是 accountable human / business owner，而不是 Agent？
 - Review Appendix 是否有 human / business owner 的显式 Export Decision，而不是 Agent 自动附加？
 - Review Appendix Export Record 是否包含 `decision`、`owner_role`、`reason`、`scope`？
