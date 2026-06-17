@@ -416,6 +416,17 @@
               <div class="row-topline">
                 <strong>Question → Evidence → Draft → Review → Approval → Final Pack</strong>
               </div>
+              <div class="business-lineage" aria-label="{{ answer.item_id }} business lineage readout">
+                <span class="eyebrow">Business readout</span>
+                <div class="lineage-business-grid">
+                  {% for item in answer.business_lineage %}
+                    <article class="business-lineage-card">
+                      <strong>{{ item.label }}</strong>
+                      <p class="small">{{ item.text }}</p>
+                    </article>
+                  {% endfor %}
+                </div>
+              </div>
               <div class="lineage-grid">
                 {% for step in answer.lineage_steps %}
                   <article class="lineage-step {{ step.stage }}">

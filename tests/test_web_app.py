@@ -171,6 +171,19 @@ def test_replay_route_surfaces_answer_lineage_drilldown() -> None:
     assert response.status_code == 200
     assert "Evidence lineage" in response.text
     assert "Question → Evidence → Draft → Review → Approval → Final Pack" in response.text
+    assert "Business readout" in response.text
+    assert "Question answered" in response.text
+    assert "Evidence confidence" in response.text
+    assert "Review / approval" in response.text
+    assert "Risk contained" in response.text
+    assert "SME Approver approved scoped wording" in response.text
+    assert "Legal Reviewer approved scoped wording" in response.text
+    assert "Security owns Q-006; support request, high risk" in response.text
+    assert "Evidence mix includes conflicting, stale refs; freshness rollup is conflicting" in response.text
+    assert "requires human approval; no valid scoped approval is attached yet." in response.text
+    assert "Final pack excluded" in response.text
+    assert "stale evidence, conflicting evidence and missing scoped human approval keep this answer out" in response.text
+    assert "Needs human approval" in response.text
     assert "Question intake" in response.text
     assert "Customer-safe draft" in response.text
     assert "Human approval" in response.text

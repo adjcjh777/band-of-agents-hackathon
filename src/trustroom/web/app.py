@@ -244,6 +244,15 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
             for candidate in item_evidence
         ]
         final_pack_status = "included" if status == "ready" else "excluded"
+        final_pack_reason = _final_pack_reason(
+            status=status,
+            risk=question.risk_level.value,
+            approval_role=approval.reviewer_role if approval else None,
+            approval_reason=approval.reason if approval else None,
+            gate_reasons=gate.reasons,
+            freshness=freshness,
+            freshness_rollup=gate.freshness_rollup.value,
+        )
         lineage = lineage_by_item_id[draft.item_id]
         suggestion_card = (
             {
@@ -290,15 +299,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                 "visibility_mode": result.final_pack.visibility_mode.value,
                 "final_pack_status": final_pack_status,
                 "gate_reasons": gate.reasons,
-                "final_pack_reason": _final_pack_reason(
-                    status=status,
-                    risk=question.risk_level.value,
-                    approval_role=approval.reviewer_role if approval else None,
-                    approval_reason=approval.reason if approval else None,
-                    gate_reasons=gate.reasons,
-                    freshness=freshness,
-                    freshness_rollup=gate.freshness_rollup.value,
-                ),
+                "final_pack_reason": final_pack_reason,
                 "next_action": _next_action_for_item(
                     item_id=draft.item_id,
                     owner=question.business_owner.value,
@@ -311,13 +312,25 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                     {
                         "stage": step.stage,
                         "label": step.label,
-                        "status": step.status,
+                        "status": _lineage_status_label(step.status),
                         "object_ids": step.object_ids,
                         "owner": step.owner,
-                        "reason": step.reason,
+                        "reason": _lineage_reason_label(step.reason),
                     }
                     for step in lineage.steps
                 ],
+                "business_lineage": _business_lineage_summary(
+                    question=question,
+                    evidence=item_evidence,
+                    review=review,
+                    approval=approval,
+                    draft=draft,
+                    status=status,
+                    final_pack_status=final_pack_status,
+                    final_pack_reason=final_pack_reason,
+                    gate_reasons=gate.reasons,
+                    freshness_rollup=gate.freshness_rollup.value,
+                ),
                 "answer_id": draft.answer_id,
             }
         )
@@ -984,6 +997,125 @@ def _approval_prohibited_wording(item_id: str) -> str:
     if item_id == "Q-006":
         return "Do not commit to an incident-response notification target until policy owner approval."
     return "Do not expand beyond the recorded approval scope."
+
+
+def _business_lineage_summary(
+    *,
+    question: Any,
+    evidence: list[Any],
+    review: Any | None,
+    approval: ApprovalDecision | None,
+    draft: AnswerDraft,
+    status: str,
+    final_pack_status: str,
+    final_pack_reason: str,
+    gate_reasons: list[str],
+    freshness_rollup: str,
+) -> list[dict[str, str]]:
+    question_text = (
+        f"{question.business_owner.value.title()} owns {question.item_id}; "
+        f"{question.category.value} request, {question.risk_level.value} risk: {question.question_text}"
+    )
+    evidence_text = _business_evidence_summary(evidence, freshness_rollup)
+    review_text = _business_review_summary(
+        review=review,
+        approval=approval,
+        draft=draft,
+    )
+    risk_text = _business_risk_summary(
+        status=status,
+        final_pack_status=final_pack_status,
+        final_pack_reason=final_pack_reason,
+        gate_reasons=gate_reasons,
+    )
+    return [
+        {"label": "Question answered", "text": question_text},
+        {"label": "Evidence confidence", "text": evidence_text},
+        {"label": "Review / approval", "text": review_text},
+        {"label": "Risk contained", "text": risk_text},
+    ]
+
+
+def _lineage_status_label(status: str) -> str:
+    label = status.replace("_", " ")
+    if label.startswith("rollup:"):
+        return label.replace("rollup:", "Rollup: ", 1)
+    return label[:1].upper() + label[1:]
+
+
+def _lineage_reason_label(reason: str) -> str:
+    return reason.replace("_", " ")
+
+
+def _business_evidence_summary(evidence: list[Any], freshness_rollup: str) -> str:
+    if not evidence:
+        return "No evidence refs are attached; the answer cannot be customer-ready."
+    evidence_ids = ", ".join(candidate.evidence_id for candidate in evidence[:3])
+    if len(evidence) > 3:
+        evidence_ids += f" + {len(evidence) - 3} more"
+    freshness = sorted({candidate.freshness_label.value for candidate in evidence})
+    if freshness == [EvidenceFreshness.CURRENT.value]:
+        return f"{len(evidence)} current evidence refs support the answer: {evidence_ids}."
+    non_current = [label for label in freshness if label != EvidenceFreshness.CURRENT.value]
+    freshness_text = ", ".join(non_current or freshness)
+    return (
+        f"Evidence mix includes {freshness_text} refs; freshness rollup is {freshness_rollup}, "
+        "so customer wording must stay bounded until the owner resolves it."
+    )
+
+
+def _business_review_summary(
+    *,
+    review: Any | None,
+    approval: ApprovalDecision | None,
+    draft: AnswerDraft,
+) -> str:
+    if approval is not None and _approval_is_valid_for_answer(approval, draft):
+        return f"{_approval_owner_label(approval.reviewer_role)} approved scoped wording: {approval.scope}"
+    if review is None:
+        return "No reviewer decision is attached yet."
+    if review.status == ReviewStatus.REQUEST_CHANGES:
+        return f"{review.reviewer_agent} challenged the draft: {review.reason}"
+    if review.status == ReviewStatus.NEEDS_HUMAN_APPROVAL:
+        return f"{review.reviewer_agent} requires human approval; no valid scoped approval is attached yet."
+    if review.status == ReviewStatus.BLOCKED:
+        return f"{review.reviewer_agent} blocked customer use: {review.reason}"
+    if review.status == ReviewStatus.APPROVED:
+        return f"{review.reviewer_agent} accepted the bounded draft: {review.reason}"
+    return f"{review.reviewer_agent} recorded {review.status.value}: {review.reason}"
+
+
+def _business_risk_summary(
+    *,
+    status: str,
+    final_pack_status: str,
+    final_pack_reason: str,
+    gate_reasons: list[str],
+) -> str:
+    if status == "ready":
+        return f"Final pack {final_pack_status}; {final_pack_reason}"
+    if gate_reasons:
+        return f"Final pack {final_pack_status}; {_business_blocker_summary(gate_reasons)}"
+    return f"Final pack {final_pack_status}; {final_pack_reason}"
+
+
+def _business_blocker_summary(gate_reasons: list[str]) -> str:
+    blockers = []
+    joined = " ".join(gate_reasons).lower()
+    if "stale evidence" in joined:
+        blockers.append("stale evidence")
+    if "conflicting evidence" in joined:
+        blockers.append("conflicting evidence")
+    if "requires human approval" in joined or "needs_human_approval" in joined:
+        blockers.append("missing scoped human approval")
+    if not blockers:
+        return "; ".join(reason.replace("_", " ") for reason in gate_reasons)
+    if len(blockers) == 1:
+        blocker_text = blockers[0]
+    else:
+        blocker_text = ", ".join(blockers[:-1]) + f" and {blockers[-1]}"
+    verb = "keeps" if len(blockers) == 1 else "keep"
+    return f"{blocker_text} {verb} this answer out of customer materials."
 
 
 def _responsibility_queue(

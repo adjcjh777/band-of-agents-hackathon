@@ -17,7 +17,7 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 | P0 | PM-03 | Turn Q-006 into the memorable buyer-safe story | The demo's strongest moment is the unsafe answer being excluded, not merely flagged | Codex controller + UI/UX review | complete |
 | P1 | PM-04 | Add responsibility / SLA / next-step queue semantics | The dashboard feels like a workbench teams can use the next morning | Codex controller | complete |
 | P1 | PM-05 | Make Approval Workbench read like an approval product | Reviewers see scope, expiry, allowed wording, prohibited wording, evidence refs and owner | Codex controller | complete |
-| P1 | PM-06 | Translate Answer Lineage into business language | Non-technical reviewers can follow where an answer came from, who changed it and why it is safe or blocked | Codex controller | queued |
+| P1 | PM-06 | Translate Answer Lineage into business language | Non-technical reviewers can follow where an answer came from, who changed it and why it is safe or blocked | Codex controller | complete |
 | P2 | PM-07 | Clarify agent roles without over-personalizing them | Judges understand specialized roles while the product still feels enterprise-grade | UI/UX agent + Codex | queued |
 | P2 | PM-08 | Evolve Handoff Trace into a lightweight collaboration map | Users can inspect by answer, agent, blocker or final-pack status | Codex controller | queued |
 | P2 | PM-09 | Productize the replay/live boundary copy | Boundary language feels confident and truthful instead of apologetic | Scout + Codex | queued |
@@ -115,6 +115,8 @@ Acceptance:
 
 ### PM-06 Translate Answer Lineage Into Business Language
 
+Status: complete in PM-R6.
+
 Goal: reduce internal-event reading burden.
 
 Questions to answer:
@@ -126,8 +128,9 @@ Questions to answer:
 
 Acceptance:
 
-- Existing lineage remains traceable.
-- UI copy becomes easier for non-technical reviewers.
+- [x] Existing lineage remains traceable.
+- [x] UI copy becomes easier for non-technical reviewers.
+- [x] Evidence lineage includes a business readout for question, evidence confidence, review / approval and contained risk.
 
 ### PM-07 Clarify Agent Roles Without Over-Personalizing Them
 

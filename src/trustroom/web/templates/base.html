@@ -669,6 +669,37 @@
         gap: 8px;
       }
 
+      .business-lineage {
+        display: grid;
+        gap: 7px;
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid rgba(49, 83, 107, 0.24);
+        border-radius: 8px;
+        background: #fbfcf8;
+      }
+
+      .lineage-business-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .business-lineage-card {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .business-lineage-card strong,
+      .business-lineage-card p {
+        overflow-wrap: anywhere;
+      }
+
       .lineage-step {
         display: grid;
         align-content: start;
@@ -1119,7 +1150,8 @@
         .item-trace-grid,
         .buyer-story-steps,
         .queue-meta,
-        .approval-field-grid {
+        .approval-field-grid,
+        .lineage-business-grid {
           grid-template-columns: 1fr;
         }
       }
