@@ -112,6 +112,10 @@ _Avoid_: exporting blocked or pending items as answer body, unlabeled exceptions
 A non-submittable appendix used with a Customer Export or reviewer package to disclose Final Pack Exceptions for transparency. It labels each exception as not customer-submittable and keeps the reason, owner, and next action visible.
 _Avoid_: customer answer body, unmarked exception list, hidden review-only caveat.
 
+**Review Appendix Visibility Mode**:
+The permission boundary for a Review Appendix, either customer-safe or internal-review. Customer-safe shows only public-safe and redacted exception detail; internal-review may show deeper permissioned audit context, but both require the appropriate export decision or internal permission and never make exceptions customer-submittable.
+_Avoid_: public raw evidence, unrestricted appendix, agent-selected visibility, treating appendix visibility as answer approval.
+
 **Review Appendix Exception Item**:
 The minimum user-visible entry for one excluded or pending Question Item inside a Review Appendix. It contains question item, inclusion, reason or blocker, owner, and next action so the exception is understandable without raw logs.
 _Avoid_: raw log row, hidden blocker, included answer, customer-submittable content.
@@ -123,6 +127,10 @@ _Avoid_: supporting_agent in the collapsed item, raw log dump, hidden accountabi
 **Review Appendix Evidence Reference**:
 A public-safe or redacted pointer shown inside Review Appendix Exception Detail to identify supporting evidence without exposing private source content. It can include an evidence freshness label in expanded detail, but it cannot include raw customer documents, secrets, real room ids, agent keys, or unredacted provider metadata.
 _Avoid_: raw document excerpt, private customer file content, secret-bearing evidence, unredacted room or message id, unlabeled stale evidence.
+
+**Evidence Freshness Rollup**:
+The most conservative evidence freshness label for a Question Item or group of Review Appendix Evidence References. It follows conflicting > missing > stale/unknown > current; unknown blocks Final Pack inclusion until owner review or stronger evidence resolves it.
+_Avoid_: averaging evidence status, treating unknown as current, hiding conflicting evidence.
 
 **Review Appendix Exception Owner**:
 The accountable human or business-owner role responsible for the next action on a Review Appendix Exception Item. It cannot be an Agent; Agents can appear only as supporting agents in expanded detail.

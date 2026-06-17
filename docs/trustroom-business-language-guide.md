@@ -55,9 +55,11 @@
 | Final Pack Exceptions | Final Pack 旁边的例外区块，展示 excluded / pending items 的原因、owner、next action | Final Pack view、reviewer view、demo full picture | mixing into included answers、hidden blocked items |
 | Customer Export | 从 Final Pack 生成的客户可提交输出；正文默认只含 Included Answers | customer-facing export、submission body | blocked / pending items in answer body、unmarked exceptions |
 | Review Appendix | Customer Export 或 reviewer package 里的非提交附录，用于透明展示 Final Pack Exceptions | customer transparency appendix、internal review package | unlabeled exception list、customer-submittable answer body |
+| Review Appendix Visibility Mode | Review Appendix 的可见范围：customer-safe 或 internal-review | export settings、reviewer package、audit access | public raw evidence、unrestricted appendix、agent-selected visibility |
 | Review Appendix Exception Item | Review Appendix 中单个 excluded / pending Question Item 的最小可见记录 | appendix item、reviewer view、customer transparency | raw log row、included answer、customer-submittable content |
 | Review Appendix Exception Detail | Review Appendix Exception Item 的展开详情，可展示 supporting_agent、Review Appendix Evidence Reference、handoff summary、redacted audit refs | appendix drill-down、reviewer view、judge inspection | supporting_agent in collapsed item、raw logs |
 | Review Appendix Evidence Reference | Review Appendix Exception Detail 里的 public-safe / redacted evidence pointer，可带 freshness label | appendix drill-down、evidence trail、judge inspection | raw customer docs、secret-bearing refs、unredacted ids、unlabeled stale evidence |
+| Evidence Freshness Rollup | 多个 evidence refs 的保守汇总 freshness：conflicting > missing > stale/unknown > current | item trace、appendix detail、Final Pack gate | average freshness、unknown-as-current、hidden conflict |
 | Review Appendix Exception Owner | Review Appendix Exception Item 下一步动作的 accountable human / business owner | appendix item、reviewer view、next action | agent owner、automated accountability |
 | Review Appendix Export Decision | human/business owner 对是否随 Customer Export 附带 Review Appendix 的显式决定；只控制附录可见性，不审批答案 | export settings、customer transparency、audit trail | agent-added appendix、appendix as approval |
 | Review Appendix Export Record | Review Appendix Export Decision 的最小审计记录：decision、owner_role、reason、scope | export settings、audit trail、customer transparency | reasonless inclusion、agent-only export setting |
@@ -110,6 +112,8 @@ Key Blocker 的 next action 第一责任人必须是 human / business owner。Ag
 Owner Review Suggestion 标准句式：
 
 > Agent suggestion for owner review: evidence-retriever-agent found a current incident-response policy candidate and recommends the Security Policy Owner review whether it covers Q-006 scoped wording; Final Pack inclusion remains blocked until owner approval.
+
+如果 Agent 找到替代 `current` evidence，它只能提出 Owner Review Suggestion，不能自动替换 stale evidence 并让 Question Item 进入 Final Pack。替代证据需要 owner review、scope 判断，并在需要时进入 Human Approval。
 
 Owner Review Suggestion 只需要 4 个轻量状态。它们用于展开区和审计，不要求第一屏展示完整状态机：
 
@@ -297,6 +301,16 @@ Evidence freshness：
 - `unknown`: freshness 未确认。
 - `conflicting`: 证据之间存在冲突，不能静默纳入。
 
+Evidence Freshness Rollup：
+
+- 多个 evidence refs 同时存在时，按最保守结果汇总：`conflicting > missing > stale/unknown > current`。
+- `unknown` 不能当作 `current` 使用；只要 rollup 不是 `current`，Question Item 就不能进入 Final Pack。
+- Agent 找到替代 `current` evidence 时，rollup 不能自动变成可提交；必须先形成 Owner Review Suggestion，由 human / business owner 判断 scope 和 approval 需求。
+
+Evidence Freshness Rollup 标准句式：
+
+> Evidence Freshness Rollup: Q-006 rollup is `conflicting` because one redacted ref is `stale` and another is `conflicting`; it remains excluded from the Final Pack until owner review resolves the evidence conflict.
+
 Review status：
 
 - `approved`: 当前证据和风险边界下可继续。
@@ -364,6 +378,19 @@ Review Appendix 标准句式：
 
 > Review Appendix: Q-006 is not customer-submittable; it is excluded from the answer body until the Security Policy Owner provides current evidence or approves scoped wording.
 
+Review Appendix Visibility Mode：
+
+| Mode | 适用范围 | 可展示 | 控制 |
+|---|---|---|---|
+| `customer-safe` | 随 Customer Export 或客户透明度包出现 | not customer-submittable exception summary、public-safe / redacted evidence refs、freshness labels | Review Appendix Export Decision |
+| `internal-review` | 授权内部 reviewer / auditor 查看 | 更深的 permissioned audit context、redacted refs、tool output business summaries | internal permission / Backend Audit Access |
+
+两种 mode 都不能让 Final Pack Exceptions 变成客户可提交答案，也不能展示 chain-of-thought、secret、真实 room id、agent key 或未脱敏 provider metadata。需要查看更深后台材料时，应通过 Backend Audit Access，而不是把 raw evidence 放进 customer-safe appendix。
+
+Review Appendix Visibility Mode 标准句式：
+
+> Review Appendix Visibility Mode: `customer-safe`; Q-006 exception may show redacted refs and freshness labels, but raw customer policy text remains outside the Customer Export.
+
 Review Appendix Exception Item 最少只需要 5 个字段：
 
 | Field | 含义 | 示例 |
@@ -399,6 +426,8 @@ Review Appendix Evidence Reference 只能展示 public-safe / redacted refs：
 |---|---|---|
 | `ref` | public-safe / redacted evidence pointer | `EV-IR-2026`, `band-ref:*`, `policy:incident-response#review-date` |
 | `freshness_label` | Evidence freshness，只能使用既有取值 | `current`, `stale`, `missing`, `unknown`, `conflicting` |
+| `freshness_marked_by` | 标注 freshness 的 supporting agent / reviewer | `evidence-retriever-agent` |
+| `freshness_marked_at` | 标注 freshness 的 timestamp 或 elapsed time | `2026-06-17T10:41Z` |
 
 Review Appendix Evidence Reference 不能展示 raw customer docs、private file content、secret、真实 room id、agent key 或未脱敏 provider metadata。它证明“证据链存在并可追溯”，不是把证据原文直接交给客户或评委。
 
@@ -406,11 +435,11 @@ Review Appendix Evidence Reference 不能展示 raw customer docs、private file
 
 Review Appendix Evidence Reference 标准句式：
 
-> Review Appendix Evidence Reference: Q-006 uses `EV-IR-2026` with freshness_label `stale` and redacted `band-ref:*` with freshness_label `conflicting`; raw customer policy text is not shown.
+> Review Appendix Evidence Reference: Q-006 uses `EV-IR-2026` with freshness_label `stale`, marked_by `evidence-retriever-agent` at `2026-06-17T10:41Z`, and redacted `band-ref:*` with freshness_label `conflicting`; raw customer policy text is not shown.
 
 Review Appendix Exception Detail 标准句式：
 
-> Review Appendix Exception Detail: supporting_agent evidence-retriever-agent provided Review Appendix Evidence Reference `EV-IR-2026` with freshness_label `stale` and redacted `band-ref:*` with freshness_label `conflicting`; owner remains Security Policy Owner.
+> Review Appendix Exception Detail: supporting_agent evidence-retriever-agent marked `EV-IR-2026` as `stale` at `2026-06-17T10:41Z` and redacted `band-ref:*` as `conflicting`; owner remains Security Policy Owner.
 
 Review Appendix Exception Owner 责任规则：
 
@@ -511,9 +540,12 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 | Review loop | Reviewer requested changes on Q-004 because the first draft overcommitted regional hosting. | The AI refined the answer. |
 | 人审 | Legal approver gave scoped approval for Q-004 pilot wording until the stated expiry. | Legal approved the whole product. |
 | 阻塞 | Q-006 stays out of the Final Pack because evidence is stale/conflicting and no valid approval exists. | The system failed Q-006. |
+| Freshness 汇总 | Evidence Freshness Rollup: Q-006 is `conflicting`, so unknown or stale refs cannot be treated as current. | Most refs are fine, so mark it current. |
+| 替代证据 | Agent found replacement current evidence and created an Owner Review Suggestion; Final Pack inclusion remains blocked until owner review. | Agent replaced the stale evidence and approved the answer. |
 | 客户导出 | Customer Export answer body contains only Included Answers; Q-006 appears only in the Review Appendix as not customer-submittable. | Customer Export includes all questions, including blocked drafts. |
+| 附录可见模式 | Review Appendix Visibility Mode: `customer-safe`; show redacted refs and freshness labels only. | Show internal raw evidence in the customer appendix. |
 | 附录单项 | Review Appendix Exception Item: Q-006; inclusion: `excluded`; owner: Security Policy Owner; next_action: provide current evidence. | Show the raw agent logs for Q-006. |
-| 附录展开 | Review Appendix Exception Detail: supporting_agent evidence-retriever-agent provided public-safe ref `EV-IR-2026` with freshness_label `stale` and redacted `band-ref:*` with freshness_label `conflicting`; owner remains Security Policy Owner. | Add supporting_agent to the collapsed exception item or show raw customer docs. |
+| 附录展开 | Review Appendix Exception Detail: supporting_agent evidence-retriever-agent marked `EV-IR-2026` as `stale` at `2026-06-17T10:41Z` and redacted `band-ref:*` as `conflicting`; owner remains Security Policy Owner. | Add supporting_agent to the collapsed exception item or show raw customer docs. |
 | 附录责任 | Review Appendix Exception Owner: Security Policy Owner owns Q-006 next action; supporting_agent: evidence-retriever-agent. | owner: evidence-retriever-agent. |
 | 导出附录 | Review Appendix Export Record: `include_appendix`; owner_role: Security Policy Owner; scope: Customer Export `CE-ACME-v1`, Q-006 only. | Agent automatically attached blocked items to the Customer Export. |
 | 记录复用 | Customer Export `CE-ACME-v2` changed evidence refs, so the previous Review Appendix Export Record is not valid and a new owner decision is required. | Reuse the last appendix decision for the updated export. |
@@ -527,8 +559,12 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 - 是否写清 From / To / Task / Shared Object / State Change / Result or Blocker？
 - 是否把 Agent 角色和 Human Approver 分清？
 - 是否有 evidence freshness、review status 或 approval basis？
+- 多个 evidence refs 是否按 Evidence Freshness Rollup 采用最保守结果，而不是平均或多数投票？
+- `unknown` freshness 是否被视为 blocker，而不是当作 `current`？
+- Agent 找到替代 `current` evidence 时，是否形成 Owner Review Suggestion，而不是自动替换并放行？
 - 是否说明哪些内容进入 Final Pack，哪些被排除？
 - Customer Export answer body 是否只包含 Included Answers，且 Review Appendix 是否标记 `not customer-submittable`？
+- Review Appendix Visibility Mode 是否明确为 `customer-safe` 或 `internal-review`，并受 Export Decision 或内部权限控制？
 - Review Appendix Exception Item 是否包含 `question_item`、`inclusion`、`reason_or_blocker`、`owner`、`next_action`？
 - `supporting_agent` 是否只出现在 Review Appendix Exception Detail，而不是折叠态 Exception Item？
 - Review Appendix Evidence Reference 是否只展示 public-safe / redacted refs，并在展开详情里带 `freshness_label`，且不包含 raw docs、secret、真实 room id / agent key？
