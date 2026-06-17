@@ -372,6 +372,46 @@
         color: var(--green);
       }
 
+      .final-pack-decision {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.95fr) minmax(0, 0.95fr);
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .final-pack-cell {
+        display: grid;
+        align-content: start;
+        gap: 8px;
+        min-width: 0;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--green);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .final-pack-cell.hold {
+        border-left-color: var(--red);
+        background: #fff8f6;
+      }
+
+      .final-pack-cell.owner-action {
+        border-left-color: var(--amber);
+      }
+
+      .final-pack-cell h2,
+      .final-pack-cell p,
+      .decision-line {
+        overflow-wrap: anywhere;
+      }
+
+      .decision-line {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
       .stack {
         display: grid;
         gap: 14px;
@@ -888,6 +928,7 @@
         .decision-strip,
         .judge-route,
         .band-rail,
+        .final-pack-decision,
         .two-col,
         .trace-overview {
           grid-template-columns: 1fr;

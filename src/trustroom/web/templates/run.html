@@ -79,7 +79,7 @@
       <strong>{{ approval_queue|length }}</strong>
       <span>SOC 2 · residency · incident</span>
     </div>
-    <div id="final-pack" class="metric">
+    <div class="metric">
       <h2>Final Pack</h2>
       <strong>{{ final_pack.included_answer_ids|length }}</strong>
       <span>{{ final_pack.blocked_item_ids|length }} held outside</span>
@@ -87,6 +87,32 @@
         <a href="{{ customer_export_path }}">Customer Export</a>
         <a href="{{ customer_export_appendix_path }}">With Appendix</a>
       </div>
+    </div>
+  </section>
+
+  <section id="final-pack" class="final-pack-decision" aria-label="Customer pack final decision">
+    <div class="final-pack-cell send">
+      <span class="eyebrow">Customer Export</span>
+      <h2>{{ final_pack_decision.headline }}</h2>
+      <p class="small">Answer body is safe to send with evidence and approval refs.</p>
+      <div class="trace compact" aria-label="Sendable final pack items">
+        {% for item_id in final_pack_decision.sendable_items %}
+          <span>{{ item_id }} · send</span>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="final-pack-cell hold">
+      <span class="eyebrow">Held outside</span>
+      <h2>{{ final_pack_decision.held_count }} item blocked from customer pack</h2>
+      {% for item in final_pack_decision.held_items %}
+        <p class="decision-line"><strong>{{ item.item_id }}</strong> · {{ item.reason }}</p>
+      {% endfor %}
+    </div>
+    <div class="final-pack-cell owner-action">
+      <span class="eyebrow">Owner action</span>
+      <h2>Human decision keeps unsafe wording out</h2>
+      <p class="small">{{ final_pack_decision.next_owner_action }}</p>
+      <p class="small">{{ final_pack_decision.appendix_boundary }}</p>
     </div>
   </section>
 

@@ -396,6 +396,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     next_actions = [answer for answer in answers if answer["status"] != "ready"]
     risk_register = _risk_register(answers)
     decision_state = _decision_state(readiness=readiness, total_questions=total_questions, next_actions=next_actions)
+    final_pack_decision = _final_pack_decision(answers=answers, readiness=readiness, total_questions=total_questions)
     run_trace = _run_trace_summary(
         timeline=timeline,
         answers=answers,
@@ -457,6 +458,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "owner_summary": owner_summary,
         "risk_register": risk_register,
         "final_pack": result.final_pack,
+        "final_pack_decision": final_pack_decision,
         "review_appendix_visibility_mode": result.final_pack.visibility_mode.value,
         "customer_export_path": _customer_export_path(
             mode=mode,
@@ -489,6 +491,34 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "run_trace": run_trace,
         "timeline": timeline,
         "evolution_events": evolution_events,
+    }
+
+
+def _final_pack_decision(
+    *,
+    answers: list[dict[str, Any]],
+    readiness: dict[str, int],
+    total_questions: int,
+) -> dict[str, Any]:
+    sendable = [answer for answer in answers if answer["final_pack_status"] == "included"]
+    held = [answer for answer in answers if answer["final_pack_status"] != "included"]
+    held_items = [
+        {
+            "item_id": answer["item_id"],
+            "owner": answer["owner"],
+            "reason": answer["final_pack_reason"],
+            "next_action": answer["next_action"],
+        }
+        for answer in held
+    ]
+    return {
+        "headline": f"{len(sendable)}/{total_questions} answers enter the customer export",
+        "sendable_items": [answer["item_id"] for answer in sendable],
+        "held_items": held_items,
+        "held_count": len(held),
+        "blocked_count": readiness["blocked"],
+        "appendix_boundary": "Customer Export contains included answers only; blocked items stay in the review appendix until a human owner decision.",
+        "next_owner_action": held_items[0]["next_action"] if held_items else "No blocked owner action remains.",
     }
 
 

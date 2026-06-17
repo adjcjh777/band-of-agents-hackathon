@@ -79,6 +79,20 @@ def test_replay_route_surfaces_enterprise_decision_context() -> None:
     assert "Policy owner must confirm incident response wording before this answer can be sent." in response.text
 
 
+def test_replay_route_surfaces_customer_pack_decision_summary() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert "Customer Export" in response.text
+    assert "7/8 answers enter the customer export" in response.text
+    assert "Answer body is safe to send with evidence and approval refs." in response.text
+    assert "<strong>Q-006</strong> · stale evidence EV-006 blocks final pack entry" in response.text
+    assert "conflicting evidence EV-010 blocks final pack entry" in response.text
+    assert "review status needs_human_approval blocks final pack entry" in response.text
+    assert "Human decision keeps unsafe wording out" in response.text
+    assert "Customer Export contains included answers only; blocked items stay in the review appendix until a human owner decision." in response.text
+
+
 def test_replay_route_surfaces_reviewer_evidence_matrix() -> None:
     response = client.get("/runs/demo/replay")
 
