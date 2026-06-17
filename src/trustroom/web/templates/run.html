@@ -43,6 +43,7 @@
       <a href="#representative-item-traces">Item Traces</a>
       <a href="#blocked-impact-path">Q-006 Blocked Path</a>
       <a href="#q006-buyer-story">Buyer Story</a>
+      <a href="#responsibility-queue">Work Queue</a>
       <a href="#final-pack">Final Pack</a>
       <a href="#replay-live-boundary">Replay Boundary</a>
     </div>
@@ -284,23 +285,36 @@
       </details>
     </div>
 
-    <div class="panel">
-      <h2>Next Actions</h2>
-      {% for item in next_actions %}
-        <article class="action-row">
-          <span class="status blocked">{{ item.item_id }}</span>
-          <div>
-            <strong>{{ item.owner|title }} owner · {{ item.risk }} risk</strong>
-            <p class="small">{{ item.next_action }}</p>
-            <details>
-              <summary>why blocked</summary>
-              <p class="small">Final pack: {{ item.final_pack_status }} · {{ item.final_pack_reason }}</p>
-            </details>
+    <div id="responsibility-queue" class="panel responsibility-queue" aria-label="Responsibility queue">
+      <div class="row-topline">
+        <div>
+          <span class="eyebrow">Operational workbench</span>
+          <h2>Responsibility Queue</h2>
+          <p class="small">{{ responsibility_queue.summary }}</p>
+        </div>
+        <span class="status {% if responsibility_queue.open_count %}blocked{% else %}ready{% endif %}">{{ responsibility_queue.open_count }} open</span>
+      </div>
+      {% for item in responsibility_queue.queue_items %}
+        <article class="queue-row {{ item.tone }}">
+          <div class="row-topline">
+            <span class="status {% if item.tone == 'blocked' %}blocked{% else %}ready{% endif %}">{{ item.state_label }}</span>
+            <span class="small">{{ item.item_id }} · final pack {{ item.final_pack_status }}</span>
           </div>
+          <h3>{{ item.assignee }}</h3>
+          <div class="queue-meta" aria-label="{{ item.item_id }} responsibility details">
+            <span>Assignee {{ item.assignee }}</span>
+            <span>SLA {{ item.due_window }}</span>
+            <span>{{ item.risk|title }} risk</span>
+            <span>Escalation {{ item.escalation_role }}</span>
+          </div>
+          <p class="small">{{ item.next_action }}</p>
+          <details>
+            <summary>why this owner</summary>
+            <p class="small">{{ item.reason }}</p>
+          </details>
         </article>
-      {% else %}
-        <p class="small">No open actions. Export the final pack with evidence and approval trail.</p>
       {% endfor %}
+      <p class="small">{{ responsibility_queue.sample_boundary }}</p>
     </div>
   </section>
 

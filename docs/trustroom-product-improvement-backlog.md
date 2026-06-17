@@ -15,7 +15,7 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 | P0 | PM-01 | Make Final Pack Decision the primary product moment | A reviewer instantly sees what can be sent, what is held back and who must unblock it | Codex controller | complete |
 | P0 | PM-02 | Compress the product promise into one verifiable sentence | All public copy and video narration align around evidence, review, approval and safe final-pack decision | Codex controller | complete |
 | P0 | PM-03 | Turn Q-006 into the memorable buyer-safe story | The demo's strongest moment is the unsafe answer being excluded, not merely flagged | Codex controller + UI/UX review | complete |
-| P1 | PM-04 | Add responsibility / SLA / next-step queue semantics | The dashboard feels like a workbench teams can use the next morning | Codex controller | queued |
+| P1 | PM-04 | Add responsibility / SLA / next-step queue semantics | The dashboard feels like a workbench teams can use the next morning | Codex controller | complete |
 | P1 | PM-05 | Make Approval Workbench read like an approval product | Reviewers see scope, expiry, allowed wording, prohibited wording, evidence refs and owner | Codex controller | queued |
 | P1 | PM-06 | Translate Answer Lineage into business language | Non-technical reviewers can follow where an answer came from, who changed it and why it is safe or blocked | Codex controller | queued |
 | P2 | PM-07 | Clarify agent roles without over-personalizing them | Judges understand specialized roles while the product still feels enterprise-grade | UI/UX agent + Codex | queued |
@@ -74,6 +74,8 @@ Acceptance:
 
 ### PM-04 Add Responsibility / SLA / Next-Step Queue Semantics
 
+Status: complete in PM-R4.
+
 Goal: move from static demo evidence to an operational work queue.
 
 Potential fields:
@@ -86,8 +88,9 @@ Potential fields:
 
 Acceptance:
 
-- Existing sample data remains fictional.
-- No new live-account dependency.
+- [x] Existing sample data remains fictional.
+- [x] No new live-account dependency.
+- [x] Replay route shows assignee, SLA / due window, risk, unblock action and escalation role for human-gated items.
 
 ### PM-05 Make Approval Workbench Read Like An Approval Product
 

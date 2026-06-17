@@ -214,6 +214,25 @@ def test_replay_route_turns_q006_into_buyer_safe_story() -> None:
     assert "ORS-Q-006" in response.text
 
 
+def test_replay_route_surfaces_responsibility_queue_workbench() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert 'id="responsibility-queue"' in response.text
+    assert 'href="#responsibility-queue">Work Queue</a>' in response.text
+    assert "Responsibility Queue" in response.text
+    assert "1 open owner action · 2 completed human gates" in response.text
+    assert "Q-006 · final pack excluded" in response.text
+    assert "Security Policy Owner" in response.text
+    assert "SLA before customer export" in response.text
+    assert "High risk" in response.text
+    assert "Escalation Security leadership" in response.text
+    assert "SME Approver" in response.text
+    assert "Legal Reviewer" in response.text
+    assert "human gate complete" in response.text
+    assert "Queue fields are fictional sample workflow metadata; no live account dependency is required." in response.text
+
+
 def test_replay_route_surfaces_review_appendix_visibility_and_owner_suggestion() -> None:
     response = client.get("/runs/demo/replay")
 
@@ -308,6 +327,8 @@ def test_replay_route_provides_judge_recording_anchor_navigation() -> None:
     assert 'href="#representative-item-traces">Item Traces</a>' in response.text
     assert 'id="blocked-impact-path"' in response.text
     assert 'href="#blocked-impact-path">Q-006 Blocked Path</a>' in response.text
+    assert 'id="responsibility-queue"' in response.text
+    assert 'href="#responsibility-queue">Work Queue</a>' in response.text
     assert 'id="final-pack"' in response.text
     assert 'href="#final-pack">Final Pack</a>' in response.text
     assert 'id="replay-live-boundary"' in response.text

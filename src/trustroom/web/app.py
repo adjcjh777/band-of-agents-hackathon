@@ -395,6 +395,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     owner_summary = _owner_summary(answers)
     next_actions = [answer for answer in answers if answer["status"] != "ready"]
     risk_register = _risk_register(answers)
+    responsibility_queue = _responsibility_queue(answers=answers, approval_queue=approval_queue)
     decision_state = _decision_state(readiness=readiness, total_questions=total_questions, next_actions=next_actions)
     final_pack_decision = _final_pack_decision(answers=answers, readiness=readiness, total_questions=total_questions)
     q006_buyer_safe_story = _q006_buyer_safe_story(
@@ -471,6 +472,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
             risk["next_action"]
             for risk in risk_register[:3]
         ],
+        "responsibility_queue": responsibility_queue,
         "next_actions": next_actions,
         "owner_summary": owner_summary,
         "risk_register": risk_register,
@@ -934,6 +936,70 @@ def _q006_buyer_safe_story(
         ],
         "safe_boundary": "Customer Export stays at 7/8 until this owner decision is complete.",
     }
+
+
+def _responsibility_queue(
+    *,
+    answers: list[dict[str, Any]],
+    approval_queue: list[dict[str, Any]],
+) -> dict[str, Any]:
+    answer_by_item_id = {answer["item_id"]: answer for answer in answers}
+    items = []
+    for gate in approval_queue:
+        answer = answer_by_item_id[gate["item_id"]]
+        is_open = gate["decision"] != "approved" or answer["final_pack_status"] != "included"
+        items.append(
+            {
+                "item_id": gate["item_id"],
+                "state": "open" if is_open else "done",
+                "state_label": "owner action open" if is_open else "human gate complete",
+                "tone": "blocked" if is_open else "ready",
+                "assignee": _queue_assignee(gate),
+                "owner": answer["owner"].title(),
+                "risk": answer["risk"],
+                "due_window": "before customer export" if is_open else "complete for sample pack",
+                "escalation_role": _queue_escalation_role(answer=answer, gate=gate, is_open=is_open),
+                "next_action": gate["next_action"],
+                "reason": answer["final_pack_reason"] if is_open else gate["approval_reason"],
+                "final_pack_status": answer["final_pack_status"],
+            }
+        )
+    items.sort(key=lambda item: (item["state"] != "open", item["item_id"]))
+    open_count = sum(1 for item in items if item["state"] == "open")
+    done_count = len(items) - open_count
+    return {
+        "summary": f"{open_count} open owner action · {done_count} completed human gates",
+        "open_count": open_count,
+        "done_count": done_count,
+        "queue_items": items,
+        "sample_boundary": "Queue fields are fictional sample workflow metadata; no live account dependency is required.",
+    }
+
+
+def _queue_assignee(gate: dict[str, Any]) -> str:
+    role = str(gate["approval_role"]).lower()
+    if "security policy" in role:
+        return "Security Policy Owner"
+    if "legal" in role:
+        return "Legal Reviewer"
+    if "sme" in role:
+        return "SME Approver"
+    return str(gate["approval_role"]).replace("-", " ").title()
+
+
+def _queue_escalation_role(
+    *,
+    answer: dict[str, Any],
+    gate: dict[str, Any],
+    is_open: bool,
+) -> str:
+    if not is_open:
+        return "No escalation"
+    if answer["risk"] == "high" and answer["owner"] == "security":
+        return "Security leadership"
+    if answer["owner"] == "legal":
+        return "Legal counsel"
+    return _queue_assignee(gate)
 
 
 def _trace_card(event: dict[str, Any], *, label: str | None = None) -> dict[str, Any]:
