@@ -55,6 +55,7 @@
 | Final Pack Exceptions | Final Pack 旁边的例外区块，展示 excluded / pending items 的原因、owner、next action | Final Pack view、reviewer view、demo full picture | mixing into included answers、hidden blocked items |
 | Customer Export | 从 Final Pack 生成的客户可提交输出；正文默认只含 Included Answers | customer-facing export、submission body | blocked / pending items in answer body、unmarked exceptions |
 | Review Appendix | Customer Export 或 reviewer package 里的非提交附录，用于透明展示 Final Pack Exceptions | customer transparency appendix、internal review package | unlabeled exception list、customer-submittable answer body |
+| Review Appendix Exception Item | Review Appendix 中单个 excluded / pending Question Item 的最小可见记录 | appendix item、reviewer view、customer transparency | raw log row、included answer、customer-submittable content |
 | Review Appendix Export Decision | human/business owner 对是否随 Customer Export 附带 Review Appendix 的显式决定；只控制附录可见性，不审批答案 | export settings、customer transparency、audit trail | agent-added appendix、appendix as approval |
 | Review Appendix Export Record | Review Appendix Export Decision 的最小审计记录：decision、owner_role、reason、scope | export settings、audit trail、customer transparency | reasonless inclusion、agent-only export setting |
 | Review Appendix Export Record Validity | Customer Export 重新生成后，旧 Review Appendix Export Record 是否仍可复用的边界 | export regeneration、audit trail、customer transparency | stale record reuse、blanket export permission |
@@ -360,6 +361,22 @@ Review Appendix 标准句式：
 
 > Review Appendix: Q-006 is not customer-submittable; it is excluded from the answer body until the Security Policy Owner provides current evidence or approves scoped wording.
 
+Review Appendix Exception Item 最少只需要 5 个字段：
+
+| Field | 含义 | 示例 |
+|---|---|---|
+| `question_item` | 对应的 Question Item | `Q-006` |
+| `inclusion` | Final Pack Inclusion，只能是 `excluded` 或 `pending` | `excluded` |
+| `reason_or_blocker` | 不能进入 Customer Export answer body 的原因或 blocker | stale/conflicting incident-response evidence; missing valid approval |
+| `owner` | 下一步负责的人类、业务 owner 或责任角色 | Security Policy Owner |
+| `next_action` | 解除 blocker 或推进 review 的下一步 | Provide current evidence or approve scoped wording. |
+
+Review Appendix Exception Item 不能使用 `included`，也不能承载客户可提交答案正文。它的作用是解释为什么某个 Question Item 当前不能提交，以及下一步谁处理。
+
+Review Appendix Exception Item 标准句式：
+
+> Review Appendix Exception Item: Q-006; inclusion: `excluded`; reason_or_blocker: stale/conflicting evidence and missing valid approval; owner: Security Policy Owner; next_action: provide current evidence or approve scoped wording.
+
 Review Appendix Export Decision 权限规则：
 
 - Agent 可以建议是否附带 Review Appendix，并说明透明度理由。
@@ -449,6 +466,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 | 人审 | Legal approver gave scoped approval for Q-004 pilot wording until the stated expiry. | Legal approved the whole product. |
 | 阻塞 | Q-006 stays out of the Final Pack because evidence is stale/conflicting and no valid approval exists. | The system failed Q-006. |
 | 客户导出 | Customer Export answer body contains only Included Answers; Q-006 appears only in the Review Appendix as not customer-submittable. | Customer Export includes all questions, including blocked drafts. |
+| 附录单项 | Review Appendix Exception Item: Q-006; inclusion: `excluded`; owner: Security Policy Owner; next_action: provide current evidence. | Show the raw agent logs for Q-006. |
 | 导出附录 | Review Appendix Export Record: `include_appendix`; owner_role: Security Policy Owner; scope: Customer Export `CE-ACME-v1`, Q-006 only. | Agent automatically attached blocked items to the Customer Export. |
 | 记录复用 | Customer Export `CE-ACME-v2` changed evidence refs, so the previous Review Appendix Export Record is not valid and a new owner decision is required. | Reuse the last appendix decision for the updated export. |
 | Replay | This is a replay fallback that mirrors the collaboration path with redacted refs. | This is live autonomous Band proof. |
@@ -463,6 +481,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 - 是否有 evidence freshness、review status 或 approval basis？
 - 是否说明哪些内容进入 Final Pack，哪些被排除？
 - Customer Export answer body 是否只包含 Included Answers，且 Review Appendix 是否标记 `not customer-submittable`？
+- Review Appendix Exception Item 是否包含 `question_item`、`inclusion`、`reason_or_blocker`、`owner`、`next_action`？
 - Review Appendix 是否有 human / business owner 的显式 Export Decision，而不是 Agent 自动附加？
 - Review Appendix Export Record 是否包含 `decision`、`owner_role`、`reason`、`scope`？
 - Customer Export 重新生成后，是否重新检查 Review Appendix Export Record Validity，而不是复用旧 record 覆盖新内容？

@@ -112,6 +112,10 @@ _Avoid_: exporting blocked or pending items as answer body, unlabeled exceptions
 A non-submittable appendix used with a Customer Export or reviewer package to disclose Final Pack Exceptions for transparency. It labels each exception as not customer-submittable and keeps the reason, owner, and next action visible.
 _Avoid_: customer answer body, unmarked exception list, hidden review-only caveat.
 
+**Review Appendix Exception Item**:
+The minimum user-visible entry for one excluded or pending Question Item inside a Review Appendix. It contains question item, inclusion, reason or blocker, owner, and next action so the exception is understandable without raw logs.
+_Avoid_: raw log row, hidden blocker, included answer, customer-submittable content.
+
 **Review Appendix Export Decision**:
 The explicit human or business-owner decision that allows a Review Appendix to be attached to a Customer Export. It controls appendix visibility only; it is not Human Approval, does not make exceptions customer-submittable, and cannot be made automatically by an Agent.
 _Avoid_: agent-added appendix, automatic exception export, treating appendix inclusion as answer approval.
