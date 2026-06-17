@@ -14,6 +14,7 @@ from trustroom.models import (
     ApprovalDecision,
     ApprovalDecisionValue,
     ApprovalValidity,
+    EvidenceFreshness,
     EventType,
     ExecutionMode,
     ReviewStatus,
@@ -30,6 +31,7 @@ TRACE_EVENT_TYPES = {
     EventType.EVIDENCE_FOUND.value,
     EventType.DRAFT_CREATED.value,
     EventType.REVIEW_DECISION.value,
+    EventType.OWNER_REVIEW_SUGGESTION.value,
     EventType.HUMAN_APPROVAL.value,
     EventType.FINAL_PACK_CREATED.value,
 }
@@ -86,6 +88,10 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
 
     review_by_item_id = {review.item_id: review for review in result.reviews}
     approval_by_item_id = {approval.item_id: approval for approval in result.approvals}
+    suggestion_by_item_id = {
+        suggestion.item_id: suggestion
+        for suggestion in result.owner_review_suggestions
+    }
     lineage_by_item_id = {lineage.item_id: lineage for lineage in result.lineage}
     evidence_by_item_id: dict[str, list[Any]] = defaultdict(list)
     for candidate in result.evidence:
@@ -96,6 +102,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         question = question_by_id[draft.item_id]
         review = review_by_item_id.get(draft.item_id)
         approval = approval_by_item_id.get(draft.item_id)
+        suggestion = suggestion_by_item_id.get(draft.item_id)
         item_evidence = evidence_by_item_id[draft.item_id]
         gate = assess_answer_gate(
             question,
@@ -116,12 +123,16 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
             trace_ids.append(review.decision_id)
         if approval is not None:
             trace_ids.append(approval.decision_id)
+        if suggestion is not None:
+            trace_ids.append(suggestion.suggestion_id)
         evidence_cards = [
             {
                 "evidence_id": candidate.evidence_id,
                 "title": candidate.source_title,
                 "snippet": candidate.snippet,
                 "freshness": candidate.freshness_label.value,
+                "freshness_marked_by": candidate.freshness_marked_by,
+                "freshness_marked_at": candidate.freshness_marked_at.strftime("%Y-%m-%dT%H:%MZ"),
                 "confidence": f"{candidate.confidence:.0%}",
                 "action": _evidence_action(candidate.freshness_label.value),
             }
@@ -129,6 +140,21 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         ]
         final_pack_status = "included" if status == "ready" else "excluded"
         lineage = lineage_by_item_id[draft.item_id]
+        suggestion_card = (
+            {
+                "suggestion_id": suggestion.suggestion_id,
+                "status": suggestion.status.value,
+                "proposed_by": suggestion.proposed_by,
+                "owner_role": suggestion.owner_role,
+                "suggested_evidence_ids": suggestion.suggested_evidence_ids,
+                "replaces_evidence_ids": suggestion.replaces_evidence_ids,
+                "reason": suggestion.reason,
+                "scope": suggestion.scope,
+                "created_at": suggestion.created_at.strftime("%Y-%m-%dT%H:%MZ"),
+            }
+            if suggestion is not None
+            else None
+        )
         answers.append(
             {
                 "item_id": draft.item_id,
@@ -143,6 +169,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                 "evidence_ids": draft.evidence_ids,
                 "evidence_cards": evidence_cards,
                 "freshness": freshness,
+                "freshness_rollup": gate.freshness_rollup.value,
                 "review_status": review.status.value if review else "not_started",
                 "review_reason": review.reason if review else "Review has not started.",
                 "review_decision_id": review.decision_id if review else None,
@@ -154,6 +181,8 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                 "approval_validity": approval.validity.value if approval else None,
                 "approval_expires_at_label": approval.expires_at_label if approval else None,
                 "approved_evidence_ids": approval.approved_evidence_ids if approval else [],
+                "owner_review_suggestion": suggestion_card,
+                "visibility_mode": result.final_pack.visibility_mode.value,
                 "final_pack_status": final_pack_status,
                 "gate_reasons": gate.reasons,
                 "final_pack_reason": _final_pack_reason(
@@ -163,6 +192,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                     approval_reason=approval.reason if approval else None,
                     gate_reasons=gate.reasons,
                     freshness=freshness,
+                    freshness_rollup=gate.freshness_rollup.value,
                 ),
                 "next_action": _next_action_for_item(
                     item_id=draft.item_id,
@@ -191,6 +221,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     for review in result.reviews:
         if review.status == ReviewStatus.NEEDS_HUMAN_APPROVAL:
             approval = approval_by_item_id.get(review.item_id)
+            suggestion = suggestion_by_item_id.get(review.item_id)
             approval_valid = _approval_is_valid_for_answer(
                 approval,
                 draft_by_item_id.get(review.item_id),
@@ -209,6 +240,20 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                     "approval_validity": approval.validity.value if approval else "missing",
                     "approval_expires_at_label": approval.expires_at_label if approval else "",
                     "approved_evidence_ids": approval.approved_evidence_ids if approval else [],
+                    "owner_review_suggestion": (
+                        {
+                            "suggestion_id": suggestion.suggestion_id,
+                            "status": suggestion.status.value,
+                            "proposed_by": suggestion.proposed_by,
+                            "owner_role": suggestion.owner_role,
+                            "suggested_evidence_ids": suggestion.suggested_evidence_ids,
+                            "replaces_evidence_ids": suggestion.replaces_evidence_ids,
+                            "reason": suggestion.reason,
+                            "scope": suggestion.scope,
+                        }
+                        if suggestion is not None
+                        else None
+                    ),
                     "required_follow_up": review.required_follow_up
                     or (approval.required_follow_up if approval else None),
                     "reason": review.reason,
@@ -250,6 +295,20 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         timeline=timeline,
         answers=answers,
         approval_queue=approval_queue,
+        owner_review_suggestions=[
+            {
+                "suggestion_id": suggestion.suggestion_id,
+                "item_id": suggestion.item_id,
+                "status": suggestion.status.value,
+                "proposed_by": suggestion.proposed_by,
+                "owner_role": suggestion.owner_role,
+                "suggested_evidence_ids": suggestion.suggested_evidence_ids,
+                "replaces_evidence_ids": suggestion.replaces_evidence_ids,
+                "reason": suggestion.reason,
+                "scope": suggestion.scope,
+            }
+            for suggestion in result.owner_review_suggestions
+        ],
         readiness=readiness,
         total_questions=total_questions,
         mode_label=mode.value.upper(),
@@ -276,6 +335,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
             "stale": evidence_counter["stale"],
             "missing": evidence_counter["missing"],
             "conflicting": evidence_counter["conflicting"],
+            "unknown": evidence_counter["unknown"],
             "covered_items": sum(1 for question in result.questions if evidence_by_item_id[question.item_id]),
             "total_evidence": len(result.evidence),
         },
@@ -288,6 +348,22 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "owner_summary": owner_summary,
         "risk_register": risk_register,
         "final_pack": result.final_pack,
+        "review_appendix_visibility_mode": result.final_pack.visibility_mode.value,
+        "owner_review_suggestions": [
+            {
+                "suggestion_id": suggestion.suggestion_id,
+                "item_id": suggestion.item_id,
+                "status": suggestion.status.value,
+                "proposed_by": suggestion.proposed_by,
+                "owner_role": suggestion.owner_role,
+                "suggested_evidence_ids": suggestion.suggested_evidence_ids,
+                "replaces_evidence_ids": suggestion.replaces_evidence_ids,
+                "reason": suggestion.reason,
+                "scope": suggestion.scope,
+                "created_at": suggestion.created_at.strftime("%Y-%m-%dT%H:%MZ"),
+            }
+            for suggestion in result.owner_review_suggestions
+        ],
         "answers": answers,
         "run_trace": run_trace,
         "timeline": timeline,
@@ -329,6 +405,7 @@ def _run_trace_summary(
     timeline: list[dict[str, Any]],
     answers: list[dict[str, Any]],
     approval_queue: list[dict[str, Any]],
+    owner_review_suggestions: list[dict[str, Any]],
     readiness: dict[str, int],
     total_questions: int,
     mode_label: str,
@@ -395,8 +472,8 @@ def _run_trace_summary(
         ],
         "milestones": _business_milestones(events, readiness, total_questions),
         "handoff_chain": _handoff_chain(events),
-        "representative_traces": _representative_item_traces(events, answers),
-        "blocked_impact_path": _blocked_impact_path(answers),
+        "representative_traces": _representative_item_traces(events, answers, owner_review_suggestions),
+        "blocked_impact_path": _blocked_impact_path(answers, owner_review_suggestions),
     }
 
 
@@ -503,8 +580,13 @@ def _handoff_chain(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _representative_item_traces(
     events: list[dict[str, Any]],
     answers: list[dict[str, Any]],
+    owner_review_suggestions: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     answer_by_item_id = {answer["item_id"]: answer for answer in answers}
+    suggestion_by_item_id = {
+        suggestion["item_id"]: suggestion
+        for suggestion in owner_review_suggestions
+    }
     labels = {
         "Q-002": "SOC 2 approval path",
         "Q-004": "Region review loop",
@@ -513,7 +595,7 @@ def _representative_item_traces(
     outcomes = {
         "Q-002": "Valid scoped SME approval; included with bridge-letter boundary.",
         "Q-004": "Reviewer challenged overbroad language; legal approved bounded pilot wording.",
-        "Q-006": "Stale/conflicting evidence plus no valid approval; final pack excluded.",
+        "Q-006": "Stale/conflicting evidence plus a proposed replacement; final pack remains excluded until owner review.",
     }
     traces = []
     for item_id in TRACE_ITEM_IDS:
@@ -531,13 +613,16 @@ def _representative_item_traces(
         ]
         if answer["approval_decision_id"]:
             item_events.append(_approval_trace_card(answer))
+        suggestion = suggestion_by_item_id.get(item_id)
+        if suggestion is not None:
+            item_events.append(_owner_review_suggestion_trace_card(suggestion))
         if item_id == "Q-004":
             item_events = _prioritize_trace_cards(
                 item_events,
                 ("EVT-008", "EVT-009", "EVT-011", "APP-Q-004", "EVT-014"),
             )
         elif item_id == "Q-006":
-            item_events = _prioritize_trace_cards(item_events, ("EVT-005", "EVT-012", "EVT-013", "EVT-014"))
+            item_events = _prioritize_trace_cards(item_events, ("EVT-005", "ORS-Q-006", "EVT-012", "EVT-013", "EVT-014"))
         traces.append(
             {
                 "item_id": item_id,
@@ -569,10 +654,44 @@ def _approval_trace_card(answer: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _blocked_impact_path(answers: list[dict[str, Any]]) -> list[str]:
+def _owner_review_suggestion_trace_card(suggestion: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "label": "Owner review suggestion",
+        "sender": suggestion["proposed_by"],
+        "receiver": suggestion["owner_role"],
+        "event_type": EventType.OWNER_REVIEW_SUGGESTION.value,
+        "task_state": "approval",
+        "summary": (
+            f"{suggestion['proposed_by']} proposed replacement evidence "
+            f"{', '.join(suggestion['suggested_evidence_ids'])}; status remains {suggestion['status']}."
+        ),
+        "refs": [
+            suggestion["suggestion_id"],
+            *suggestion["suggested_evidence_ids"],
+            *suggestion["replaces_evidence_ids"],
+        ],
+        "tone": "review",
+    }
+
+
+def _blocked_impact_path(
+    answers: list[dict[str, Any]],
+    owner_review_suggestions: list[dict[str, Any]],
+) -> list[str]:
     q6 = next(answer for answer in answers if answer["item_id"] == "Q-006")
+    q6_suggestion = next(
+        (suggestion for suggestion in owner_review_suggestions if suggestion["item_id"] == "Q-006"),
+        None,
+    )
+    suggestion_step = (
+        f"replacement suggestion {q6_suggestion['suggestion_id']} is {q6_suggestion['status']}"
+        if q6_suggestion
+        else "no replacement suggestion"
+    )
     return [
+        f"freshness rollup {q6['freshness_rollup']}",
         "stale/conflicting incident evidence",
+        suggestion_step,
         q6["review_status"],
         "no valid human approval",
         "final pack excluded",
@@ -584,6 +703,8 @@ def _trace_card(event: dict[str, Any], *, label: str | None = None) -> dict[str,
     event_type = event["event_type"]
     tone = "handoff"
     if event_type == EventType.REVIEW_DECISION.value or "review loop" in event["payload_summary"].lower():
+        tone = "review"
+    elif event_type == EventType.OWNER_REVIEW_SUGGESTION.value:
         tone = "review"
     elif event_type == EventType.HUMAN_APPROVAL.value:
         tone = "human"
@@ -674,9 +795,12 @@ def _final_pack_reason(
     approval_reason: str | None,
     gate_reasons: list[str],
     freshness: list[str],
+    freshness_rollup: str,
 ) -> str:
     if status == "blocked":
         return "; ".join(gate_reasons) if gate_reasons else "Blocked item is excluded from the final pack."
+    if freshness_rollup != EvidenceFreshness.CURRENT.value:
+        return f"Excluded until evidence freshness rollup becomes current; current rollup is {freshness_rollup}."
     if approval_role and approval_reason:
         return f"Included after {approval_role} approval: {approval_reason}"
     if risk == "high":
@@ -740,7 +864,7 @@ def _risk_register(answers: list[dict[str, Any]]) -> list[dict[str, Any]]:
     risks: list[dict[str, Any]] = []
     for answer in answers:
         freshness = set(answer["freshness"])
-        if answer["risk"] == "high" or freshness.intersection({"stale", "missing", "conflicting"}):
+        if answer["risk"] == "high" or freshness.intersection({"stale", "missing", "unknown", "conflicting"}):
             risks.append(
                 {
                     "item_id": answer["item_id"],
@@ -748,6 +872,7 @@ def _risk_register(answers: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "risk": answer["risk"],
                     "status": answer["status"],
                     "freshness": ", ".join(answer["freshness"]) or "none",
+                    "freshness_rollup": answer["freshness_rollup"],
                     "review_status": answer["review_status"],
                     "next_action": answer["next_action"],
                 }

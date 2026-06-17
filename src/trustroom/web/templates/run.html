@@ -65,7 +65,7 @@
     <div id="final-pack" class="metric">
       <h2>Final Pack</h2>
       <strong>{{ final_pack.included_answer_ids|length }}</strong>
-      <span>{{ final_pack.blocked_item_ids|length }} blocker kept outside the submission pack</span>
+      <span>{{ final_pack.blocked_item_ids|length }} blocker kept outside · appendix {{ review_appendix_visibility_mode }}</span>
     </div>
   </section>
 
@@ -146,7 +146,7 @@
         <h2>Representative Item Traces</h2>
         <p class="small">Q-002 / Q-004 / Q-006 decision paths</p>
       </div>
-      <p class="small">Approval evidence refs are visible reviewer context, not a machine-enforced evidence-set gate.</p>
+      <p class="small">Approval evidence refs are visible reviewer context; Final Pack entry still requires current evidence rollup.</p>
     </div>
     <div class="item-trace-grid">
       {% for trace in run_trace.representative_traces %}
@@ -231,7 +231,7 @@
           </div>
           <h3>{{ answer.item_id }} · {{ answer.question }}</h3>
           <p class="answer-draft">{{ answer.draft_text }}</p>
-          <p class="small">Risk: {{ answer.risk }} · Freshness: {{ answer.freshness|join(", ") }} · Source: {{ answer.source_ref }}</p>
+          <p class="small">Risk: {{ answer.risk }} · Freshness: {{ answer.freshness|join(", ") }} · Rollup: {{ answer.freshness_rollup }} · Source: {{ answer.source_ref }}</p>
 
           <div class="evidence-grid">
             {% for evidence in answer.evidence_cards %}
@@ -243,9 +243,36 @@
                 <p>{{ evidence.title }}</p>
                 <p class="small">{{ evidence.snippet }}</p>
                 <p class="small">Confidence {{ evidence.confidence }} · {{ evidence.action }}</p>
+                <p class="small">Marked by {{ evidence.freshness_marked_by }} · {{ evidence.freshness_marked_at }}</p>
               </section>
             {% endfor %}
           </div>
+
+          <section class="appendix-detail {{ answer.visibility_mode }}" aria-label="{{ answer.item_id }} review appendix detail">
+            <div class="row-topline">
+              <strong>Review Appendix Detail</strong>
+              <span class="status review">{{ answer.visibility_mode }}</span>
+            </div>
+            <p class="small">Evidence refs stay public-safe/redacted in customer-safe mode; internal-review uses the same panel with permissioned audit context.</p>
+            <p class="small">Freshness rollup: {{ answer.freshness_rollup }} · Final pack: {{ answer.final_pack_status }}</p>
+            {% if answer.owner_review_suggestion %}
+              <div class="suggestion-detail">
+                <span class="eyebrow">Owner review suggestion</span>
+                <strong>{{ answer.owner_review_suggestion.suggestion_id }} · {{ answer.owner_review_suggestion.status }}</strong>
+                <p class="small">{{ answer.owner_review_suggestion.proposed_by }} → {{ answer.owner_review_suggestion.owner_role }}</p>
+                <p class="small">{{ answer.owner_review_suggestion.reason }}</p>
+                <p class="small">Scope: {{ answer.owner_review_suggestion.scope }}</p>
+                <div class="trace compact">
+                  {% for evidence_id in answer.owner_review_suggestion.suggested_evidence_ids %}
+                    <span>suggests {{ evidence_id }}</span>
+                  {% endfor %}
+                  {% for evidence_id in answer.owner_review_suggestion.replaces_evidence_ids %}
+                    <span>replaces {{ evidence_id }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </section>
 
           <p class="small">Review: {{ answer.review_decision_id }} · {{ answer.review_status }} · {{ answer.review_reason }}</p>
           {% if answer.approval_decision %}
@@ -337,6 +364,19 @@
           {% if item.required_follow_up %}
             <p class="small">Follow-up: {{ item.required_follow_up }}</p>
           {% endif %}
+          {% if item.owner_review_suggestion %}
+            <div class="suggestion-detail">
+              <span class="eyebrow">Owner review card</span>
+              <strong>{{ item.owner_review_suggestion.suggestion_id }} · {{ item.owner_review_suggestion.status }}</strong>
+              <p class="small">{{ item.owner_review_suggestion.proposed_by }} proposed replacement evidence for {{ item.owner_review_suggestion.owner_role }}.</p>
+              <p class="small">{{ item.owner_review_suggestion.reason }}</p>
+              <div class="trace compact">
+                {% for evidence_id in item.owner_review_suggestion.suggested_evidence_ids %}
+                  <span>{{ evidence_id }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
           <p class="small"><strong>Next:</strong> {{ item.next_action }}</p>
         </article>
       {% endfor %}
@@ -352,7 +392,7 @@
             <span class="status {% if risk.status == 'ready' %}ready{% elif risk.status == 'blocked' %}blocked{% else %}review{% endif %}">{{ risk.item_id }}</span>
             <span class="small">{{ risk.owner }} · {{ risk.risk }} risk · {{ risk.review_status }}</span>
           </div>
-          <p class="small">Evidence freshness: {{ risk.freshness }}</p>
+          <p class="small">Evidence freshness: {{ risk.freshness }} · rollup {{ risk.freshness_rollup }}</p>
           <p class="small">{{ risk.next_action }}</p>
         </article>
       {% endfor %}

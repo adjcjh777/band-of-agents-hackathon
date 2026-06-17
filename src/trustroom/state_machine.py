@@ -41,6 +41,7 @@ class AnswerGate:
     can_enter_final_pack: bool
     status: str
     reasons: list[str]
+    freshness_rollup: EvidenceFreshness
 
 
 ALLOWED_TRANSITIONS: dict[RunState, set[RunState]] = {
@@ -71,6 +72,14 @@ REVIEW_BLOCKING_STATUSES = {
     ReviewStatus.NEEDS_HUMAN_APPROVAL,
     ReviewStatus.NEEDS_REVIEW,
 }
+
+FRESHNESS_ROLLUP_PRIORITY = (
+    EvidenceFreshness.CONFLICTING,
+    EvidenceFreshness.MISSING,
+    EvidenceFreshness.STALE,
+    EvidenceFreshness.UNKNOWN,
+    EvidenceFreshness.CURRENT,
+)
 
 
 def transition_run(run: Run, next_state: RunState) -> Run:
@@ -126,6 +135,16 @@ def _evidence_by_id(evidence: list[EvidenceCandidate]) -> dict[str, EvidenceCand
     return {candidate.evidence_id: candidate for candidate in evidence}
 
 
+def rollup_evidence_freshness(evidence: list[EvidenceCandidate]) -> EvidenceFreshness:
+    if not evidence:
+        return EvidenceFreshness.MISSING
+    labels = {candidate.freshness_label for candidate in evidence}
+    for label in FRESHNESS_ROLLUP_PRIORITY:
+        if label in labels:
+            return label
+    return EvidenceFreshness.UNKNOWN
+
+
 def assess_answer_gate(
     question: QuestionItem,
     answer: AnswerDraft,
@@ -134,31 +153,42 @@ def assess_answer_gate(
     review_decision: ReviewDecision | None = None,
     approval_decision: ApprovalDecision | None = None,
 ) -> AnswerGate:
-    reasons: list[str] = []
+    evidence_reasons: list[str] = []
+    gate_reasons: list[str] = []
     approved = _approved(approval_decision, answer)
     indexed_evidence = _evidence_by_id(evidence)
+    referenced_evidence: list[EvidenceCandidate] = []
+    has_missing_reference = False
 
     if not answer.evidence_ids:
-        reasons.append("missing evidence blocks final pack entry")
+        evidence_reasons.append("missing evidence blocks final pack entry")
 
     for evidence_id in answer.evidence_ids:
         candidate = indexed_evidence.get(evidence_id)
         if candidate is None:
-            reasons.append(f"missing evidence reference {evidence_id}")
+            has_missing_reference = True
+            evidence_reasons.append(f"missing evidence reference {evidence_id}")
             continue
+        referenced_evidence.append(candidate)
         if candidate.item_id != question.item_id:
-            reasons.append(f"evidence {evidence_id} belongs to {candidate.item_id}, not {question.item_id}")
+            evidence_reasons.append(f"evidence {evidence_id} belongs to {candidate.item_id}, not {question.item_id}")
         if candidate.freshness_label == EvidenceFreshness.STALE:
-            reasons.append(f"stale evidence {evidence_id} needs review or human approval")
+            evidence_reasons.append(f"stale evidence {evidence_id} blocks final pack entry")
         elif candidate.freshness_label == EvidenceFreshness.MISSING:
-            reasons.append(f"missing evidence {evidence_id} blocks final pack entry")
+            evidence_reasons.append(f"missing evidence {evidence_id} blocks final pack entry")
         elif candidate.freshness_label == EvidenceFreshness.UNKNOWN:
-            reasons.append(f"unknown evidence freshness {evidence_id} needs review")
+            evidence_reasons.append(f"unknown evidence freshness {evidence_id} blocks final pack entry")
         elif candidate.freshness_label == EvidenceFreshness.CONFLICTING:
-            reasons.append(f"conflicting evidence {evidence_id} needs review")
+            evidence_reasons.append(f"conflicting evidence {evidence_id} blocks final pack entry")
+
+    freshness_rollup = (
+        EvidenceFreshness.MISSING
+        if has_missing_reference or not answer.evidence_ids
+        else rollup_evidence_freshness(referenced_evidence)
+    )
 
     if question.risk_level == RiskLevel.HIGH and not approved:
-        reasons.extend(
+        gate_reasons.extend(
             _approval_blocking_reasons(
                 approval_decision,
                 answer,
@@ -172,12 +202,13 @@ def assess_answer_gate(
         and question.risk_level != RiskLevel.HIGH
         and not approved
     ):
-        reasons.append("unsupported certification requires human approval")
+        gate_reasons.append("unsupported certification requires human approval")
 
     if review_decision is not None and review_decision.status in REVIEW_BLOCKING_STATUSES and not approved:
-        reasons.append(f"review status {review_decision.status.value} blocks final pack entry")
+        gate_reasons.append(f"review status {review_decision.status.value} blocks final pack entry")
 
-    can_enter_final_pack = not reasons or approved
+    reasons = evidence_reasons + gate_reasons
+    can_enter_final_pack = not reasons
     status = "ready" if can_enter_final_pack else "needs_review"
     return AnswerGate(
         item_id=question.item_id,
@@ -185,6 +216,7 @@ def assess_answer_gate(
         can_enter_final_pack=can_enter_final_pack,
         status=status,
         reasons=[] if can_enter_final_pack else reasons,
+        freshness_rollup=freshness_rollup,
     )
 
 
@@ -212,6 +244,7 @@ def build_final_submission_pack(
     blocked_item_ids: list[str] = []
     blocked_reasons: dict[str, list[str]] = {}
     evidence_index: dict[str, list[str]] = {}
+    freshness_rollup: dict[str, EvidenceFreshness] = {}
     audit_event_ids: list[str] = []
 
     for draft in drafts:
@@ -228,6 +261,7 @@ def build_final_submission_pack(
             review_decision=review_by_answer_id.get(draft.answer_id),
             approval_decision=approval_by_item_id.get(draft.item_id),
         )
+        freshness_rollup[draft.item_id] = gate.freshness_rollup
         if gate.can_enter_final_pack:
             included_answer_ids.append(draft.answer_id)
             evidence_index[draft.item_id] = list(draft.evidence_ids)
@@ -248,6 +282,7 @@ def build_final_submission_pack(
         blocked_item_ids=[],
         readiness_summary="ready",
         evidence_index=evidence_index,
+        freshness_rollup=freshness_rollup,
         audit_event_ids=audit_event_ids,
         mode=run.mode,
     )

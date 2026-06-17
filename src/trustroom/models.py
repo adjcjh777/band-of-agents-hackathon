@@ -60,6 +60,11 @@ class EvidenceFreshness(str, Enum):
     CONFLICTING = "conflicting"
 
 
+class ReviewAppendixVisibilityMode(str, Enum):
+    CUSTOMER_SAFE = "customer-safe"
+    INTERNAL_REVIEW = "internal-review"
+
+
 class ReviewStatus(str, Enum):
     NOT_STARTED = "not_started"
     APPROVED = "approved"
@@ -101,6 +106,7 @@ class EventType(str, Enum):
     FINAL_PACK_CREATED = "final_pack_created"
     EVOLUTION_PROPOSED = "evolution_proposed"
     LESSON_ACCEPTED = "lesson_accepted"
+    OWNER_REVIEW_SUGGESTION = "owner_review_suggestion"
     STRESS_TEST_GENERATED = "stress_test_generated"
     STATE_CHANGED = "state_changed"
     REQUEST_CHANGES = "request_changes"
@@ -139,6 +145,13 @@ class ProposalType(str, Enum):
     EVIDENCE_RULE = "evidence_rule"
     STRESS_TEST = "stress_test"
     NO_OVERCLAIM_RULE = "no_overclaim_rule"
+
+
+class OwnerReviewSuggestionStatus(str, Enum):
+    PROPOSED = "proposed"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    NEEDS_REVISION = "needs_revision"
 
 
 class LessonScope(str, Enum):
@@ -219,6 +232,8 @@ class EvidenceCandidate(TrustRoomModel):
     source_title: str
     snippet: str
     freshness_label: EvidenceFreshness
+    freshness_marked_by: str = "evidence-retriever-agent"
+    freshness_marked_at: datetime = Field(default_factory=utc_now)
     confidence: float = Field(ge=0.0, le=1.0)
 
 
@@ -240,6 +255,19 @@ class ReviewDecision(TrustRoomModel):
     status: ReviewStatus
     reason: str
     required_follow_up: str | None = None
+    created_at: datetime = Field(default_factory=utc_now)
+
+
+class OwnerReviewSuggestion(TrustRoomModel):
+    suggestion_id: str
+    item_id: str
+    proposed_by: str
+    owner_role: str
+    status: OwnerReviewSuggestionStatus = OwnerReviewSuggestionStatus.PROPOSED
+    suggested_evidence_ids: list[str] = Field(default_factory=list)
+    replaces_evidence_ids: list[str] = Field(default_factory=list)
+    reason: str
+    scope: str
     created_at: datetime = Field(default_factory=utc_now)
 
 
@@ -266,6 +294,8 @@ class FinalSubmissionPack(TrustRoomModel):
     blocked_item_ids: list[str] = Field(default_factory=list)
     readiness_summary: ReadinessSummary
     evidence_index: dict[str, list[str]] = Field(default_factory=dict)
+    freshness_rollup: dict[str, EvidenceFreshness] = Field(default_factory=dict)
+    visibility_mode: ReviewAppendixVisibilityMode = ReviewAppendixVisibilityMode.CUSTOMER_SAFE
     audit_event_ids: list[str] = Field(default_factory=list)
     mode: ExecutionMode
 

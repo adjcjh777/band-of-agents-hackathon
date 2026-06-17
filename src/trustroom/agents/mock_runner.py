@@ -8,10 +8,13 @@ from trustroom.models import (
     ApprovalDecisionValue,
     BusinessOwner,
     EvidenceCandidate,
+    EvidenceFreshness,
     EventType,
     ExecutionMode,
     FinalSubmissionPack,
     LineageStep,
+    OwnerReviewSuggestion,
+    OwnerReviewSuggestionStatus,
     QuestionItem,
     ReviewDecision,
     ReviewStatus,
@@ -22,7 +25,7 @@ from trustroom.models import (
     TrustRoomModel,
 )
 from trustroom.sample_loader import KnowledgeSnippet, SamplePack, load_default_sample_pack
-from trustroom.state_machine import assess_answer_gate
+from trustroom.state_machine import assess_answer_gate, rollup_evidence_freshness
 
 
 ORCHESTRATOR = "trustroom-orchestrator-agent"
@@ -76,6 +79,7 @@ class MockRunResult(TrustRoomModel):
     drafts: list[AnswerDraft]
     reviews: list[ReviewDecision]
     approvals: list[ApprovalDecision]
+    owner_review_suggestions: list[OwnerReviewSuggestion]
     final_pack: FinalSubmissionPack
     lineage: list[AnswerLineage]
 
@@ -111,6 +115,7 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
     )
 
     evidence = _evidence_from_knowledge(sample.knowledge)
+    evidence.append(_q6_replacement_evidence())
     adapter.record_event(
         run_id=run.run_id,
         sender=DECOMPOSER,
@@ -126,7 +131,7 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
         receiver=ANSWER_DRAFTER,
         event_type=EventType.EVIDENCE_FOUND,
         task_state=RunState.DRAFTING,
-        payload_summary="Evidence retriever returns current evidence, stale evidence, conflicting evidence and explicit gaps.",
+        payload_summary="Evidence retriever returns current evidence, stale evidence, conflicting evidence, explicit gaps and a proposed replacement evidence candidate for Q-006.",
         related_object_ids=[candidate.evidence_id for candidate in evidence],
     )
 
@@ -174,6 +179,15 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
         answer_id="A-004R",
         draft_text=SAMPLE_DRAFT_TEXT["Q-004"],
     )
+    revised_q4 = revised_q4.model_copy(
+        update={
+            "evidence_ids": [
+                evidence_id
+                for evidence_id in revised_q4.evidence_ids
+                if evidence_id != "EV-009"
+            ],
+        }
+    )
     drafts = [draft for draft in drafts if draft.item_id != "Q-004"] + [revised_q4]
     adapter.record_event(
         run_id=run.run_id,
@@ -187,6 +201,16 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
 
     reviews = _review_drafts(drafts)
     approvals = _approval_decisions(drafts)
+    owner_review_suggestions = _owner_review_suggestions()
+    adapter.record_event(
+        run_id=run.run_id,
+        sender=EVIDENCE_RETRIEVER,
+        receiver=SME_APPROVER,
+        event_type=EventType.OWNER_REVIEW_SUGGESTION,
+        task_state=RunState.APPROVAL,
+        payload_summary="Evidence retriever found replacement current incident-response candidate EV-013 and created an owner review suggestion; Q-006 remains blocked until policy owner review.",
+        related_object_ids=["Q-006", "EV-006", "EV-010", "EV-013", "ORS-Q-006"],
+    )
     adapter.record_event(
         run_id=run.run_id,
         sender=COMPLIANCE_REVIEWER,
@@ -240,6 +264,7 @@ def run_mock_trustroom(sample: SamplePack | None = None) -> MockRunResult:
         drafts=drafts,
         reviews=reviews,
         approvals=approvals,
+        owner_review_suggestions=owner_review_suggestions,
         final_pack=final_pack,
         lineage=lineage,
     )
@@ -265,6 +290,21 @@ def _evidence_from_knowledge(knowledge: list[KnowledgeSnippet]) -> list[Evidence
                 )
             )
     return evidence
+
+
+def _q6_replacement_evidence() -> EvidenceCandidate:
+    return EvidenceCandidate(
+        evidence_id="EV-013",
+        item_id="Q-006",
+        source_title="Incident Response Policy Candidate v2026.06",
+        snippet=(
+            "A replacement policy candidate uses customer-safe incident response wording, "
+            "but the policy owner must confirm scope before it can support the answer."
+        ),
+        freshness_label=EvidenceFreshness.CURRENT,
+        freshness_marked_by=EVIDENCE_RETRIEVER,
+        confidence=0.81,
+    )
 
 
 def _draft_answers(questions: list[QuestionItem], evidence: list[EvidenceCandidate]) -> list[AnswerDraft]:
@@ -361,6 +401,25 @@ def _approval_decisions(drafts: list[AnswerDraft]) -> list[ApprovalDecision]:
     ]
 
 
+def _owner_review_suggestions() -> list[OwnerReviewSuggestion]:
+    return [
+        OwnerReviewSuggestion(
+            suggestion_id="ORS-Q-006",
+            item_id="Q-006",
+            proposed_by=EVIDENCE_RETRIEVER,
+            owner_role="security-policy-owner",
+            status=OwnerReviewSuggestionStatus.PROPOSED,
+            suggested_evidence_ids=["EV-013"],
+            replaces_evidence_ids=["EV-006", "EV-010"],
+            reason=(
+                "Replacement current evidence may support safer incident-response wording, "
+                "but stale/conflicting refs remain unresolved until owner review."
+            ),
+            scope="Q-006 incident-response notification wording for the Acme sample pack only.",
+        )
+    ]
+
+
 def _build_mock_final_pack(
     *,
     run: Run,
@@ -376,6 +435,7 @@ def _build_mock_final_pack(
     included_answer_ids: list[str] = []
     blocked_item_ids: list[str] = []
     evidence_index: dict[str, list[str]] = {}
+    freshness_rollup: dict[str, EvidenceFreshness] = {}
 
     for draft in drafts:
         question = question_by_id[draft.item_id]
@@ -386,6 +446,7 @@ def _build_mock_final_pack(
             review_decision=review_by_answer_id.get(draft.answer_id),
             approval_decision=approval_by_item_id.get(draft.item_id),
         )
+        freshness_rollup[draft.item_id] = gate.freshness_rollup
         if gate.can_enter_final_pack:
             included_answer_ids.append(draft.answer_id)
             evidence_index[draft.item_id] = list(draft.evidence_ids)
@@ -399,6 +460,7 @@ def _build_mock_final_pack(
         blocked_item_ids=blocked_item_ids,
         readiness_summary="blocked" if blocked_item_ids else "ready",
         evidence_index=evidence_index,
+        freshness_rollup=freshness_rollup,
         audit_event_ids=[review.decision_id for review in reviews] + [approval.decision_id for approval in approvals],
         mode=run.mode,
     )
@@ -499,10 +561,12 @@ def _build_answer_lineage(
 def _lineage_evidence_status(evidence: list[EvidenceCandidate]) -> str:
     if not evidence:
         return "missing"
+    rollup = rollup_evidence_freshness(evidence)
     counts: dict[str, int] = {}
     for candidate in evidence:
         counts[candidate.freshness_label.value] = counts.get(candidate.freshness_label.value, 0) + 1
-    return ", ".join(f"{label}:{count}" for label, count in sorted(counts.items()))
+    detail = ", ".join(f"{label}:{count}" for label, count in sorted(counts.items()))
+    return f"rollup:{rollup.value}; {detail}"
 
 
 def _lineage_evidence_reason(evidence: list[EvidenceCandidate]) -> str:

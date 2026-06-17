@@ -24,6 +24,7 @@ from trustroom.state_machine import (
     InvalidTransition,
     assess_answer_gate,
     build_final_submission_pack,
+    rollup_evidence_freshness,
     transition_run,
 )
 
@@ -192,6 +193,69 @@ def test_stale_evidence_answer_needs_review_and_blocks_finalization() -> None:
     assert gate.can_enter_final_pack is False
     assert gate.status == "needs_review"
     assert any("stale" in reason for reason in gate.reasons)
+    assert gate.freshness_rollup == EvidenceFreshness.STALE
+
+
+def test_non_current_evidence_blocks_even_with_human_approval() -> None:
+    item = make_item(item_id="Q-002", risk_level=RiskLevel.HIGH)
+    stale = make_evidence(
+        evidence_id="EV-002",
+        item_id=item.item_id,
+        freshness=EvidenceFreshness.STALE,
+    )
+    current = make_evidence(
+        evidence_id="EV-013",
+        item_id=item.item_id,
+        freshness=EvidenceFreshness.CURRENT,
+    )
+    answer = make_answer(
+        answer_id="A-002",
+        item_id=item.item_id,
+        evidence_ids=["EV-002", "EV-013"],
+    )
+    approval = ApprovalDecision(
+        decision_id="H-002",
+        item_id=item.item_id,
+        answer_id=answer.answer_id,
+        reviewer_role="security-policy-owner",
+        decision=ApprovalDecisionValue.APPROVE,
+        reason="Owner approved replacement direction.",
+        scope="Q-002 only.",
+        approved_evidence_ids=["EV-013"],
+    )
+
+    gate = assess_answer_gate(item, answer, [stale, current], approval_decision=approval)
+
+    assert gate.can_enter_final_pack is False
+    assert gate.freshness_rollup == EvidenceFreshness.STALE
+    assert any("stale evidence EV-002 blocks final pack entry" in reason for reason in gate.reasons)
+
+
+def test_unknown_evidence_freshness_blocks_final_pack() -> None:
+    item = make_item(item_id="Q-009", risk_level=RiskLevel.LOW)
+    evidence = make_evidence(
+        evidence_id="EV-009",
+        item_id=item.item_id,
+        freshness=EvidenceFreshness.UNKNOWN,
+    )
+    answer = make_answer(answer_id="A-009", item_id=item.item_id, evidence_ids=["EV-009"])
+
+    gate = assess_answer_gate(item, answer, [evidence])
+
+    assert gate.can_enter_final_pack is False
+    assert gate.freshness_rollup == EvidenceFreshness.UNKNOWN
+    assert any("unknown evidence freshness EV-009 blocks final pack entry" in reason for reason in gate.reasons)
+
+
+def test_evidence_freshness_rollup_is_conservative() -> None:
+    item_id = "Q-010"
+    evidence = [
+        make_evidence(evidence_id="EV-current", item_id=item_id, freshness=EvidenceFreshness.CURRENT),
+        make_evidence(evidence_id="EV-unknown", item_id=item_id, freshness=EvidenceFreshness.UNKNOWN),
+        make_evidence(evidence_id="EV-conflict", item_id=item_id, freshness=EvidenceFreshness.CONFLICTING),
+    ]
+
+    assert rollup_evidence_freshness(evidence) == EvidenceFreshness.CONFLICTING
 
 
 def test_unsupported_certification_requires_explicit_human_approval() -> None:

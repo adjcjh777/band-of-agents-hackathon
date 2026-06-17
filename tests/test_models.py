@@ -22,6 +22,8 @@ from trustroom.models import (
     LessonType,
     LineageStep,
     MaterialType,
+    OwnerReviewSuggestion,
+    OwnerReviewSuggestionStatus,
     ProposalStatus,
     ProposalType,
     QuestionCategory,
@@ -89,6 +91,25 @@ def test_question_and_evidence_models_require_traceable_business_fields() -> Non
 
     assert item.status == "open"
     assert evidence.confidence == pytest.approx(0.86)
+    assert evidence.freshness_marked_by == "evidence-retriever-agent"
+    assert evidence.freshness_marked_at.tzinfo is not None
+
+
+def test_owner_review_suggestion_starts_as_proposed() -> None:
+    suggestion = OwnerReviewSuggestion(
+        suggestion_id="ORS-Q-006",
+        item_id="Q-006",
+        proposed_by="evidence-retriever-agent",
+        owner_role="security-policy-owner",
+        suggested_evidence_ids=["EV-013"],
+        replaces_evidence_ids=["EV-006", "EV-010"],
+        reason="Replacement evidence may support safer incident-response wording.",
+        scope="Q-006 only.",
+    )
+
+    assert suggestion.status == OwnerReviewSuggestionStatus.PROPOSED
+    assert suggestion.suggested_evidence_ids == ["EV-013"]
+    assert suggestion.replaces_evidence_ids == ["EV-006", "EV-010"]
 
 
 def test_confidence_must_be_between_zero_and_one() -> None:
@@ -119,6 +140,8 @@ def test_final_submission_pack_preserves_readiness_and_evidence_index() -> None:
 
     assert pack.mode == ExecutionMode.REPLAY
     assert pack.evidence_index["Q-001"] == ["EV-001"]
+    assert pack.freshness_rollup == {}
+    assert pack.visibility_mode == "customer-safe"
     assert pack.blocked_item_ids == ["Q-002"]
 
 

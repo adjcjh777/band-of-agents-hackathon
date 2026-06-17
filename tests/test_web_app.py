@@ -75,9 +75,12 @@ def test_replay_route_surfaces_reviewer_evidence_matrix() -> None:
     assert "Incident Response Policy v2024.11" in response.text
     assert "Support Addendum Draft" in response.text
     assert "EU Residency Gap Note" in response.text
-    assert "stale evidence EV-006 needs review or human approval" in response.text
-    assert "conflicting evidence EV-010 needs review" in response.text
+    assert "Incident Response Policy Candidate v2026.06" in response.text
+    assert "stale evidence EV-006 blocks final pack entry" in response.text
+    assert "conflicting evidence EV-010 blocks final pack entry" in response.text
     assert "missing" in response.text
+    assert "Rollup: conflicting" in response.text
+    assert "Marked by evidence-retriever-agent" in response.text
     assert "questionnaire.csv:7" in response.text
     assert "REV-Q-006" in response.text
 
@@ -129,7 +132,7 @@ def test_replay_route_surfaces_answer_lineage_drilldown() -> None:
     assert "included" in response.text
     assert "No human approval record is attached to this answer." in response.text
     assert "excluded" in response.text
-    assert "high-risk answer requires human approval" in response.text
+    assert "conflicting evidence EV-010 blocks final pack entry" in response.text
 
 
 def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
@@ -157,7 +160,25 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert "stale/conflicting incident evidence" in response.text
     assert "no valid human approval" in response.text
     assert "final pack excluded" in response.text
-    assert "Approval evidence refs are visible reviewer context, not a machine-enforced evidence-set gate." in response.text
+    assert "Approval evidence refs are visible reviewer context; Final Pack entry still requires current evidence rollup." in response.text
+    assert "Owner review suggestion" in response.text
+    assert "evidence-retriever-agent proposed replacement evidence EV-013" in response.text
+    assert "replacement suggestion ORS-Q-006 is proposed" in response.text
+
+
+def test_replay_route_surfaces_review_appendix_visibility_and_owner_suggestion() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert "appendix customer-safe" in response.text
+    assert "Review Appendix Detail" in response.text
+    assert "customer-safe" in response.text
+    assert "Owner review card" in response.text
+    assert "ORS-Q-006 · proposed" in response.text
+    assert "suggests EV-013" in response.text
+    assert "replaces EV-006" in response.text
+    assert "replaces EV-010" in response.text
+    assert "raw customer policy text" not in response.text
 
 
 def test_replay_route_provides_judge_recording_anchor_navigation() -> None:

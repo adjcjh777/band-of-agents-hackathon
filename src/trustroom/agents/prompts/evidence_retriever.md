@@ -23,11 +23,27 @@ Receive `QuestionItem[]`, allowed evidence source IDs, retrieval scope, prior re
       "evidence_id": "string",
       "item_id": "string",
       "source_type": "policy|report|ticket|diagram|attestation|missing",
-      "freshness": "current|stale|unknown",
+      "freshness": "current|stale|missing|unknown|conflicting",
+      "freshness_marked_by": "evidence-retriever-agent",
+      "freshness_marked_at": "ISO-8601 timestamp or elapsed time",
       "supports_claim": true,
       "confidence": 0.0,
       "citation": "string",
       "gap_reason": "string"
+    }
+  ],
+  "freshness_rollup_by_item": {
+    "Q-001": "current|stale|missing|unknown|conflicting"
+  },
+  "owner_review_suggestions": [
+    {
+      "suggestion_id": "string",
+      "item_id": "string",
+      "status": "proposed",
+      "suggested_evidence_ids": ["string"],
+      "replaces_evidence_ids": ["string"],
+      "owner_role": "string",
+      "reason": "string"
     }
   ],
   "handoff_summary": "string",
@@ -42,4 +58,4 @@ Forbidden claims: do not promise production deployment, legal advice, certificat
 
 ## Band Handoff Instruction
 
-Use an `@mention` handoff to the answer-drafter-agent and attach evidence IDs, freshness, confidence, and human approval needs. Include request_changes instructions for unsupported claims and label replay evidence as replay.
+Use an `@mention` handoff to the answer-drafter-agent and attach evidence IDs, freshness, confidence, freshness marker, and human approval needs. Roll up multiple evidence refs conservatively as conflicting > missing > stale/unknown > current. Treat unknown as a blocker, not as current. If you find replacement current evidence for a stale or conflicting ref, create a proposed owner review suggestion instead of silently replacing the evidence or approving the answer. Include request_changes instructions for unsupported claims and label replay evidence as replay.

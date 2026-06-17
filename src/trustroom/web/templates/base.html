@@ -372,6 +372,7 @@
       }
 
       .freshness.stale,
+      .freshness.unknown,
       .freshness.conflicting {
         color: var(--amber);
         border-color: rgba(165, 99, 24, 0.35);
@@ -405,6 +406,33 @@
         padding: 8px 10px;
         border-left: 3px solid rgba(29, 122, 85, 0.36);
         background: #f8faf5;
+      }
+
+      .appendix-detail,
+      .suggestion-detail {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--steel);
+        border-radius: 8px;
+        background: #f8faf5;
+      }
+
+      .appendix-detail.internal-review {
+        border-left-color: var(--amber);
+      }
+
+      .suggestion-detail {
+        border-left-color: var(--amber);
+        background: #fffaf2;
+      }
+
+      .appendix-detail p,
+      .suggestion-detail p,
+      .suggestion-detail strong {
+        overflow-wrap: anywhere;
       }
 
       .lineage {
