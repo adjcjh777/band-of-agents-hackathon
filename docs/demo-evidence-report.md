@@ -7,7 +7,7 @@
 | Area | Evidence | Status |
 |---|---|---|
 | Sample intake | `samples/acme-security-rfp/` includes case, RFP, questionnaire, knowledge snippets | Ready |
-| Replay mirror | `reports/trustroom_replay.example.jsonl` has 19 events | Ready |
+| Replay mirror | `reports/trustroom_replay.example.jsonl` has 20 events | Ready |
 | Domain model | `src/trustroom/models.py` and `src/trustroom/state_machine.py` model run, items, evidence, review, approval, final pack, evolution | Ready |
 | Mock agents | `src/trustroom/agents/mock_runner.py` produces intake, 3+ Agent handoff, evidence, draft, review, human approval, final pack | Ready |
 | Dashboard | `/runs/demo/replay` shows Executive Decision, Run Trace, Business Milestones, Agent Handoff Chain, Representative Item Traces, Blocked Impact Path, Reviewer Decision Matrix, Approval Workbench, Final Pack, Event Log Detail and Governed Evolution | Ready |

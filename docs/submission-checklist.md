@@ -36,7 +36,7 @@
 - [x] 有最终业务产物：answer pack、security questionnaire 回答表、evidence index。
 - [x] 有 human approval 或 escalation。
 - [x] 有审计时间线。
-- [x] 有 T20 Run Trace / Agent Handoff Chain，不用读完整 19 条 raw event 也能看懂 Band-style 协作链。
+- [x] 有 T20 Run Trace / Agent Handoff Chain，不用读完整 20 条 raw event 也能看懂 Band-style 协作链。
 - [x] 有 Representative Item Traces：Q-002 approved path、Q-004 review loop、Q-006 fail-closed blocker。
 - [x] 有 Q-006 Blocked Impact Path：stale/conflicting evidence -> no valid approval -> final pack excluded -> policy owner next action。
 - [x] 有 live path 和 replay fallback 的明确标注。
@@ -83,7 +83,7 @@
 ## 2026-06-13 Final Rehearsal Record
 
 - `uv run pytest -v`：100 passed，1 个 FastAPI / Starlette deprecation warning，不影响 demo。
-- `uv run python scripts/check_trustroom_readiness.py`：OK，question_count 8，evidence_coverage_ratio 1.0，replay_event_count 19。
+- `uv run python scripts/check_trustroom_readiness.py`：OK，question_count 8，evidence_coverage_ratio 1.0，replay_event_count 20。
 - `uv run python scripts/check_no_secrets.py`：OK。
 - `uv run uvicorn trustroom.web.app:app --host 127.0.0.1 --port 8000`：本地服务启动成功。
 - Browser smoke：`/runs/demo/replay` 包含 `REPLAY`、Executive Decision、Run Trace、Business Milestones、Agent Handoff Chain、Representative Item Traces、Blocked Impact Path、Reviewer Decision Matrix、Approval Workbench、Final Pack、Event Log Detail、Governed Evolution，并显示 `fallback, not live Band`；浏览器 error logs 为空，无横向溢出。
