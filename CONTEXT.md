@@ -121,8 +121,8 @@ The expanded view for a Review Appendix Exception Item. It may show supporting a
 _Avoid_: supporting_agent in the collapsed item, raw log dump, hidden accountability shift.
 
 **Review Appendix Evidence Reference**:
-A public-safe or redacted pointer shown inside Review Appendix Exception Detail to identify supporting evidence without exposing private source content. It can use sanitized evidence ids or redacted audit refs; it cannot include raw customer documents, secrets, real room ids, agent keys, or unredacted provider metadata.
-_Avoid_: raw document excerpt, private customer file content, secret-bearing evidence, unredacted room or message id.
+A public-safe or redacted pointer shown inside Review Appendix Exception Detail to identify supporting evidence without exposing private source content. It can include an evidence freshness label in expanded detail, but it cannot include raw customer documents, secrets, real room ids, agent keys, or unredacted provider metadata.
+_Avoid_: raw document excerpt, private customer file content, secret-bearing evidence, unredacted room or message id, unlabeled stale evidence.
 
 **Review Appendix Exception Owner**:
 The accountable human or business-owner role responsible for the next action on a Review Appendix Exception Item. It cannot be an Agent; Agents can appear only as supporting agents in expanded detail.
