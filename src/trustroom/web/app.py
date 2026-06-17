@@ -424,6 +424,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     responsibility_queue = _responsibility_queue(answers=answers, approval_queue=approval_queue)
     decision_state = _decision_state(readiness=readiness, total_questions=total_questions, next_actions=next_actions)
     final_pack_decision = _final_pack_decision(answers=answers, readiness=readiness, total_questions=total_questions)
+    demo_boundary = _demo_boundary(mode)
     q006_buyer_safe_story = _q006_buyer_safe_story(
         answers=answers,
         owner_review_suggestions=[
@@ -477,10 +478,11 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "sample_boundary": "Sample evidence is fictional and redacted; it demonstrates review traceability, not a formal audit.",
         "mode_label": mode.value.upper(),
         "is_replay": mode == ExecutionMode.REPLAY,
+        "demo_boundary": demo_boundary,
         "decision_state": decision_state,
         "band_evidence_mode": {
             "label": "REST smoke verified",
-            "note": "Replay fallback · autonomous pending",
+            "note": "Public replay · live gated",
         },
         "readiness": readiness,
         "total_questions": total_questions,
@@ -642,9 +644,9 @@ def _run_trace_summary(
     ]
     valid_approvals = sum(1 for item in approval_queue if item["decision"] == "approved")
     boundary = (
-        "REPLAY fallback, not live Band."
+        "Public replay is the demo-safe evidence path. Live Band mode is separately gated."
         if is_replay
-        else "MOCK local run."
+        else "Local mock run for development; live Band mode is separately gated."
     )
 
     return {
@@ -687,6 +689,23 @@ def _run_trace_summary(
         "handoff_chain": _handoff_chain(events),
         "representative_traces": _representative_item_traces(events, answers, owner_review_suggestions),
         "blocked_impact_path": _blocked_impact_path(answers, owner_review_suggestions),
+    }
+
+
+def _demo_boundary(mode: ExecutionMode) -> dict[str, str]:
+    if mode == ExecutionMode.REPLAY:
+        return {
+            "short_label": "Public replay · live gated",
+            "summary": "Public replay is the demo-safe evidence path. Live Band mode is separately gated.",
+            "detail": (
+                "Judges can inspect the full workflow without live credentials or raw room identifiers. "
+                "Band REST room and handoff evidence are separate; connected-peer autonomous replies remain pending."
+            ),
+        }
+    return {
+        "short_label": "Local mock · live gated",
+        "summary": "Local mock mode is for development. Live Band mode is separately gated.",
+        "detail": "Use the public replay route for judge-safe review; do not treat mock output as live Band evidence.",
     }
 
 

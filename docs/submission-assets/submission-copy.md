@@ -14,7 +14,9 @@ RFP TrustRoom turns a messy B2B RFP and security questionnaire response into a c
 
 The product promise is simple and verifiable: every answer carries evidence, review, approval and final-pack decision context, so risky commitments stay out of the customer package.
 
-The demo focuses on enterprise control rather than unchecked automation. Q-002 shows scoped SME approval, Q-004 shows a reviewer challenge followed by bounded legal-approved wording, and Q-006 shows a fail-closed blocker when incident-response evidence is stale/conflicting and no valid approval exists. The public-safe replay route makes the workflow visible for judges while keeping live credentials and raw room identifiers out of the submission. Band REST room and handoff evidence were verified separately; complete autonomous live replies remain a separate gate until connected peers pass the challenge-token smoke.
+The demo focuses on enterprise control rather than unchecked automation. Q-002 shows scoped SME approval, Q-004 shows a reviewer challenge followed by bounded legal-approved wording, and Q-006 shows a fail-closed blocker when incident-response evidence is stale/conflicting and no valid approval exists. Public replay is the demo-safe evidence path: judges can inspect the full workflow without live credentials or raw room identifiers. Live Band mode is separately gated; Band REST room and handoff evidence were verified separately, and connected-peer autonomous replies remain pending until challenge-token smoke evidence passes.
+
+This remains a hackathon working prototype; do not claim production deployment, formal audit, compliance certification, legal advice, complete autonomous live workflow, or complete autonomous live replies.
 
 ## Tags
 

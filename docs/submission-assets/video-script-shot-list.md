@@ -38,7 +38,7 @@ Status: draft-ready for recording. Record the public-safe replay route from the 
 
 4:35-5:00 Boundary / value
 - Visual: replay/live boundary and no-overclaim footer.
-- Say: This is a hackathon working prototype. Replay is the public-safe fallback. Band REST room and handoff boundary were separately verified; autonomous live replies remain a separate gate. The value is the final-pack decision: every answer keeps evidence, review and approval context attached, so the room shows what is safe to send and what must wait for policy-owner approval.
+- Say: This is a hackathon working prototype. Public replay is the demo-safe evidence path: judges can inspect the workflow without live credentials or raw room identifiers. Live Band mode is separately gated; Band REST room and handoff boundary were verified separately, and connected-peer autonomous replies remain pending. The value is the final-pack decision: every answer keeps evidence, review and approval context attached, so the room shows what is safe to send and what must wait for policy-owner approval.
 
 ## Recording notes
 
@@ -46,4 +46,4 @@ Status: draft-ready for recording. Record the public-safe replay route from the 
 - Use browser zoom around 90-100%.
 - Hide bookmarks, account tabs and anything that could expose raw ids or account data.
 - Avoid showing live Band account pages unless sanitized.
-- Do not claim more than the public-safe replay deployment. Keep live REST evidence and autonomous live replies as separate, bounded claims.
+- Do not claim more than the public-safe replay deployment. Keep live REST evidence and connected-peer autonomous replies as separate, bounded claims.

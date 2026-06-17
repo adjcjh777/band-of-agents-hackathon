@@ -20,7 +20,7 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 | P1 | PM-06 | Translate Answer Lineage into business language | Non-technical reviewers can follow where an answer came from, who changed it and why it is safe or blocked | Codex controller | complete |
 | P2 | PM-07 | Clarify agent roles without over-personalizing them | Judges understand specialized roles while the product still feels enterprise-grade | UI/UX agent + Codex | complete |
 | P2 | PM-08 | Evolve Handoff Trace into a lightweight collaboration map | Users can inspect by answer, agent, blocker or final-pack status | Codex controller | complete |
-| P2 | PM-09 | Productize the replay/live boundary copy | Boundary language feels confident and truthful instead of apologetic | Scout + Codex | queued |
+| P2 | PM-09 | Productize the replay/live boundary copy | Boundary language feels confident and truthful instead of apologetic | Scout + Codex | complete |
 | P3 | PM-10 | Add workspace / project-list concept | TrustRoom scales from one demo run to multiple RFPs/questionnaires | Future product task | later |
 | P3 | PM-11 | Add evidence library direction | SOC 2, ISO, DPA, architecture and incident evidence become reusable product assets | Future product task | later |
 | P3 | PM-12 | Expand export workflow | Customer-safe export, internal appendix, blocked exceptions and evidence index become first-class outputs | Future product task | later |
@@ -172,14 +172,17 @@ Acceptance:
 
 ### PM-09 Productize The Replay / Live Boundary Copy
 
+Status: complete in PM-R9.
+
 Goal: make the boundary confident:
 
 > Public replay is the demo-safe evidence path. Live Band mode is separately gated.
 
 Acceptance:
 
-- Replay is never described as live.
-- Autonomous replies remain pending unless connected-peer challenge-token evidence exists.
+- [x] Replay is never described as live.
+- [x] Autonomous replies remain pending unless connected-peer challenge-token evidence exists.
+- [x] UI and submission copy use the public replay / separately gated live mode framing.
 
 ### PM-10 Add Workspace / Project-List Concept
 

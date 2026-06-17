@@ -49,7 +49,7 @@
       <a href="#final-pack">Final Pack</a>
       <a href="#replay-live-boundary">Replay Boundary</a>
     </div>
-    <span class="route-boundary">REPLAY fallback, not live Band</span>
+    <span class="route-boundary">{{ demo_boundary.short_label }}</span>
   </nav>
 
   <section class="first-grid" aria-label="First viewport enterprise dashboard">
@@ -634,8 +634,9 @@
       </section>
 
       <section id="replay-live-boundary" class="panel">
-        <h2>Replay / Live Evidence</h2>
-        <p class="small">{{ mode_label }} fallback, not live Band.</p>
+        <h2>Demo-Safe Replay / Live Gate</h2>
+        <p class="small">{{ demo_boundary.summary }}</p>
+        <p class="small">{{ demo_boundary.detail }}</p>
         <details>
           <summary>technical boundary</summary>
           <p class="small">Customer Export API: {{ customer_export_api_path }}</p>

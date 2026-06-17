@@ -53,7 +53,7 @@ def test_replay_route_is_clearly_labeled_and_contains_judge_signals() -> None:
     assert "Human Gates" in response.text
     assert "Human approval" in response.text
     assert "Governed Evolution" in response.text
-    assert "Replay / Live Evidence" in response.text
+    assert "Demo-Safe Replay / Live Gate" in response.text
     assert "REPLAY" in response.text
 
 
@@ -72,7 +72,9 @@ def test_replay_route_surfaces_enterprise_decision_context() -> None:
     assert "Decomposer @ Retriever" in response.text
     assert "Reviewer @ Owner" in response.text
     assert "REST smoke verified" in response.text
-    assert "Replay fallback · autonomous pending" in response.text
+    assert "Public replay · live gated" in response.text
+    assert "Public replay is the demo-safe evidence path. Live Band mode is separately gated." in response.text
+    assert "connected-peer autonomous replies remain pending" in response.text
     assert "Q-002 · included" in response.text
     assert "Q-004 · included" in response.text
     assert "Q-006 · excluded" in response.text
@@ -225,7 +227,7 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert "Business Milestones" in response.text
     assert "Representative Item Traces" in response.text
     assert "Blocked Impact Path" in response.text
-    assert "REPLAY fallback, not live Band" in response.text
+    assert "Public replay is the demo-safe evidence path. Live Band mode is separately gated." in response.text
     assert re.search(r"Review loops</span>\s*<strong>1</strong>", response.text)
     assert "<summary>handoff detail</summary>" in response.text
     assert "<summary>show handoffs</summary>" in response.text
@@ -389,4 +391,4 @@ def test_replay_route_provides_judge_recording_anchor_navigation() -> None:
     assert 'href="#final-pack">Final Pack</a>' in response.text
     assert 'id="replay-live-boundary"' in response.text
     assert 'href="#replay-live-boundary">Replay Boundary</a>' in response.text
-    assert "REPLAY fallback, not live Band" in response.text
+    assert "Public replay · live gated" in response.text
