@@ -166,7 +166,7 @@
 
       .band-rail {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 8px;
         margin: -4px 0 16px;
         padding: 10px;
@@ -292,7 +292,7 @@
 
       .first-grid {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 12px;
       }
 
@@ -335,6 +335,41 @@
         color: var(--muted);
         font-size: 13px;
         line-height: 1.45;
+      }
+
+      .path-metric {
+        display: grid;
+        align-content: start;
+        gap: 8px;
+      }
+
+      .path-pills {
+        display: grid;
+        gap: 5px;
+      }
+
+      .path-pill {
+        display: block;
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 7px;
+        background: #fbfcf8;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+      }
+
+      .path-pill.blocked {
+        border-color: rgba(162, 58, 50, 0.28);
+        color: var(--red);
+      }
+
+      .path-pill.ready {
+        border-color: rgba(29, 122, 85, 0.28);
+        color: var(--green);
       }
 
       .stack {
@@ -862,11 +897,19 @@
           content: "";
         }
 
+        .band-rail {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
         .route-boundary {
           white-space: normal;
         }
 
         .first-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .band-rail {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 

@@ -34,6 +34,8 @@ def test_mock_demo_route_renders_enterprise_dashboard() -> None:
     assert "Draft pack ready with exclusions" in response.text
     assert "Sendable" in response.text
     assert "Evidence" in response.text
+    assert "Band Evidence" in response.text
+    assert "Paths" in response.text
     assert "Human Gates" in response.text
     assert "Reviewer Decision Matrix" in response.text
     assert "Final Pack" in response.text
@@ -47,6 +49,7 @@ def test_replay_route_is_clearly_labeled_and_contains_judge_signals() -> None:
     assert "RFP TrustRoom" in response.text
     assert "Sendable" in response.text
     assert "Evidence" in response.text
+    assert "Band Evidence" in response.text
     assert "Human Gates" in response.text
     assert "Human approval" in response.text
     assert "Governed Evolution" in response.text
@@ -65,8 +68,14 @@ def test_replay_route_surfaces_enterprise_decision_context() -> None:
     assert "Draft pack ready with exclusions" in response.text
     assert "7/8 ready · 1 blocked outside." in response.text
     assert "Human @ TrustRoom" in response.text
+    assert "Orchestrator @ Decomposer" in response.text
     assert "Decomposer @ Retriever" in response.text
     assert "Reviewer @ Owner" in response.text
+    assert "REST smoke verified" in response.text
+    assert "Replay fallback · autonomous pending" in response.text
+    assert "Q-002 · included" in response.text
+    assert "Q-004 · included" in response.text
+    assert "Q-006 · excluded" in response.text
     assert "Policy owner must confirm incident response wording before this answer can be sent." in response.text
 
 

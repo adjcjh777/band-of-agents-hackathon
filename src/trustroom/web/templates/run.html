@@ -23,6 +23,7 @@
 
   <section class="band-rail" aria-label="Band handoff rail">
     <span>Human @ TrustRoom</span>
+    <span>Orchestrator @ Decomposer</span>
     <span>Decomposer @ Retriever</span>
     <span>Retriever @ Drafter</span>
     <span>Reviewer @ Owner</span>
@@ -59,14 +60,24 @@
       <span>{{ evidence_coverage.stale }} stale · {{ evidence_coverage.conflicting }} conflict</span>
     </div>
     <div class="metric">
+      <h2>Band Evidence</h2>
+      <strong>REST</strong>
+      <span>{{ band_evidence_mode.label }}</span>
+      <span>{{ band_evidence_mode.note }}</span>
+    </div>
+    <div class="metric path-metric">
+      <h2>Paths</h2>
+      <strong>3</strong>
+      <div class="path-pills" aria-label="Representative item paths">
+        {% for trace in run_trace.representative_traces %}
+          <span class="path-pill {{ trace.tone }}">{{ trace.item_id }} · {{ trace.status }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="metric">
       <h2>Human Gates</h2>
       <strong>{{ approval_queue|length }}</strong>
       <span>SOC 2 · residency · incident</span>
-    </div>
-    <div class="metric">
-      <h2>Owners</h2>
-      <strong>{{ owner_summary|length }}</strong>
-      <span>item-level accountability</span>
     </div>
     <div id="final-pack" class="metric">
       <h2>Final Pack</h2>

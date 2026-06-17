@@ -433,6 +433,10 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "mode_label": mode.value.upper(),
         "is_replay": mode == ExecutionMode.REPLAY,
         "decision_state": decision_state,
+        "band_evidence_mode": {
+            "label": "REST smoke verified",
+            "note": "Replay fallback · autonomous pending",
+        },
         "readiness": readiness,
         "total_questions": total_questions,
         "evidence_coverage": {
