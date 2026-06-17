@@ -509,11 +509,11 @@ def _decision_state(
     next_actions: list[dict[str, Any]],
 ) -> dict[str, str]:
     if readiness["blocked"]:
-        primary_action = next_actions[0]["next_action"] if next_actions else "Resolve blockers before sending."
+        primary_action = "Q-006 owner review required." if next_actions else "Resolve blockers before sending."
         return {
             "label": "Draft pack ready with exclusions",
             "tone": "blocked",
-            "summary": f"{readiness['ready']} of {total_questions} answers can enter the pack; {readiness['blocked']} blocker must stay out.",
+            "summary": f"{readiness['ready']}/{total_questions} ready · {readiness['blocked']} blocked outside.",
             "primary_action": primary_action,
         }
     if readiness["needs_review"]:
@@ -562,9 +562,9 @@ def _run_trace_summary(
     ]
     valid_approvals = sum(1 for item in approval_queue if item["decision"] == "approved")
     boundary = (
-        "REPLAY fallback, not live Band; redacted event refs mirror the collaboration path."
+        "REPLAY fallback, not live Band."
         if is_replay
-        else "MOCK local run; use replay or verified live evidence for judge-facing claims."
+        else "MOCK local run."
     )
 
     return {
@@ -573,32 +573,32 @@ def _run_trace_summary(
             {
                 "label": "Roles",
                 "value": str(len(participants)),
-                "note": "agent and human handoff participants",
+                "note": "participants",
             },
             {
                 "label": "Handoffs",
                 "value": str(len(handoff_events)),
-                "note": "Band-style sender to receiver transitions",
+                "note": "sender → receiver",
             },
             {
                 "label": "Review loops",
                 "value": str(len(review_loops)),
-                "note": "reviewer challenge before final wording",
+                "note": "challenge loop",
             },
             {
                 "label": "Valid approvals",
                 "value": str(valid_approvals),
-                "note": "scoped sample approvals",
+                "note": "scoped",
             },
             {
                 "label": "Final pack",
                 "value": f"{readiness['ready']}/{total_questions}",
-                "note": f"{readiness['blocked']} blocked item excluded",
+                "note": f"{readiness['blocked']} excluded",
             },
             {
                 "label": "Mode",
                 "value": mode_label,
-                "note": "fallback trace, not autonomous live proof" if is_replay else "local deterministic run",
+                "note": "fallback" if is_replay else "local",
             },
         ],
         "milestones": _business_milestones(events, readiness, total_questions),
@@ -631,43 +631,43 @@ def _business_milestones(
         {
             "label": "Intake",
             "status": "passed",
-            "detail": "Sample RFP, questionnaire and knowledge pack entered the room.",
+            "detail": "RFP entered the room.",
             "refs": _event_refs(events, task_state="intake"),
         },
         {
             "label": "Triage",
             "status": "passed",
-            "detail": "Orchestrator assigned owners, risk and evidence needs for 8 items.",
+            "detail": "Owners and risk assigned.",
             "refs": _event_refs(events, event_type=EventType.TASK_ASSIGNED.value, task_state="triage"),
         },
         {
             "label": "Evidence",
             "status": "passed",
-            "detail": "Retriever surfaced current, stale, missing and conflicting evidence.",
+            "detail": "Freshness labeled.",
             "refs": _event_refs(events, task_state="evidence")[:3],
         },
         {
             "label": "Draft",
             "status": "passed",
-            "detail": "Answer drafter created customer-safe drafts with evidence refs.",
+            "detail": "Drafts linked to refs.",
             "refs": _event_refs(events, event_type=EventType.DRAFT_CREATED.value)[:2],
         },
         {
             "label": "Review loop",
             "status": "review",
-            "detail": "Q-004 was challenged, sent back for clarification and rewritten.",
+            "detail": "Q-004 challenged.",
             "refs": _event_refs(events, object_id="Q-004", text_contains="review")[:3],
         },
         {
             "label": "Human approval",
             "status": "review",
-            "detail": "Q-002 and Q-004 have scoped approvals; Q-006 has no valid approval.",
+            "detail": "Q-002/Q-004 approved.",
             "refs": _event_refs(events, task_state="approval")[:3],
         },
         {
             "label": "Final pack",
             "status": "blocked" if readiness["blocked"] else "passed",
-            "detail": f"{readiness['ready']} of {total_questions} answers included; Q-006 stays excluded.",
+            "detail": f"{readiness['ready']}/{total_questions} included.",
             "refs": _event_refs(events, event_type=EventType.FINAL_PACK_CREATED.value),
         },
     ]
@@ -724,9 +724,9 @@ def _representative_item_traces(
         "Q-006": "Incident blocker path",
     }
     outcomes = {
-        "Q-002": "Valid scoped SME approval; included with bridge-letter boundary.",
-        "Q-004": "Reviewer challenged overbroad language; legal approved bounded pilot wording.",
-        "Q-006": "Stale/conflicting evidence plus a proposed replacement; final pack remains excluded until owner review.",
+        "Q-002": "Scoped SME approval.",
+        "Q-004": "Reviewer loop, legal approval.",
+        "Q-006": "Stale/conflicting; excluded.",
     }
     traces = []
     for item_id in TRACE_ITEM_IDS:

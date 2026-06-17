@@ -5,9 +5,7 @@
     <div>
       <span class="mode {% if is_replay %}replay{% endif %}">{{ mode_label }}</span>
       <h1>RFP TrustRoom</h1>
-      <p class="subcopy">
-        {{ case_name }} is being prepared as an evidence-backed answer pack with visible owner accountability, reviewer challenge and human approval.
-      </p>
+      <p class="subcopy">{{ case_name }} · evidence-backed answer pack</p>
     </div>
   </section>
 
@@ -18,15 +16,23 @@
       <p>{{ decision_state.summary }}</p>
     </div>
     <div>
-      <span class="eyebrow">Next required action</span>
+      <span class="eyebrow">Owner action</span>
       <p>{{ decision_state.primary_action }}</p>
     </div>
+  </section>
+
+  <section class="band-rail" aria-label="Band handoff rail">
+    <span>Human @ TrustRoom</span>
+    <span>Decomposer @ Retriever</span>
+    <span>Retriever @ Drafter</span>
+    <span>Reviewer @ Owner</span>
+    <strong>Final Pack</strong>
   </section>
 
   <nav class="judge-route" aria-label="Judge route and recording route">
     <div class="judge-route-label">
       <span class="eyebrow">Judge route</span>
-      <p class="small">Recording path for the 10-minute review</p>
+      <p class="small">10-minute review path</p>
     </div>
     <div class="judge-route-links">
       <a href="#executive-decision">Executive Decision</a>
@@ -43,29 +49,29 @@
 
   <section class="first-grid" aria-label="First viewport enterprise dashboard">
     <div class="metric">
-      <h2>Submission Readiness</h2>
+      <h2>Sendable</h2>
       <strong>{{ readiness.ready }}/{{ total_questions }}</strong>
-      <span>{{ readiness.blocked }} blocked, {{ readiness.needs_review }} needs review, customer pack not auto-sent</span>
+      <span>{{ readiness.blocked }} blocked</span>
     </div>
     <div class="metric">
-      <h2>Evidence Coverage</h2>
+      <h2>Evidence</h2>
       <strong>{{ evidence_coverage.covered_items }}/{{ total_questions }}</strong>
-      <span>{{ evidence_coverage.total_evidence }} evidence refs · {{ evidence_coverage.stale }} stale · {{ evidence_coverage.missing }} gap · {{ evidence_coverage.conflicting }} conflict</span>
+      <span>{{ evidence_coverage.stale }} stale · {{ evidence_coverage.conflicting }} conflict</span>
     </div>
     <div class="metric">
-      <h2>Approval Queue</h2>
+      <h2>Human Gates</h2>
       <strong>{{ approval_queue|length }}</strong>
-      <span>Human gates for SOC 2, residency and incident commitments</span>
+      <span>SOC 2 · residency · incident</span>
     </div>
     <div class="metric">
-      <h2>Owner Accountability</h2>
+      <h2>Owners</h2>
       <strong>{{ owner_summary|length }}</strong>
-      <span>Sales, security, product and legal ownership is visible by item</span>
+      <span>item-level accountability</span>
     </div>
     <div id="final-pack" class="metric">
       <h2>Final Pack</h2>
       <strong>{{ final_pack.included_answer_ids|length }}</strong>
-      <span>{{ final_pack.blocked_item_ids|length }} blocker kept outside · appendix {{ review_appendix_visibility_mode }}</span>
+      <span>{{ final_pack.blocked_item_ids|length }} held outside</span>
       <div class="metric-actions">
         <a href="{{ customer_export_path }}">Customer Export</a>
         <a href="{{ customer_export_appendix_path }}">With Appendix</a>
@@ -77,7 +83,7 @@
     <div class="panel stack">
       <div class="row-topline">
         <div>
-          <span class="eyebrow">30-second proof</span>
+          <span class="eyebrow">Band proof</span>
           <h2>Run Trace</h2>
         </div>
         <span class="mode {% if is_replay %}replay{% endif %}">{{ mode_label }}</span>
@@ -96,7 +102,7 @@
       <div id="business-milestones">
         <div class="row-topline">
           <h3>Business Milestones</h3>
-          <span class="small">Intake → Evidence → Review → Approval → Final Pack</span>
+          <span class="small">Intake → Final Pack</span>
         </div>
         <div class="milestone-grid">
           {% for milestone in run_trace.milestones %}
@@ -120,7 +126,7 @@
       <div>
         <span class="eyebrow">Band collaboration mirror</span>
         <h2>Agent Handoff Chain</h2>
-        <p class="small">Sender → Receiver → Decision path, using redacted replay refs rather than live Band proof.</p>
+        <p class="small">Sender → Receiver → State change</p>
       </div>
       <div class="handoff-chain">
         {% for step in run_trace.handoff_chain %}
@@ -131,7 +137,10 @@
             </div>
             <p class="handoff-route">{{ step.sender }} → {{ step.receiver }}</p>
             <p class="small">{{ step.event_type }}</p>
-            <p>{{ step.summary }}</p>
+            <details>
+              <summary>handoff detail</summary>
+              <p>{{ step.summary }}</p>
+            </details>
             <div class="trace compact">
               {% for ref in step.refs[:5] %}
                 <span>{{ ref }}</span>
@@ -148,9 +157,9 @@
       <div>
         <span class="eyebrow">Representative item traces</span>
         <h2>Representative Item Traces</h2>
-        <p class="small">Q-002 / Q-004 / Q-006 decision paths</p>
+        <p class="small">Q-002 / Q-004 / Q-006</p>
       </div>
-      <p class="small">Approval evidence refs are visible reviewer context; Final Pack entry still requires current evidence rollup.</p>
+      <p class="small">Current evidence still gates Final Pack entry.</p>
     </div>
     <div class="item-trace-grid">
       {% for trace in run_trace.representative_traces %}
@@ -161,23 +170,26 @@
           </div>
           <h3>{{ trace.label }}</h3>
           <p>{{ trace.outcome }}</p>
-          <div class="handoff-mini-list">
-            {% for event in trace.events %}
-              <article class="mini-event {{ event.tone }}">
-                <div class="row-topline">
-                  <strong>{{ event.label }}</strong>
-                  <span class="small">{{ event.task_state }}</span>
-                </div>
-                <p class="small">{{ event.sender }} → {{ event.receiver }}</p>
-                <p>{{ event.summary }}</p>
-                <div class="trace compact">
-                  {% for ref in event.refs[:4] %}
-                    <span>{{ ref }}</span>
-                  {% endfor %}
-                </div>
-              </article>
-            {% endfor %}
-          </div>
+          <details>
+            <summary>show handoffs</summary>
+            <div class="handoff-mini-list">
+              {% for event in trace.events %}
+                <article class="mini-event {{ event.tone }}">
+                  <div class="row-topline">
+                    <strong>{{ event.label }}</strong>
+                    <span class="small">{{ event.task_state }}</span>
+                  </div>
+                  <p class="small">{{ event.sender }} → {{ event.receiver }}</p>
+                  <p>{{ event.summary }}</p>
+                  <div class="trace compact">
+                    {% for ref in event.refs[:4] %}
+                      <span>{{ ref }}</span>
+                    {% endfor %}
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          </details>
         </article>
       {% endfor %}
     </div>
@@ -195,16 +207,18 @@
     <div class="panel stack">
       <h2>Case Brief</h2>
       <p><strong>{{ case_name }}</strong></p>
-      <p class="small">Customer: {{ customer_profile }}</p>
-      <p class="small">Goal: {{ business_goal }}</p>
-      <p class="small">Deadline: {{ deadline }} · Internal cutoff: {{ internal_review_cutoff }}</p>
-      <p class="small">Owner: {{ submission_owner }} · Mode: {{ mode_label }}{% if is_replay %} fallback, not live Band{% endif %}</p>
+      <p class="small">{{ customer_profile }}</p>
+      <p class="small">Owner: {{ submission_owner }} · {{ deadline }}</p>
       <div class="tag-row" aria-label="Material types">
         {% for material in material_types %}
           <span class="tag">{{ material }}</span>
         {% endfor %}
       </div>
-      <p class="small">{{ sample_boundary }}</p>
+      <details>
+        <summary>boundary</summary>
+        <p class="small">Goal: {{ business_goal }}</p>
+        <p class="small">{{ sample_boundary }}</p>
+      </details>
     </div>
 
     <div class="panel">
@@ -215,7 +229,10 @@
           <div>
             <strong>{{ item.owner|title }} owner · {{ item.risk }} risk</strong>
             <p class="small">{{ item.next_action }}</p>
-            <p class="small">Final pack: {{ item.final_pack_status }} · {{ item.final_pack_reason }}</p>
+            <details>
+              <summary>why blocked</summary>
+              <p class="small">Final pack: {{ item.final_pack_status }} · {{ item.final_pack_reason }}</p>
+            </details>
           </div>
         </article>
       {% else %}
@@ -231,67 +248,76 @@
         <article class="row">
           <div class="row-topline">
             <span class="status {% if answer.status == 'ready' %}ready{% elif answer.status == 'blocked' %}blocked{% else %}review{% endif %}">{{ answer.status }}</span>
-            <span class="small">{{ answer.owner }} · {{ answer.category }} · {{ answer.required_evidence_type }} · final pack {{ answer.final_pack_status }}</span>
+            <span class="small">{{ answer.item_id }} · {{ answer.owner }} · {{ answer.freshness_rollup }}</span>
           </div>
-          <h3>{{ answer.item_id }} · {{ answer.question }}</h3>
+          <h3>{{ answer.question }}</h3>
           <p class="answer-draft">{{ answer.draft_text }}</p>
-          <p class="small">Risk: {{ answer.risk }} · Freshness: {{ answer.freshness|join(", ") }} · Rollup: {{ answer.freshness_rollup }} · Source: {{ answer.source_ref }}</p>
+          <p class="small">{{ answer.category }} · {{ answer.required_evidence_type }} · final pack {{ answer.final_pack_status }}</p>
 
-          <div class="evidence-grid">
-            {% for evidence in answer.evidence_cards %}
-              <section class="evidence-card">
-                <div class="row-topline">
-                  <strong>{{ evidence.evidence_id }}</strong>
-                  <span class="freshness {{ evidence.freshness }}">{{ evidence.freshness }}</span>
-                </div>
-                <p>{{ evidence.title }}</p>
-                <p class="small">{{ evidence.snippet }}</p>
-                <p class="small">Confidence {{ evidence.confidence }} · {{ evidence.action }}</p>
-                <p class="small">Marked by {{ evidence.freshness_marked_by }} · {{ evidence.freshness_marked_at }}</p>
-              </section>
-            {% endfor %}
-          </div>
-
-          <section class="appendix-detail {{ answer.visibility_mode }}" aria-label="{{ answer.item_id }} review appendix detail">
-            <div class="row-topline">
-              <strong>Review Appendix Detail</strong>
-              <span class="status review">{{ answer.visibility_mode }}</span>
+          <details>
+            <summary>evidence refs</summary>
+            <div class="evidence-grid">
+              {% for evidence in answer.evidence_cards %}
+                <section class="evidence-card">
+                  <div class="row-topline">
+                    <strong>{{ evidence.evidence_id }}</strong>
+                    <span class="freshness {{ evidence.freshness }}">{{ evidence.freshness }}</span>
+                  </div>
+                  <p>{{ evidence.title }}</p>
+                  <p class="small">{{ evidence.snippet }}</p>
+                  <p class="small">Confidence {{ evidence.confidence }} · {{ evidence.action }}</p>
+                  <p class="small">Marked by {{ evidence.freshness_marked_by }} · {{ evidence.freshness_marked_at }}</p>
+                </section>
+              {% endfor %}
             </div>
-            <p class="small">Evidence refs stay public-safe/redacted in customer-safe mode; internal-review uses the same panel with permissioned audit context.</p>
-            <p class="small">Freshness rollup: {{ answer.freshness_rollup }} · Final pack: {{ answer.final_pack_status }}</p>
-            {% if answer.owner_review_suggestion %}
-              <div class="suggestion-detail">
-                <span class="eyebrow">Owner review suggestion</span>
-                <strong>{{ answer.owner_review_suggestion.suggestion_id }} · {{ answer.owner_review_suggestion.status }}</strong>
-                <p class="small">{{ answer.owner_review_suggestion.proposed_by }} → {{ answer.owner_review_suggestion.owner_role }}</p>
-                <p class="small">{{ answer.owner_review_suggestion.reason }}</p>
-                <p class="small">Scope: {{ answer.owner_review_suggestion.scope }}</p>
-                <div class="trace compact">
-                  {% for evidence_id in answer.owner_review_suggestion.suggested_evidence_ids %}
-                    <span>suggests {{ evidence_id }}</span>
-                  {% endfor %}
-                  {% for evidence_id in answer.owner_review_suggestion.replaces_evidence_ids %}
-                    <span>replaces {{ evidence_id }}</span>
-                  {% endfor %}
-                </div>
-              </div>
-            {% endif %}
-          </section>
+          </details>
 
-          <p class="small">Review: {{ answer.review_decision_id }} · {{ answer.review_status }} · {{ answer.review_reason }}</p>
-          {% if answer.approval_decision %}
-            <p class="small">Approval: {{ answer.approval_decision }} by {{ answer.approval_role }} · {{ answer.approval_decision_id }} · {{ answer.approval_reason }}</p>
-            <div class="approval-detail">
-              <p class="small"><strong>Approval scope:</strong> {{ answer.approval_scope }}</p>
-              <p class="small"><strong>Validity:</strong> {{ answer.approval_validity }} · {{ answer.approval_expires_at_label }}</p>
-              {% if answer.approved_evidence_ids %}
-                <div class="trace compact" aria-label="{{ answer.item_id }} approved evidence">
-                  {% for evidence_id in answer.approved_evidence_ids %}
-                    <span>{{ evidence_id }}</span>
-                  {% endfor %}
+          <details>
+            <summary>review appendix</summary>
+            <section class="appendix-detail {{ answer.visibility_mode }}" aria-label="{{ answer.item_id }} review appendix detail">
+              <div class="row-topline">
+                <strong>Review Appendix Detail</strong>
+                <span class="status review">{{ answer.visibility_mode }}</span>
+              </div>
+              <p class="small">Freshness rollup: {{ answer.freshness_rollup }} · Final pack: {{ answer.final_pack_status }}</p>
+              {% if answer.owner_review_suggestion %}
+                <div class="suggestion-detail">
+                  <span class="eyebrow">Owner review suggestion</span>
+                  <strong>{{ answer.owner_review_suggestion.suggestion_id }} · {{ answer.owner_review_suggestion.status }}</strong>
+                  <p class="small">{{ answer.owner_review_suggestion.proposed_by }} → {{ answer.owner_review_suggestion.owner_role }}</p>
+                  <p class="small">{{ answer.owner_review_suggestion.reason }}</p>
+                  <p class="small">Scope: {{ answer.owner_review_suggestion.scope }}</p>
+                  <div class="trace compact">
+                    {% for evidence_id in answer.owner_review_suggestion.suggested_evidence_ids %}
+                      <span>suggests {{ evidence_id }}</span>
+                    {% endfor %}
+                    {% for evidence_id in answer.owner_review_suggestion.replaces_evidence_ids %}
+                      <span>replaces {{ evidence_id }}</span>
+                    {% endfor %}
+                  </div>
                 </div>
               {% endif %}
-            </div>
+            </section>
+          </details>
+
+          <p class="small">Review: {{ answer.review_decision_id }} · {{ answer.review_status }}</p>
+          {% if answer.approval_decision %}
+            <p class="small">Approval: {{ answer.approval_role }} · {{ answer.approval_decision_id }}</p>
+            <details>
+              <summary>approval basis</summary>
+              <div class="approval-detail">
+                <p class="small">{{ answer.approval_reason }}</p>
+                <p class="small"><strong>Approval scope:</strong> {{ answer.approval_scope }}</p>
+                <p class="small"><strong>Validity:</strong> {{ answer.approval_validity }} · {{ answer.approval_expires_at_label }}</p>
+                {% if answer.approved_evidence_ids %}
+                  <div class="trace compact" aria-label="{{ answer.item_id }} approved evidence">
+                    {% for evidence_id in answer.approved_evidence_ids %}
+                      <span>{{ evidence_id }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </details>
           {% else %}
             <p class="small">Approval: no approval record attached to this item.</p>
           {% endif %}
@@ -306,33 +332,35 @@
           {% if answer.status != 'ready' %}
             <p class="small"><strong>Next:</strong> {{ answer.next_action }}</p>
           {% endif %}
-          <section class="lineage" aria-label="{{ answer.item_id }} evidence lineage">
-            <div class="row-topline">
-              <strong>Evidence lineage</strong>
-              <span class="small">Question → Evidence → Draft → Review → Approval → Final Pack</span>
-            </div>
-            <div class="lineage-grid">
-              {% for step in answer.lineage_steps %}
-                <article class="lineage-step {{ step.stage }}">
-                  <span class="lineage-stage">{{ step.label }}</span>
-                  <strong>{{ step.status }}</strong>
-                  {% if step.owner %}
-                    <p class="small">Owner: {{ step.owner }}</p>
-                  {% endif %}
-                  {% if step.object_ids %}
-                    <div class="trace compact">
-                      {% for object_id in step.object_ids %}
-                        <span>{{ object_id }}</span>
-                      {% endfor %}
-                    </div>
-                  {% endif %}
-                  {% if step.reason %}
-                    <p class="small">{{ step.reason }}</p>
-                  {% endif %}
-                </article>
-              {% endfor %}
-            </div>
-          </section>
+          <details>
+            <summary>Evidence lineage</summary>
+            <section class="lineage" aria-label="{{ answer.item_id }} evidence lineage">
+              <div class="row-topline">
+                <strong>Question → Evidence → Draft → Review → Approval → Final Pack</strong>
+              </div>
+              <div class="lineage-grid">
+                {% for step in answer.lineage_steps %}
+                  <article class="lineage-step {{ step.stage }}">
+                    <span class="lineage-stage">{{ step.label }}</span>
+                    <strong>{{ step.status }}</strong>
+                    {% if step.owner %}
+                      <p class="small">Owner: {{ step.owner }}</p>
+                    {% endif %}
+                    {% if step.object_ids %}
+                      <div class="trace compact">
+                        {% for object_id in step.object_ids %}
+                          <span>{{ object_id }}</span>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                    {% if step.reason %}
+                      <p class="small">{{ step.reason }}</p>
+                    {% endif %}
+                  </article>
+                {% endfor %}
+              </div>
+            </section>
+          </details>
           <div class="trace" aria-label="{{ answer.item_id }} trace">
             {% for trace_id in answer.trace_ids %}
               <span>{{ trace_id }}</span>
@@ -348,22 +376,25 @@
         <article class="row">
           <span class="status {% if item.decision == 'approved' %}ready{% else %}blocked{% endif %}">{{ item.decision }}</span>
           <h3>{{ item.item_id }} · Human approval</h3>
-          <p class="small">{{ item.question }}</p>
-          <p class="small">Owner: {{ item.owner }} · Reviewer agent: {{ item.reviewer }} · Approver role: {{ item.approval_role }}</p>
-          <p class="small">Review record: {{ item.decision_id }} · {{ item.reason }}</p>
+          <p class="small">{{ item.owner }} owner · {{ item.approval_role }}</p>
           {% if item.approval_reason %}
-            <p class="small">Approval basis: {{ item.approval_reason }}</p>
-            <div class="approval-detail">
-              <p class="small"><strong>Scope:</strong> {{ item.approval_scope }}</p>
-              <p class="small"><strong>Validity:</strong> {{ item.approval_validity }} · {{ item.approval_expires_at_label }}</p>
-              {% if item.approved_evidence_ids %}
-                <div class="trace compact" aria-label="{{ item.item_id }} approved evidence refs">
-                  {% for evidence_id in item.approved_evidence_ids %}
-                    <span>{{ evidence_id }}</span>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
+            <p class="small">{{ item.approval_reason }}</p>
+            <details>
+              <summary>scope and evidence</summary>
+              <div class="approval-detail">
+                <p class="small"><strong>Question:</strong> {{ item.question }}</p>
+                <p class="small"><strong>Review record:</strong> {{ item.decision_id }} · {{ item.reason }}</p>
+                <p class="small"><strong>Scope:</strong> {{ item.approval_scope }}</p>
+                <p class="small"><strong>Validity:</strong> {{ item.approval_validity }} · {{ item.approval_expires_at_label }}</p>
+                {% if item.approved_evidence_ids %}
+                  <div class="trace compact" aria-label="{{ item.item_id }} approved evidence refs">
+                    {% for evidence_id in item.approved_evidence_ids %}
+                      <span>{{ evidence_id }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </details>
           {% endif %}
           {% if item.required_follow_up %}
             <p class="small">Follow-up: {{ item.required_follow_up }}</p>
@@ -421,13 +452,15 @@
   <section class="section two-col">
     <div class="panel">
       <h2>Band Collaboration Timeline</h2>
-      <p class="small">Event Log Detail keeps the raw replay events available after the summary trace above.</p>
       <div class="timeline">
         {% for event in timeline %}
           <article class="event">
             <strong>{{ event.sender }} → {{ event.receiver }}</strong>
             <p class="small">{{ event.event_type }} · {{ event.task_state }}</p>
-            <p>{{ event.payload_summary }}</p>
+            <details>
+              <summary>event detail</summary>
+              <p>{{ event.payload_summary }}</p>
+            </details>
           </article>
         {% endfor %}
       </div>
@@ -448,11 +481,12 @@
 
       <section id="replay-live-boundary" class="panel">
         <h2>Replay / Live Evidence</h2>
-        <p class="small">
-          {{ mode_label }} view uses redacted event references and preserves the same readiness, evidence, approval and final pack shape expected from the live Band path. Replay is a fallback, not live Band.
-        </p>
-        <p class="small">Customer Export API: {{ customer_export_api_path }}</p>
-        <p class="small">{{ sample_boundary }}</p>
+        <p class="small">{{ mode_label }} fallback, not live Band.</p>
+        <details>
+          <summary>technical boundary</summary>
+          <p class="small">Customer Export API: {{ customer_export_api_path }}</p>
+          <p class="small">{{ sample_boundary }}</p>
+        </details>
       </section>
     </div>
   </section>

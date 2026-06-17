@@ -164,6 +164,51 @@
         border-left-color: var(--green);
       }
 
+      .band-rail {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+        margin: -4px 0 16px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcf8;
+      }
+
+      .band-rail span,
+      .band-rail strong {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 7px 9px;
+        background: var(--panel);
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 750;
+        line-height: 1.25;
+        text-align: center;
+        overflow-wrap: anywhere;
+      }
+
+      .band-rail span::after {
+        content: "→";
+        position: absolute;
+        right: -10px;
+        color: var(--steel);
+        font-weight: 850;
+        z-index: 1;
+      }
+
+      .band-rail strong {
+        border-color: rgba(29, 122, 85, 0.28);
+        color: var(--green);
+      }
+
       .judge-route {
         display: grid;
         grid-template-columns: minmax(0, 0.36fr) minmax(0, 1fr) auto;
@@ -465,13 +510,23 @@
       details {
         display: grid;
         gap: 8px;
+        margin-top: 3px;
       }
 
       summary {
+        width: fit-content;
+        min-width: 0;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 3px 0;
         cursor: pointer;
         color: var(--steel);
         font-size: 13px;
         font-weight: 750;
+      }
+
+      summary:hover {
+        color: var(--ink);
       }
 
       .lineage {
@@ -797,9 +852,14 @@
         .hero,
         .decision-strip,
         .judge-route,
+        .band-rail,
         .two-col,
         .trace-overview {
           grid-template-columns: 1fr;
+        }
+
+        .band-rail span::after {
+          content: "";
         }
 
         .route-boundary {

@@ -15,14 +15,14 @@
     <div>
       <span class="eyebrow">Export body</span>
       <h2>Included Answers only</h2>
-      <p>Blocked or pending items stay outside the customer-submittable answer body.</p>
+      <p>{{ export.answer_body|length }} answers ready for customer use.</p>
     </div>
     <div class="stack-tight">
       <span class="eyebrow">Review Appendix</span>
       {% if export.review_appendix %}
         <p>{{ export.review_appendix.visibility_mode.value }} · not customer-submittable</p>
       {% else %}
-        <p>Omitted until an owner export record is present.</p>
+        <p>Omitted by default.</p>
       {% endif %}
       <div class="tag-row">
         <a class="button" href="{{ dashboard_path }}">Dashboard</a>
@@ -88,8 +88,11 @@
               <span class="small">{{ item.inclusion }} · not customer-submittable</span>
             </div>
             <p class="small"><strong>Owner:</strong> {{ item.owner }}</p>
-            <p class="small"><strong>Blocker:</strong> {{ item.reason_or_blocker }}</p>
             <p class="small"><strong>Next:</strong> {{ item.next_action }}</p>
+            <details>
+              <summary>blocker</summary>
+              <p class="small">{{ item.reason_or_blocker }}</p>
+            </details>
             {% if item.detail %}
               <details>
                 <summary>Appendix detail</summary>

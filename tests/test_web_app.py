@@ -32,9 +32,9 @@ def test_mock_demo_route_renders_enterprise_dashboard() -> None:
     assert response.status_code == 200
     assert "RFP TrustRoom" in response.text
     assert "Draft pack ready with exclusions" in response.text
-    assert "Submission Readiness" in response.text
-    assert "Evidence Coverage" in response.text
-    assert "Approval Queue" in response.text
+    assert "Sendable" in response.text
+    assert "Evidence" in response.text
+    assert "Human Gates" in response.text
     assert "Reviewer Decision Matrix" in response.text
     assert "Final Pack" in response.text
     assert "MOCK" in response.text
@@ -45,9 +45,9 @@ def test_replay_route_is_clearly_labeled_and_contains_judge_signals() -> None:
 
     assert response.status_code == 200
     assert "RFP TrustRoom" in response.text
-    assert "Submission Readiness" in response.text
-    assert "Evidence Coverage" in response.text
-    assert "Approval Queue" in response.text
+    assert "Sendable" in response.text
+    assert "Evidence" in response.text
+    assert "Human Gates" in response.text
     assert "Human approval" in response.text
     assert "Governed Evolution" in response.text
     assert "Replay / Live Evidence" in response.text
@@ -63,7 +63,10 @@ def test_replay_route_surfaces_enterprise_decision_context() -> None:
     assert "Create an evidence-backed RFP and security questionnaire response pack" in response.text
     assert "security questionnaire" in response.text
     assert "Draft pack ready with exclusions" in response.text
-    assert "7 of 8 answers can enter the pack; 1 blocker must stay out." in response.text
+    assert "7/8 ready · 1 blocked outside." in response.text
+    assert "Human @ TrustRoom" in response.text
+    assert "Decomposer @ Retriever" in response.text
+    assert "Reviewer @ Owner" in response.text
     assert "Policy owner must confirm incident response wording before this answer can be sent." in response.text
 
 
@@ -79,7 +82,7 @@ def test_replay_route_surfaces_reviewer_evidence_matrix() -> None:
     assert "stale evidence EV-006 blocks final pack entry" in response.text
     assert "conflicting evidence EV-010 blocks final pack entry" in response.text
     assert "missing" in response.text
-    assert "Rollup: conflicting" in response.text
+    assert "Q-006 · security · conflicting" in response.text
     assert "Marked by evidence-retriever-agent" in response.text
     assert "questionnaire.csv:7" in response.text
     assert "REV-Q-006" in response.text
@@ -140,27 +143,31 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
 
     assert response.status_code == 200
     assert "Run Trace" in response.text
+    assert 'class="band-rail"' in response.text
+    assert "Human @ TrustRoom" in response.text
     assert "Agent Handoff Chain" in response.text
     assert "Business Milestones" in response.text
     assert "Representative Item Traces" in response.text
     assert "Blocked Impact Path" in response.text
     assert "REPLAY fallback, not live Band" in response.text
     assert re.search(r"Review loops</span>\s*<strong>1</strong>", response.text)
-    assert "Sender → Receiver → Decision path" in response.text
+    assert "Sender → Receiver → State change" in response.text
+    assert "<summary>handoff detail</summary>" in response.text
+    assert "<summary>show handoffs</summary>" in response.text
     assert "requirement-decomposer-agent → evidence-retriever-agent" in response.text
     assert "evidence-retriever-agent → answer-drafter-agent" in response.text
     assert "answer-drafter-agent → compliance-review-agent" in response.text
     assert "compliance-review-agent → evidence-retriever-agent" in response.text
     assert "EVT-009" in response.text
     assert "Q-004" in response.text
-    assert "Reviewer challenged overbroad language; legal approved bounded pilot wording." in response.text
+    assert "Reviewer loop, legal approval." in response.text
     assert "legal-reviewer approved scoped sample wording: Legal approved bounded region-processing language." in response.text
     assert "APP-Q-004" in response.text
     assert "Q-006" in response.text
     assert "stale/conflicting incident evidence" in response.text
     assert "no valid human approval" in response.text
     assert "final pack excluded" in response.text
-    assert "Approval evidence refs are visible reviewer context; Final Pack entry still requires current evidence rollup." in response.text
+    assert "Current evidence still gates Final Pack entry." in response.text
     assert "Owner review suggestion" in response.text
     assert "evidence-retriever-agent proposed replacement evidence EV-013" in response.text
     assert "replacement suggestion ORS-Q-006 is proposed" in response.text
@@ -170,7 +177,10 @@ def test_replay_route_surfaces_review_appendix_visibility_and_owner_suggestion()
     response = client.get("/runs/demo/replay")
 
     assert response.status_code == 200
-    assert "appendix customer-safe" in response.text
+    assert "With Appendix" in response.text
+    assert "<summary>evidence refs</summary>" in response.text
+    assert "<summary>review appendix</summary>" in response.text
+    assert "<summary>approval basis</summary>" in response.text
     assert "Review Appendix Detail" in response.text
     assert "customer-safe" in response.text
     assert "Owner review card" in response.text
