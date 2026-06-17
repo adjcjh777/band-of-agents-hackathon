@@ -212,6 +212,16 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert "Challenges risky wording, requests clarification and blocks unsafe commitments." in response.text
     assert "sample human gates, not autonomous agents." in response.text
     assert "SME Approver (human gate) → trustroom-orchestrator-agent" in response.text
+    assert "Collaboration Map" in response.text
+    assert "answer · agent · blocker · final-pack status" in response.text
+    assert "By answer" in response.text
+    assert "By agent" in response.text
+    assert "By blocker" in response.text
+    assert "By final-pack status" in response.text
+    assert "Q-004: review loop -&gt; legal gate -&gt; included" in response.text
+    assert "Q-006: blocker -&gt; policy owner -&gt; excluded" in response.text
+    assert "stale/conflicting evidence plus missing scoped human approval keeps it out" in response.text
+    assert "7 answers included; 1 held outside customer materials." in response.text
     assert "Business Milestones" in response.text
     assert "Representative Item Traces" in response.text
     assert "Blocked Impact Path" in response.text
@@ -365,6 +375,8 @@ def test_replay_route_provides_judge_recording_anchor_navigation() -> None:
     assert 'href="#business-milestones">Milestones</a>' in response.text
     assert 'id="agent-handoff-chain"' in response.text
     assert 'href="#agent-handoff-chain">Handoff Chain</a>' in response.text
+    assert 'id="collaboration-map"' in response.text
+    assert 'href="#collaboration-map">Collab Map</a>' in response.text
     assert 'id="representative-item-traces"' in response.text
     assert 'href="#representative-item-traces">Item Traces</a>' in response.text
     assert 'id="blocked-impact-path"' in response.text

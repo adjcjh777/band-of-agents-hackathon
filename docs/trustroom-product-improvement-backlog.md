@@ -19,7 +19,7 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 | P1 | PM-05 | Make Approval Workbench read like an approval product | Reviewers see scope, expiry, allowed wording, prohibited wording, evidence refs and owner | Codex controller | complete |
 | P1 | PM-06 | Translate Answer Lineage into business language | Non-technical reviewers can follow where an answer came from, who changed it and why it is safe or blocked | Codex controller | complete |
 | P2 | PM-07 | Clarify agent roles without over-personalizing them | Judges understand specialized roles while the product still feels enterprise-grade | UI/UX agent + Codex | complete |
-| P2 | PM-08 | Evolve Handoff Trace into a lightweight collaboration map | Users can inspect by answer, agent, blocker or final-pack status | Codex controller | queued |
+| P2 | PM-08 | Evolve Handoff Trace into a lightweight collaboration map | Users can inspect by answer, agent, blocker or final-pack status | Codex controller | complete |
 | P2 | PM-09 | Productize the replay/live boundary copy | Boundary language feels confident and truthful instead of apologetic | Scout + Codex | queued |
 | P3 | PM-10 | Add workspace / project-list concept | TrustRoom scales from one demo run to multiple RFPs/questionnaires | Future product task | later |
 | P3 | PM-11 | Add evidence library direction | SOC 2, ISO, DPA, architecture and incident evidence become reusable product assets | Future product task | later |
@@ -153,6 +153,8 @@ Acceptance:
 
 ### PM-08 Evolve Handoff Trace Into A Lightweight Collaboration Map
 
+Status: complete in PM-R8.
+
 Goal: let reviewers investigate the workflow by object, not only by timeline order.
 
 Potential filters:
@@ -164,8 +166,9 @@ Potential filters:
 
 Acceptance:
 
-- Raw event log remains available as detail.
-- Main route stays compact for video.
+- [x] Raw event log remains available as detail.
+- [x] Main route stays compact for video.
+- [x] Collaboration Map supports answer, agent, blocker and final-pack-status inspection lenses.
 
 ### PM-09 Productize The Replay / Live Boundary Copy
 

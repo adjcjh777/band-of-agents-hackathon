@@ -832,6 +832,57 @@
         gap: 8px;
       }
 
+      .collaboration-map {
+        display: grid;
+        gap: 8px;
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid rgba(49, 83, 107, 0.24);
+        border-radius: 8px;
+        background: #fbfcf8;
+      }
+
+      .map-lens-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .map-lens {
+        display: grid;
+        align-content: start;
+        gap: 6px;
+        min-width: 0;
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--steel);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .map-lens strong,
+      .map-lens p {
+        overflow-wrap: anywhere;
+      }
+
+      .map-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      .map-chip-row span {
+        max-width: 100%;
+        padding: 3px 6px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #f4f6f1;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+
       .role-map {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1187,6 +1238,7 @@
         .buyer-story-steps,
         .queue-meta,
         .approval-field-grid,
+        .map-lens-grid,
         .lineage-business-grid {
           grid-template-columns: 1fr;
         }

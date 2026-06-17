@@ -40,6 +40,7 @@
       <a href="#run-trace">Run Trace</a>
       <a href="#business-milestones">Milestones</a>
       <a href="#agent-handoff-chain">Handoff Chain</a>
+      <a href="#collaboration-map">Collab Map</a>
       <a href="#representative-item-traces">Item Traces</a>
       <a href="#blocked-impact-path">Q-006 Blocked Path</a>
       <a href="#q006-buyer-story">Buyer Story</a>
@@ -183,6 +184,25 @@
             <p class="small">{{ role.responsibility }}</p>
           </article>
         {% endfor %}
+      </div>
+      <div id="collaboration-map" class="collaboration-map" aria-label="Collaboration map by answer, agent, blocker and final-pack status">
+        <div class="row-topline">
+          <h3>Collaboration Map</h3>
+          <span class="small">answer · agent · blocker · final-pack status</span>
+        </div>
+        <div class="map-lens-grid">
+          {% for lens in run_trace.collaboration_map %}
+            <article class="map-lens">
+              <strong>{{ lens.lens }}</strong>
+              <p class="small">{{ lens.summary }}</p>
+              <div class="map-chip-row">
+                {% for chip in lens.chips %}
+                  <span>{{ chip }}</span>
+                {% endfor %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
       </div>
       <div class="handoff-chain">
         {% for step in run_trace.handoff_chain %}

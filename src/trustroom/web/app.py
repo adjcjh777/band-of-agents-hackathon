@@ -682,6 +682,7 @@ def _run_trace_summary(
             },
         ],
         "role_map": _agent_role_map(),
+        "collaboration_map": _collaboration_map(answers),
         "milestones": _business_milestones(events, readiness, total_questions),
         "handoff_chain": _handoff_chain(events),
         "representative_traces": _representative_item_traces(events, answers, owner_review_suggestions),
@@ -745,6 +746,51 @@ def _agent_role_map() -> list[dict[str, str]]:
             ),
         },
     ]
+
+
+def _collaboration_map(answers: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    answer_by_id = {answer["item_id"]: answer for answer in answers}
+    representative_ids = [item_id for item_id in TRACE_ITEM_IDS if item_id in answer_by_id]
+    included = [answer["item_id"] for answer in answers if answer["final_pack_status"] == "included"]
+    excluded = [answer["item_id"] for answer in answers if answer["final_pack_status"] == "excluded"]
+    blocker = answer_by_id.get("Q-006")
+    blocker_summary = (
+        "Q-006: stale/conflicting evidence plus missing scoped human approval keeps it out."
+        if blocker is not None
+        else "No blocker item is present in this sample run."
+    )
+    return [
+        {
+            "lens": "By answer",
+            "summary": "Start from the question id and inspect its evidence, review, approval and final-pack path.",
+            "chips": [_answer_path_chip(answer_by_id[item_id]) for item_id in representative_ids],
+        },
+        {
+            "lens": "By agent",
+            "summary": "Follow the role sequence from decomposition through evidence, drafting, review and human gate.",
+            "chips": ["Decomposer", "Retriever", "Drafter", "Reviewer", "Human gate", "Orchestrator"],
+        },
+        {
+            "lens": "By blocker",
+            "summary": blocker_summary,
+            "chips": ["stale evidence", "conflicting evidence", "missing scoped approval", "policy owner"],
+        },
+        {
+            "lens": "By final-pack status",
+            "summary": f"{len(included)} answers included; {len(excluded)} held outside customer materials.",
+            "chips": [f"included: {', '.join(included)}", f"held out: {', '.join(excluded) or 'none'}"],
+        },
+    ]
+
+
+def _answer_path_chip(answer: dict[str, Any]) -> str:
+    if answer["item_id"] == "Q-004":
+        return f"{answer['item_id']}: review loop -> legal gate -> {answer['final_pack_status']}"
+    if answer["item_id"] == "Q-006":
+        return f"{answer['item_id']}: blocker -> policy owner -> {answer['final_pack_status']}"
+    if answer["approval_owner"]:
+        return f"{answer['item_id']}: {answer['approval_owner']} -> {answer['final_pack_status']}"
+    return f"{answer['item_id']}: evidence -> {answer['final_pack_status']}"
 
 
 def _business_milestones(
