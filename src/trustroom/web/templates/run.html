@@ -42,6 +42,7 @@
       <a href="#agent-handoff-chain">Handoff Chain</a>
       <a href="#representative-item-traces">Item Traces</a>
       <a href="#blocked-impact-path">Q-006 Blocked Path</a>
+      <a href="#q006-buyer-story">Buyer Story</a>
       <a href="#final-pack">Final Pack</a>
       <a href="#replay-live-boundary">Replay Boundary</a>
     </div>
@@ -236,6 +237,31 @@
         {% for step in run_trace.blocked_impact_path %}
           <span>{{ step }}</span>
         {% endfor %}
+      </div>
+    </div>
+    <div id="q006-buyer-story" class="buyer-story" aria-label="Q-006 buyer-safe story">
+      <div>
+        <span class="eyebrow">Buyer-safe moment</span>
+        <h3>{{ q006_buyer_safe_story.headline }}</h3>
+        <p>{{ q006_buyer_safe_story.summary }}</p>
+      </div>
+      <div class="buyer-story-steps">
+        {% for step in q006_buyer_safe_story.steps %}
+          <article class="buyer-story-step {{ step.tone }}">
+            <strong>{{ step.label }}</strong>
+            <p>{{ step.detail }}</p>
+          </article>
+        {% endfor %}
+      </div>
+      <div class="row-topline">
+        <p class="small">{{ q006_buyer_safe_story.safe_boundary }}</p>
+        <div class="trace compact">
+          {% for ref in q006_buyer_safe_story.refs %}
+            {% if ref %}
+              <span>{{ ref }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
       </div>
     </div>
   </section>

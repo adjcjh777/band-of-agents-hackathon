@@ -196,6 +196,24 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert "replacement suggestion ORS-Q-006 is proposed" in response.text
 
 
+def test_replay_route_turns_q006_into_buyer_safe_story() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert 'id="q006-buyer-story"' in response.text
+    assert 'href="#q006-buyer-story">Buyer Story</a>' in response.text
+    assert "Q-006 buyer-safe story" in response.text
+    assert "Unsafe incident-response wording is held outside the customer export" in response.text
+    assert "risky incident-response wording" in response.text
+    assert "stale/conflicting evidence" in response.text
+    assert "no valid human approval" in response.text
+    assert "excluded from customer pack" in response.text
+    assert "policy owner action" in response.text
+    assert "Customer Export stays at 7/8 until this owner decision is complete." in response.text
+    assert "REV-Q-006" in response.text
+    assert "ORS-Q-006" in response.text
+
+
 def test_replay_route_surfaces_review_appendix_visibility_and_owner_suggestion() -> None:
     response = client.get("/runs/demo/replay")
 

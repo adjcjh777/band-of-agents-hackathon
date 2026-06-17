@@ -859,6 +859,62 @@
         overflow-wrap: anywhere;
       }
 
+      .buyer-story {
+        display: grid;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid rgba(162, 58, 50, 0.22);
+        border-left: 4px solid var(--red);
+        border-radius: 8px;
+        background: #fffaf7;
+      }
+
+      .buyer-story h3,
+      .buyer-story p {
+        overflow-wrap: anywhere;
+      }
+
+      .buyer-story-steps {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .buyer-story-step {
+        display: grid;
+        align-content: start;
+        gap: 5px;
+        min-width: 0;
+        padding: 10px;
+        border-top: 3px solid var(--steel);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .buyer-story-step.blocked {
+        border-top-color: var(--red);
+      }
+
+      .buyer-story-step.review {
+        border-top-color: var(--amber);
+      }
+
+      .buyer-story-step.human {
+        border-top-color: var(--green);
+      }
+
+      .buyer-story-step strong {
+        color: var(--ink);
+        font-size: 13px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+
+      .buyer-story-step p {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
       .owner-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -960,7 +1016,8 @@
         .trace-overview .proof-grid,
         .proof-grid,
         .milestone-grid,
-        .item-trace-grid {
+        .item-trace-grid,
+        .buyer-story-steps {
           grid-template-columns: 1fr;
         }
       }

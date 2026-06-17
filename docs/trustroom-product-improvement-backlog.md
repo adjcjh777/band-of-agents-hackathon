@@ -14,7 +14,7 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 |---|---|---|---|---|---|
 | P0 | PM-01 | Make Final Pack Decision the primary product moment | A reviewer instantly sees what can be sent, what is held back and who must unblock it | Codex controller | complete |
 | P0 | PM-02 | Compress the product promise into one verifiable sentence | All public copy and video narration align around evidence, review, approval and safe final-pack decision | Codex controller | complete |
-| P0 | PM-03 | Turn Q-006 into the memorable buyer-safe story | The demo's strongest moment is the unsafe answer being excluded, not merely flagged | Codex controller + UI/UX review | queued |
+| P0 | PM-03 | Turn Q-006 into the memorable buyer-safe story | The demo's strongest moment is the unsafe answer being excluded, not merely flagged | Codex controller + UI/UX review | complete |
 | P1 | PM-04 | Add responsibility / SLA / next-step queue semantics | The dashboard feels like a workbench teams can use the next morning | Codex controller | queued |
 | P1 | PM-05 | Make Approval Workbench read like an approval product | Reviewers see scope, expiry, allowed wording, prohibited wording, evidence refs and owner | Codex controller | queued |
 | P1 | PM-06 | Translate Answer Lineage into business language | Non-technical reviewers can follow where an answer came from, who changed it and why it is safe or blocked | Codex controller | queued |
@@ -60,14 +60,17 @@ Acceptance:
 
 ### PM-03 Turn Q-006 Into The Memorable Buyer-Safe Story
 
+Status: complete in PM-R3.
+
 Goal: make the Q-006 storyline unmistakable:
 
 `risky incident-response wording -> stale/conflicting evidence -> no valid approval -> excluded from customer pack -> policy owner action`
 
 Acceptance:
 
-- Q-006 appears in Executive Decision, Final Pack Decision, Representative Item Traces and Blocked Impact Path.
-- Q-006 never appears as customer-submittable answer body.
+- [x] Q-006 appears in Executive Decision, Final Pack Decision, Representative Item Traces and Blocked Impact Path.
+- [x] Q-006 never appears as customer-submittable answer body.
+- [x] The replay route now contains a buyer-safe story block that makes the exclusion path legible in one scan.
 
 ### PM-04 Add Responsibility / SLA / Next-Step Queue Semantics
 

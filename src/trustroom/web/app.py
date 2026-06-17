@@ -397,6 +397,23 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     risk_register = _risk_register(answers)
     decision_state = _decision_state(readiness=readiness, total_questions=total_questions, next_actions=next_actions)
     final_pack_decision = _final_pack_decision(answers=answers, readiness=readiness, total_questions=total_questions)
+    q006_buyer_safe_story = _q006_buyer_safe_story(
+        answers=answers,
+        owner_review_suggestions=[
+            {
+                "suggestion_id": suggestion.suggestion_id,
+                "item_id": suggestion.item_id,
+                "status": suggestion.status.value,
+                "proposed_by": suggestion.proposed_by,
+                "owner_role": suggestion.owner_role,
+                "suggested_evidence_ids": suggestion.suggested_evidence_ids,
+                "replaces_evidence_ids": suggestion.replaces_evidence_ids,
+                "reason": suggestion.reason,
+                "scope": suggestion.scope,
+            }
+            for suggestion in result.owner_review_suggestions
+        ],
+    )
     run_trace = _run_trace_summary(
         timeline=timeline,
         answers=answers,
@@ -459,6 +476,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "risk_register": risk_register,
         "final_pack": result.final_pack,
         "final_pack_decision": final_pack_decision,
+        "q006_buyer_safe_story": q006_buyer_safe_story,
         "review_appendix_visibility_mode": result.final_pack.visibility_mode.value,
         "customer_export_path": _customer_export_path(
             mode=mode,
@@ -862,6 +880,60 @@ def _blocked_impact_path(
         "final pack excluded",
         q6["next_action"],
     ]
+
+
+def _q006_buyer_safe_story(
+    answers: list[dict[str, Any]],
+    owner_review_suggestions: list[dict[str, Any]],
+) -> dict[str, Any]:
+    q6 = next(answer for answer in answers if answer["item_id"] == "Q-006")
+    q6_suggestion = next(
+        (suggestion for suggestion in owner_review_suggestions if suggestion["item_id"] == "Q-006"),
+        None,
+    )
+    suggestion_ref = q6_suggestion["suggestion_id"] if q6_suggestion else "owner review pending"
+    return {
+        "item_id": "Q-006",
+        "headline": "Q-006 buyer-safe story",
+        "summary": (
+            "Unsafe incident-response wording is held outside the customer export until the "
+            "Security Policy Owner confirms current wording."
+        ),
+        "steps": [
+            {
+                "label": "risky incident-response wording",
+                "detail": q6["question"],
+                "tone": "review",
+            },
+            {
+                "label": "stale/conflicting evidence",
+                "detail": q6["freshness_rollup"],
+                "tone": "blocked",
+            },
+            {
+                "label": "no valid human approval",
+                "detail": q6["review_status"],
+                "tone": "blocked",
+            },
+            {
+                "label": "excluded from customer pack",
+                "detail": q6["final_pack_reason"],
+                "tone": "blocked",
+            },
+            {
+                "label": "policy owner action",
+                "detail": q6["next_action"],
+                "tone": "human",
+            },
+        ],
+        "refs": [
+            q6["item_id"],
+            q6["answer_id"],
+            q6["review_decision_id"],
+            suggestion_ref,
+        ],
+        "safe_boundary": "Customer Export stays at 7/8 until this owner decision is complete.",
+    }
 
 
 def _trace_card(event: dict[str, Any], *, label: str | None = None) -> dict[str, Any]:
