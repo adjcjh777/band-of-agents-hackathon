@@ -44,6 +44,8 @@
 - 派发或集成前运行 `uv run python scripts/check_dual_agent_protocol.py`；Claude Code 写入任务返回后运行 `uv run python scripts/check_dual_agent_changes.py --task "<Task>"`。
 - 当用户要求“规划今天任务”“给 agent 分配任务”“继续推进目标”或类似多 agent 调度时，controller 不能只在当前聊天里总结；必须通过 Agent Bus 可见投递把 bounded task 发给对应执行、测试、UI/UX、研究/探索线程。
 - Agent Bus 可见投递默认使用 Codex thread delivery，例如 `codex_app.send_message_to_thread`；本地 bus 记录或口头说明不能替代目标线程可见消息。
+- 如果当前 controller 会话没有可用的 `codex_app.send_message_to_thread` handler，不能把 `trigger=codex_app` 返回的 `prepared` 当作已送达。必须改用可闭环验证的 fallback：`CODEX_AGENT_BUS_TRANSPORT=exec ~/.codex/tools/codex-agent-bus/bin/agent-bus send <target> "<message>" --trigger resume --wait --timeout-sec <seconds>`，并确认目标 agent 通过 `reply_message` 或 CLI fallback `agent-bus reply <message_id> ... --trigger queue` 返回 ACK。
+- Agent Bus 派发验收标准是 `delivered_at` 存在且 planner/controller inbox 收到带 `parent_message_id` 的 reply；仅有 `prepared`、仅有本地 inbox 记录或仅有 app-server `turn/start` ACK 都不能算完成派发。
 - 每条派发消息必须包含 task name、owner、输入/禁止范围、locked paths 或 read-only 声明、必跑命令、PASS/BLOCKED 标准、证据落盘位置和 no-overclaim / secret / `pilotdeck/` 边界。
 - 任务派发后，controller 的用户汇报必须列出已通知的 agent/thread、各自任务和当前未验证项；如果某个任务因 live 凭证、Chrome 登录态、外部表单或部署授权需要人工动作，必须明确标为 controller/user-owned gate。
 

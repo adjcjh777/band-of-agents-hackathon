@@ -1,6 +1,6 @@
 # Agent Task Ledger
 
-最后更新：2026-06-15
+最后更新：2026-06-17
 
 本台账是 Codex + Claude Code 并行执行的单一事实来源。任何 agent 开始写文件前，必须先在 Active File Locks 表中拥有一条 `active` 锁。
 
@@ -18,6 +18,7 @@
 
 | Task | Owner | Branch | Status | Locked paths | Review owner | Required checks |
 |---|---|---|---|---|---|---|
+| DOC-R6 Agent Bus recovery and today orchestration plan | Codex | `feature/trustroom-governed-evolution-spec` | complete | `AGENTS.md`, `docs/trustroom-today-todolist.md`, `docs/agent-task-ledger.md` | Codex | Agent Bus exec-transport ping ACK from tester/executor/UIUX/scout; Agent Bus prompt tests; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |
 | T26 Band-first first viewport clarity | Codex | `feature/trustroom-governed-evolution-spec` | complete | `src/trustroom/web/app.py`, `src/trustroom/web/templates/base.html`, `src/trustroom/web/templates/run.html`, `tests/test_web_app.py`, `docs/agent-task-ledger.md` | Codex | `uv run pytest tests/test_web_app.py -v`; local Chrome desktop/mobile smoke for `/runs/demo/replay`; `uv run python scripts/check_no_secrets.py`; `uv run python scripts/check_trustroom_readiness.py`; `uv run python scripts/check_dual_agent_protocol.py`; `git diff --check` |
 | T27 Live autonomous SDK/WebSocket proof follow-through | Codex | `feature/trustroom-governed-evolution-spec` | blocked | `reports/` | Codex | `uv run python scripts/run_live_band_autonomous_smoke.py --dry-run-check`; if ready, `uv run python scripts/run_live_band_autonomous_smoke.py --target-agent requirement-decomposer-agent --timeout-seconds 5 --poll-interval-seconds 1 --max-attempts 3`; preserve redacted evidence only; do not commit live reports |
 | T5 Governed evolution engine and experience ledger | Codex | `feature/trustroom-governed-evolution-spec` | complete | `src/trustroom/evolution.py`, `tests/test_evolution.py`, `docs/superpowers/plans/2026-05-30-rfp-trustroom-implementation.md` | Codex | `uv run pytest tests/test_evolution.py -v`; `uv run pytest -v`; `git diff --check` |
