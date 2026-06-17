@@ -772,6 +772,7 @@
 
       .proof-grid,
       .milestone-grid,
+      .role-map,
       .item-trace-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -831,6 +832,38 @@
         gap: 8px;
       }
 
+      .role-map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .role-card {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--steel);
+        border-radius: 8px;
+        background: #fbfcf8;
+      }
+
+      .role-card.human {
+        border-left-color: var(--amber);
+        background: #fffaf2;
+      }
+
+      .role-actor {
+        width: fit-content;
+        max-width: 100%;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: #eef2ea;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        text-transform: uppercase;
+      }
+
       .handoff-step,
       .item-trace-card,
       .mini-event {
@@ -866,6 +899,8 @@
 
       .handoff-route,
       .handoff-step p,
+      .role-card p,
+      .role-card strong,
       .mini-event p,
       .item-trace-card p,
       .milestone p,
@@ -1147,6 +1182,7 @@
         .trace-overview .proof-grid,
         .proof-grid,
         .milestone-grid,
+        .role-map,
         .item-trace-grid,
         .buyer-story-steps,
         .queue-meta,

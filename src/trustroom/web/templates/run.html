@@ -166,7 +166,23 @@
       <div>
         <span class="eyebrow">Band collaboration mirror</span>
         <h2>Agent Handoff Chain</h2>
-        <p class="small">Sender → Receiver → State change</p>
+        <p class="small">Workflow roles are shown by responsibility first; human approval gates are not presented as autonomous agents.</p>
+      </div>
+      <div class="row-topline">
+        <h3>Role Map</h3>
+        <span class="small">automated roles + human gates</span>
+      </div>
+      <div class="role-map" aria-label="Agent role map">
+        {% for role in run_trace.role_map %}
+          <article class="role-card {% if role.actor == 'human decision role' %}human{% endif %}">
+            <div class="row-topline">
+              <strong>{{ role.role }}</strong>
+              <span class="small">{{ role.kind }}</span>
+            </div>
+            <span class="role-actor">{{ role.actor }}</span>
+            <p class="small">{{ role.responsibility }}</p>
+          </article>
+        {% endfor %}
       </div>
       <div class="handoff-chain">
         {% for step in run_trace.handoff_chain %}
@@ -380,7 +396,7 @@
 
           <p class="small">Review: {{ answer.review_decision_id }} · {{ answer.review_status }}</p>
           {% if answer.approval_decision %}
-            <p class="small">Approval: {{ answer.approval_role }} · {{ answer.approval_decision_id }}</p>
+            <p class="small">Approval: {{ answer.approval_owner or answer.approval_role }} · {{ answer.approval_decision_id }}</p>
             <details>
               <summary>approval basis</summary>
               <div class="approval-detail">

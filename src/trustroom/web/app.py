@@ -289,6 +289,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                 "review_decision_id": review.decision_id if review else None,
                 "approval_decision": approval.decision.value if approval else None,
                 "approval_role": approval.reviewer_role if approval else None,
+                "approval_owner": _approval_owner_label(approval.reviewer_role) if approval else None,
                 "approval_decision_id": approval.decision_id if approval else None,
                 "approval_reason": approval.reason if approval else None,
                 "approval_scope": approval.scope if approval else None,
@@ -680,6 +681,7 @@ def _run_trace_summary(
                 "note": "fallback" if is_replay else "local",
             },
         ],
+        "role_map": _agent_role_map(),
         "milestones": _business_milestones(events, readiness, total_questions),
         "handoff_chain": _handoff_chain(events),
         "representative_traces": _representative_item_traces(events, answers, owner_review_suggestions),
@@ -699,6 +701,50 @@ def _normalize_trace_event(event: dict[str, Any]) -> dict[str, Any]:
         "band_message_ref": str(event.get("band_message_ref") or event.get("event_id") or ""),
         "mode_label": str(event.get("mode_label") or ""),
     }
+
+
+def _agent_role_map() -> list[dict[str, str]]:
+    return [
+        {
+            "role": "Orchestrator",
+            "kind": "workflow coordinator",
+            "actor": "automated workflow role",
+            "responsibility": "Keeps the room state, routes handoffs and assembles the final pack decision.",
+        },
+        {
+            "role": "Decomposer",
+            "kind": "task splitter",
+            "actor": "automated workflow role",
+            "responsibility": "Breaks the questionnaire into answer tasks with owner and risk context.",
+        },
+        {
+            "role": "Retriever",
+            "kind": "evidence finder",
+            "actor": "automated workflow role",
+            "responsibility": "Attaches approved evidence refs and labels freshness before drafting.",
+        },
+        {
+            "role": "Drafter",
+            "kind": "answer writer",
+            "actor": "automated workflow role",
+            "responsibility": "Writes bounded answer copy that stays tied to evidence and review limits.",
+        },
+        {
+            "role": "Reviewer",
+            "kind": "risk challenger",
+            "actor": "automated workflow role",
+            "responsibility": "Challenges risky wording, requests clarification and blocks unsafe commitments.",
+        },
+        {
+            "role": "Human approver",
+            "kind": "approval gate",
+            "actor": "human decision role",
+            "responsibility": (
+                "Approves scoped commitments; SME, legal and security policy approvals are represented as "
+                "sample human gates, not autonomous agents."
+            ),
+        },
+    ]
 
 
 def _business_milestones(
@@ -847,13 +893,14 @@ def _representative_item_traces(
 
 
 def _approval_trace_card(answer: dict[str, Any]) -> dict[str, Any]:
+    approval_owner = answer["approval_owner"] or "Human approver"
     return {
         "label": "Scoped approval",
-        "sender": answer["approval_role"] or "human approver",
+        "sender": approval_owner,
         "receiver": "trustroom-orchestrator-agent",
         "event_type": EventType.HUMAN_APPROVAL.value,
         "task_state": "approval",
-        "summary": f"{answer['approval_role']} approved scoped sample wording: {answer['approval_reason']}",
+        "summary": f"{approval_owner} approved scoped sample wording: {answer['approval_reason']}",
         "refs": [
             answer["approval_decision_id"],
             answer["approval_validity"],
@@ -1184,6 +1231,8 @@ def _queue_escalation_role(
 
 def _trace_card(event: dict[str, Any], *, label: str | None = None) -> dict[str, Any]:
     event_type = event["event_type"]
+    sender = event["sender"]
+    receiver = event["receiver"]
     tone = "handoff"
     if event_type == EventType.REVIEW_DECISION.value or "review loop" in event["payload_summary"].lower():
         tone = "review"
@@ -1191,16 +1240,17 @@ def _trace_card(event: dict[str, Any], *, label: str | None = None) -> dict[str,
         tone = "review"
     elif event_type == EventType.HUMAN_APPROVAL.value:
         tone = "human"
+        sender = f"{_approval_owner_label(sender)} (human gate)"
     elif event_type == EventType.FINAL_PACK_CREATED.value:
         tone = "final"
     if "blocked" in event["payload_summary"].lower():
         tone = "blocked"
     return {
         "label": label or _trace_label(event),
-        "sender": event["sender"],
-        "receiver": event["receiver"],
-        "event_type": event_type,
-        "task_state": event["task_state"],
+        "sender": sender,
+        "receiver": receiver,
+        "event_type": _trace_value_label(event_type),
+        "task_state": _trace_value_label(event["task_state"]),
         "summary": event["payload_summary"],
         "refs": [event["event_id"], event["band_message_ref"], *event["related_object_ids"]],
         "tone": tone,
@@ -1215,6 +1265,10 @@ def _trace_label(event: dict[str, Any]) -> str:
     if event["event_type"] == EventType.FINAL_PACK_CREATED.value:
         return "Final pack"
     return event["event_type"].replace("_", " ").title()
+
+
+def _trace_value_label(value: str) -> str:
+    return value.replace("_", " ").title()
 
 
 def _event_refs(
@@ -1285,7 +1339,7 @@ def _final_pack_reason(
     if freshness_rollup != EvidenceFreshness.CURRENT.value:
         return f"Excluded until evidence freshness rollup becomes current; current rollup is {freshness_rollup}."
     if approval_role and approval_reason:
-        return f"Included after {approval_role} approval: {approval_reason}"
+        return f"Included after {_approval_owner_label(approval_role)} approval: {approval_reason}"
     if risk == "high":
         return "High-risk answer requires an approval record before customer delivery."
     if set(freshness) <= {"current"}:

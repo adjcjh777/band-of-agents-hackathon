@@ -119,8 +119,8 @@ def test_replay_route_surfaces_human_approval_basis() -> None:
     assert "Legal approved bounded region-processing language." in response.text
     assert "APP-Q-002" in response.text
     assert "APP-Q-004" in response.text
-    assert "Included after sme-approver approval" in response.text
-    assert "Included after legal-reviewer approval" in response.text
+    assert "Included after SME Approver approval" in response.text
+    assert "Included after Legal Reviewer approval" in response.text
     assert "Approval scope:" in response.text
     assert "SOC 2 summary availability and bridge-letter sharing for approved prospects in this Acme sample pack." in response.text
     assert "Valid for Acme sample pack only; renew before quoting a future SOC 2 period." in response.text
@@ -204,12 +204,19 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert 'class="band-rail"' in response.text
     assert "Human @ TrustRoom" in response.text
     assert "Agent Handoff Chain" in response.text
+    assert "Role Map" in response.text
+    assert "Workflow roles are shown by responsibility first; human approval gates are not presented as autonomous agents." in response.text
+    assert "Breaks the questionnaire into answer tasks with owner and risk context." in response.text
+    assert "Attaches approved evidence refs and labels freshness before drafting." in response.text
+    assert "Writes bounded answer copy that stays tied to evidence and review limits." in response.text
+    assert "Challenges risky wording, requests clarification and blocks unsafe commitments." in response.text
+    assert "sample human gates, not autonomous agents." in response.text
+    assert "SME Approver (human gate) → trustroom-orchestrator-agent" in response.text
     assert "Business Milestones" in response.text
     assert "Representative Item Traces" in response.text
     assert "Blocked Impact Path" in response.text
     assert "REPLAY fallback, not live Band" in response.text
     assert re.search(r"Review loops</span>\s*<strong>1</strong>", response.text)
-    assert "Sender → Receiver → State change" in response.text
     assert "<summary>handoff detail</summary>" in response.text
     assert "<summary>show handoffs</summary>" in response.text
     assert "requirement-decomposer-agent → evidence-retriever-agent" in response.text
@@ -219,7 +226,7 @@ def test_replay_route_surfaces_agent_handoff_trace_view() -> None:
     assert "EVT-009" in response.text
     assert "Q-004" in response.text
     assert "Reviewer loop, legal approval." in response.text
-    assert "legal-reviewer approved scoped sample wording: Legal approved bounded region-processing language." in response.text
+    assert "Legal Reviewer approved scoped sample wording: Legal approved bounded region-processing language." in response.text
     assert "APP-Q-004" in response.text
     assert "Q-006" in response.text
     assert "stale/conflicting incident evidence" in response.text

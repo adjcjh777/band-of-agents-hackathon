@@ -18,7 +18,7 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 | P1 | PM-04 | Add responsibility / SLA / next-step queue semantics | The dashboard feels like a workbench teams can use the next morning | Codex controller | complete |
 | P1 | PM-05 | Make Approval Workbench read like an approval product | Reviewers see scope, expiry, allowed wording, prohibited wording, evidence refs and owner | Codex controller | complete |
 | P1 | PM-06 | Translate Answer Lineage into business language | Non-technical reviewers can follow where an answer came from, who changed it and why it is safe or blocked | Codex controller | complete |
-| P2 | PM-07 | Clarify agent roles without over-personalizing them | Judges understand specialized roles while the product still feels enterprise-grade | UI/UX agent + Codex | queued |
+| P2 | PM-07 | Clarify agent roles without over-personalizing them | Judges understand specialized roles while the product still feels enterprise-grade | UI/UX agent + Codex | complete |
 | P2 | PM-08 | Evolve Handoff Trace into a lightweight collaboration map | Users can inspect by answer, agent, blocker or final-pack status | Codex controller | queued |
 | P2 | PM-09 | Productize the replay/live boundary copy | Boundary language feels confident and truthful instead of apologetic | Scout + Codex | queued |
 | P3 | PM-10 | Add workspace / project-list concept | TrustRoom scales from one demo run to multiple RFPs/questionnaires | Future product task | later |
@@ -134,6 +134,8 @@ Acceptance:
 
 ### PM-07 Clarify Agent Roles Without Over-Personalizing Them
 
+Status: complete in PM-R7.
+
 Goal: keep agent collaboration understandable and enterprise-safe.
 
 Role copy:
@@ -146,7 +148,8 @@ Role copy:
 
 Acceptance:
 
-- `sme-approver` is never presented as an autonomous agent.
+- [x] `sme-approver` is not presented as an autonomous agent in the role map or approval-facing copy.
+- [x] Role Map explains decomposer, retriever, drafter, reviewer and human approver responsibilities.
 
 ### PM-08 Evolve Handoff Trace Into A Lightweight Collaboration Map
 
