@@ -116,6 +116,10 @@ _Avoid_: customer answer body, unmarked exception list, hidden review-only cavea
 The minimum user-visible entry for one excluded or pending Question Item inside a Review Appendix. It contains question item, inclusion, reason or blocker, owner, and next action so the exception is understandable without raw logs.
 _Avoid_: raw log row, hidden blocker, included answer, customer-submittable content.
 
+**Review Appendix Exception Owner**:
+The accountable human or business-owner role responsible for the next action on a Review Appendix Exception Item. It cannot be an Agent; Agents can appear only as supporting agents in expanded detail.
+_Avoid_: agent owner, automated accountability, orphaned next action.
+
 **Review Appendix Export Decision**:
 The explicit human or business-owner decision that allows a Review Appendix to be attached to a Customer Export. It controls appendix visibility only; it is not Human Approval, does not make exceptions customer-submittable, and cannot be made automatically by an Agent.
 _Avoid_: agent-added appendix, automatic exception export, treating appendix inclusion as answer approval.
