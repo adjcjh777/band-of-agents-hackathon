@@ -120,6 +120,10 @@ _Avoid_: agent-added appendix, automatic exception export, treating appendix inc
 The minimum audit record for a Review Appendix Export Decision. It contains decision, owner role, reason, and scope, tying appendix visibility to a specific human or business-owner choice and Customer Export boundary.
 _Avoid_: reasonless appendix inclusion, agent-only export setting, broad reusable appendix permission.
 
+**Review Appendix Export Record Validity**:
+The reuse boundary for a Review Appendix Export Record after a Customer Export is regenerated. A record remains valid only when Included Answers, Final Pack Exceptions, evidence references, and customer scope are unchanged; any content, evidence, exception, or scope change requires a new record, while pure format changes can reuse it.
+_Avoid_: stale record reuse, blanket export permission, treating changed content as a format-only export.
+
 **First-Screen Representative Paths**:
 The three Question Item paths shown on the Full-Picture First View to demonstrate the main TrustRoom outcomes: one ready or approved item, one request-changes review loop, and one blocked fail-closed item. The full item list can appear in a later section or expanded view.
 _Avoid_: exhaustive first-screen item table, success-only showcase, hiding blocked outcomes.

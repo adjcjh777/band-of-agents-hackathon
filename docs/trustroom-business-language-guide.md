@@ -57,6 +57,7 @@
 | Review Appendix | Customer Export 或 reviewer package 里的非提交附录，用于透明展示 Final Pack Exceptions | customer transparency appendix、internal review package | unlabeled exception list、customer-submittable answer body |
 | Review Appendix Export Decision | human/business owner 对是否随 Customer Export 附带 Review Appendix 的显式决定；只控制附录可见性，不审批答案 | export settings、customer transparency、audit trail | agent-added appendix、appendix as approval |
 | Review Appendix Export Record | Review Appendix Export Decision 的最小审计记录：decision、owner_role、reason、scope | export settings、audit trail、customer transparency | reasonless inclusion、agent-only export setting |
+| Review Appendix Export Record Validity | Customer Export 重新生成后，旧 Review Appendix Export Record 是否仍可复用的边界 | export regeneration、audit trail、customer transparency | stale record reuse、blanket export permission |
 | First-Screen Representative Paths | 第一屏展示三条代表性 Question Item 路径：ready / request_changes / blocked | first viewport handoff preview、demo opening | exhaustive item table、success-only showcase |
 | Full-Picture Workflow View | 普通产品体验中展示完整流程，不是 judge-only 页面 | demo route、企业审阅路径 | judge-only page、opaque final answer |
 | Final Pack | 通过证据和审批 gate 后的客户提交包 | 输出区、视频结尾、README | chatbot answer、generic report |
@@ -383,6 +384,26 @@ Review Appendix Export Record 标准句式：
 
 > Review Appendix Export Record: `include_appendix`; owner_role: Security Policy Owner; reason: customer transparency on excluded questionnaire items; scope: Customer Export `CE-ACME-v1`, Q-006 only.
 
+Review Appendix Export Record Validity 复用规则：
+
+| Customer Export 变化 | 旧 record 处理 |
+|---|---|
+| Included Answers changed | 需要新的 Review Appendix Export Record |
+| Final Pack Exceptions changed | 需要新的 Review Appendix Export Record |
+| evidence refs changed | 需要新的 Review Appendix Export Record |
+| customer scope / run changed | 需要新的 Review Appendix Export Record |
+| format-only change, such as PDF / Markdown rendering, pagination, or styling | 可以复用旧 record |
+
+复用旧 record 前必须确认 Included Answers、Final Pack Exceptions、evidence refs 和 customer scope 都未变化。不要把“重新生成文件”自动等同于“可以复用旧决定”；也不要把纯格式变化升级成人工负担。
+
+Review Appendix Export Record Validity 标准句式：
+
+> Review Appendix Export Record Validity: previous record cannot be reused because evidence refs changed; a new owner decision is required before Customer Export `CE-ACME-v2` includes a Review Appendix.
+
+格式变化复用标准句式：
+
+> Review Appendix Export Record Validity: previous record may be reused because only PDF formatting changed and Included Answers, Final Pack Exceptions, evidence refs, and customer scope are unchanged.
+
 Final Pack 总结标准句式：
 
 > Final Pack includes 7 of 8 answers with evidence refs and approval trail; Q-006 is excluded because stale/conflicting evidence and missing valid approval fail the gate.
@@ -429,6 +450,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 | 阻塞 | Q-006 stays out of the Final Pack because evidence is stale/conflicting and no valid approval exists. | The system failed Q-006. |
 | 客户导出 | Customer Export answer body contains only Included Answers; Q-006 appears only in the Review Appendix as not customer-submittable. | Customer Export includes all questions, including blocked drafts. |
 | 导出附录 | Review Appendix Export Record: `include_appendix`; owner_role: Security Policy Owner; scope: Customer Export `CE-ACME-v1`, Q-006 only. | Agent automatically attached blocked items to the Customer Export. |
+| 记录复用 | Customer Export `CE-ACME-v2` changed evidence refs, so the previous Review Appendix Export Record is not valid and a new owner decision is required. | Reuse the last appendix decision for the updated export. |
 | Replay | This is a replay fallback that mirrors the collaboration path with redacted refs. | This is live autonomous Band proof. |
 
 ## 14. 文案检查清单
@@ -443,6 +465,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 - Customer Export answer body 是否只包含 Included Answers，且 Review Appendix 是否标记 `not customer-submittable`？
 - Review Appendix 是否有 human / business owner 的显式 Export Decision，而不是 Agent 自动附加？
 - Review Appendix Export Record 是否包含 `decision`、`owner_role`、`reason`、`scope`？
+- Customer Export 重新生成后，是否重新检查 Review Appendix Export Record Validity，而不是复用旧 record 覆盖新内容？
 - 是否把 blocker 写成 fail-closed，而不是模糊失败？
 - 是否保留 replay/live 边界？
 - 是否避免生产部署、法律意见、合规认证、enterprise-grade compliance 等 overclaim？
