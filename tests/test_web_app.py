@@ -389,6 +389,27 @@ def test_replay_route_provides_judge_recording_anchor_navigation() -> None:
     assert 'href="#approval-workbench">Approvals</a>' in response.text
     assert 'id="final-pack"' in response.text
     assert 'href="#final-pack">Final Pack</a>' in response.text
+    assert 'id="product-roadmap"' in response.text
+    assert 'href="#product-roadmap">Roadmap</a>' in response.text
     assert 'id="replay-live-boundary"' in response.text
     assert 'href="#replay-live-boundary">Replay Boundary</a>' in response.text
     assert "Public replay · live gated" in response.text
+
+
+def test_replay_route_surfaces_product_roadmap_without_overclaim() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert 'aria-label="Product roadmap direction"' in response.text
+    assert "Workspace / Evidence / Export Roadmap" in response.text
+    assert "Product direction, not a live multi-workspace deployment." in response.text
+    assert "Workspace Queue" in response.text
+    assert "multi-RFP queue" in response.text
+    assert "Evidence Library" in response.text
+    assert "SOC 2" in response.text
+    assert "architecture docs" in response.text
+    assert "Export Workflow" in response.text
+    assert "customer-safe export" in response.text
+    assert "internal review appendix" in response.text
+    assert "blocked exceptions" in response.text
+    assert "appendix visibility remains a human/business-owner decision" in response.text

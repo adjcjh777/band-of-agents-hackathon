@@ -21,9 +21,9 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 | P2 | PM-07 | Clarify agent roles without over-personalizing them | Judges understand specialized roles while the product still feels enterprise-grade | UI/UX agent + Codex | complete |
 | P2 | PM-08 | Evolve Handoff Trace into a lightweight collaboration map | Users can inspect by answer, agent, blocker or final-pack status | Codex controller | complete |
 | P2 | PM-09 | Productize the replay/live boundary copy | Boundary language feels confident and truthful instead of apologetic | Scout + Codex | complete |
-| P3 | PM-10 | Add workspace / project-list concept | TrustRoom scales from one demo run to multiple RFPs/questionnaires | Future product task | later |
-| P3 | PM-11 | Add evidence library direction | SOC 2, ISO, DPA, architecture and incident evidence become reusable product assets | Future product task | later |
-| P3 | PM-12 | Expand export workflow | Customer-safe export, internal appendix, blocked exceptions and evidence index become first-class outputs | Future product task | later |
+| P3 | PM-10 | Add workspace / project-list concept | TrustRoom scales from one demo run to multiple RFPs/questionnaires | Codex controller | complete |
+| P3 | PM-11 | Add evidence library direction | SOC 2, ISO, DPA, architecture and incident evidence become reusable product assets | Codex controller | complete |
+| P3 | PM-12 | Expand export workflow | Customer-safe export, internal appendix, blocked exceptions and evidence index become first-class outputs | Codex controller | complete |
 
 ## Detailed Todo
 
@@ -186,14 +186,19 @@ Acceptance:
 
 ### PM-10 Add Workspace / Project-List Concept
 
+Status: complete in PM-R10-R12.
+
 Goal: future SaaS direction for multiple RFPs/questionnaires.
 
 Acceptance:
 
-- Not submission-critical.
-- Should not delay video or final form.
+- [x] Not submission-critical.
+- [x] Should not delay video or final form.
+- [x] Replay route includes a Product Roadmap section with a Workspace Queue concept for multiple RFPs/questionnaires, customer due windows, sendable counts and owner actions.
 
 ### PM-11 Add Evidence Library Direction
+
+Status: complete in PM-R10-R12.
 
 Goal: make evidence a reusable company asset.
 
@@ -207,9 +212,13 @@ Potential evidence types:
 
 Acceptance:
 
-- Fictional public-safe data only.
+- [x] Fictional public-safe data only.
+- [x] Replay route frames SOC 2, ISO, DPA, architecture docs and incident policy as reusable evidence assets with owner/freshness/scope direction.
+- [x] Copy does not imply real customer evidence or a production evidence vault.
 
 ### PM-12 Expand Export Workflow
+
+Status: complete in PM-R10-R12.
 
 Goal: make the output feel real:
 
@@ -220,7 +229,9 @@ Goal: make the output feel real:
 
 Acceptance:
 
-- Blocked/pending content remains controlled by human/business-owner visibility decisions.
+- [x] Blocked/pending content remains controlled by human/business-owner visibility decisions.
+- [x] Replay route distinguishes customer-safe export, internal review appendix, blocked exceptions and evidence index as future workflow outputs.
+- [x] Q-006 remains excluded from customer answer body, and appendix visibility remains a human/business-owner decision.
 
 ## Current Execution Order
 

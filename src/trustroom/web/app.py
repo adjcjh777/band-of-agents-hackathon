@@ -425,6 +425,12 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
     decision_state = _decision_state(readiness=readiness, total_questions=total_questions, next_actions=next_actions)
     final_pack_decision = _final_pack_decision(answers=answers, readiness=readiness, total_questions=total_questions)
     demo_boundary = _demo_boundary(mode)
+    product_roadmap = _product_roadmap(
+        answers=answers,
+        readiness=readiness,
+        responsibility_queue=responsibility_queue,
+        evidence_counter=evidence_counter,
+    )
     q006_buyer_safe_story = _q006_buyer_safe_story(
         answers=answers,
         owner_review_suggestions=[
@@ -506,6 +512,7 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         "risk_register": risk_register,
         "final_pack": result.final_pack,
         "final_pack_decision": final_pack_decision,
+        "product_roadmap": product_roadmap,
         "q006_buyer_safe_story": q006_buyer_safe_story,
         "review_appendix_visibility_mode": result.final_pack.visibility_mode.value,
         "customer_export_path": _customer_export_path(
@@ -1265,6 +1272,83 @@ def _responsibility_queue(
         "done_count": done_count,
         "queue_items": items,
         "sample_boundary": "Queue fields are fictional sample workflow metadata; no live account dependency is required.",
+    }
+
+
+def _product_roadmap(
+    *,
+    answers: list[dict[str, Any]],
+    readiness: dict[str, int],
+    responsibility_queue: dict[str, Any],
+    evidence_counter: Counter[str],
+) -> dict[str, Any]:
+    blocked_items = [answer["item_id"] for answer in answers if answer["final_pack_status"] != "included"]
+    return {
+        "summary": (
+            "Post-submit product direction: keep the current final-pack safety model, then scale it from one "
+            "sample run into a reusable sales-security workspace."
+        ),
+        "boundary": "Product direction, not a live multi-workspace deployment.",
+        "cards": [
+            {
+                "label": "PM-10",
+                "title": "Workspace Queue",
+                "status": "direction",
+                "summary": (
+                    "Multiple RFPs and security questionnaires should be sortable by customer, due window, "
+                    "sendable answers and open owner actions."
+                ),
+                "proof": (
+                    f"Acme sample would appear as {readiness['ready']}/{len(answers)} sendable with "
+                    f"{responsibility_queue['open_count']} owner action open."
+                ),
+                "chips": [
+                    "multi-RFP queue",
+                    "customer + due date",
+                    "owner action SLA",
+                    "sendable / held outside",
+                ],
+            },
+            {
+                "label": "PM-11",
+                "title": "Evidence Library",
+                "status": "direction",
+                "summary": (
+                    "SOC 2, ISO, DPA, architecture and incident-response evidence become reusable assets with "
+                    "freshness, owner and scope."
+                ),
+                "proof": (
+                    f"This sample already tracks {evidence_counter['current']} current refs, "
+                    f"{evidence_counter['stale']} stale refs and {evidence_counter['conflicting']} conflict."
+                ),
+                "chips": [
+                    "SOC 2",
+                    "ISO",
+                    "DPA",
+                    "architecture docs",
+                    "incident policy",
+                ],
+            },
+            {
+                "label": "PM-12",
+                "title": "Export Workflow",
+                "status": "direction",
+                "summary": (
+                    "The output should split customer-safe answer body, owner-approved appendix, internal review "
+                    "appendix, blocked exceptions and evidence index."
+                ),
+                "proof": (
+                    "Q-006 stays out of the customer answer body; appendix visibility remains a human/business-owner decision."
+                ),
+                "chips": [
+                    "customer-safe export",
+                    "internal review appendix",
+                    "blocked exceptions",
+                    "evidence index",
+                ],
+            },
+        ],
+        "blocked_items": blocked_items,
     }
 
 

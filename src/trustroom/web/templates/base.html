@@ -1148,6 +1148,33 @@
         overflow-wrap: anywhere;
       }
 
+      .product-roadmap {
+        display: grid;
+        gap: 12px;
+      }
+
+      .roadmap-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .roadmap-card {
+        display: grid;
+        gap: 9px;
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--steel);
+        border-radius: 8px;
+        background: #fbfcf8;
+      }
+
+      .roadmap-card h3,
+      .roadmap-card p {
+        overflow-wrap: anywhere;
+      }
+
       .status {
         display: inline-flex;
         width: fit-content;
@@ -1239,6 +1266,7 @@
         .queue-meta,
         .approval-field-grid,
         .map-lens-grid,
+        .roadmap-grid,
         .lineage-business-grid {
           grid-template-columns: 1fr;
         }

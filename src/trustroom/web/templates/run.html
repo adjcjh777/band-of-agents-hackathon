@@ -47,6 +47,7 @@
       <a href="#responsibility-queue">Work Queue</a>
       <a href="#approval-workbench">Approvals</a>
       <a href="#final-pack">Final Pack</a>
+      <a href="#product-roadmap">Roadmap</a>
       <a href="#replay-live-boundary">Replay Boundary</a>
     </div>
     <span class="route-boundary">{{ demo_boundary.short_label }}</span>
@@ -600,6 +601,36 @@
           </article>
         {% endfor %}
       </div>
+    </div>
+  </section>
+
+  <section id="product-roadmap" class="section panel product-roadmap" aria-label="Product roadmap direction">
+    <div class="row-topline">
+      <div>
+        <span class="eyebrow">Product direction</span>
+        <h2>Workspace / Evidence / Export Roadmap</h2>
+        <p class="small">{{ product_roadmap.summary }}</p>
+      </div>
+      <span class="status review">future layer</span>
+    </div>
+    <p class="small">{{ product_roadmap.boundary }}</p>
+    <div class="roadmap-grid" aria-label="Future product direction cards">
+      {% for card in product_roadmap.cards %}
+        <article class="roadmap-card">
+          <div class="row-topline">
+            <span class="eyebrow">{{ card.label }}</span>
+            <span class="status review">{{ card.status }}</span>
+          </div>
+          <h3>{{ card.title }}</h3>
+          <p class="small">{{ card.summary }}</p>
+          <p class="small"><strong>Sample proof:</strong> {{ card.proof }}</p>
+          <div class="map-chip-row">
+            {% for chip in card.chips %}
+              <span>{{ chip }}</span>
+            {% endfor %}
+          </div>
+        </article>
+      {% endfor %}
     </div>
   </section>
 
