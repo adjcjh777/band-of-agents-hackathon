@@ -116,6 +116,10 @@ _Avoid_: customer answer body, unmarked exception list, hidden review-only cavea
 The minimum user-visible entry for one excluded or pending Question Item inside a Review Appendix. It contains question item, inclusion, reason or blocker, owner, and next action so the exception is understandable without raw logs.
 _Avoid_: raw log row, hidden blocker, included answer, customer-submittable content.
 
+**Review Appendix Exception Detail**:
+The expanded view for a Review Appendix Exception Item. It may show supporting agents, evidence references, handoff summaries, timing, and redacted audit references, but it does not add fields to the collapsed five-field item or transfer accountability away from the owner.
+_Avoid_: supporting_agent in the collapsed item, raw log dump, hidden accountability shift.
+
 **Review Appendix Exception Owner**:
 The accountable human or business-owner role responsible for the next action on a Review Appendix Exception Item. It cannot be an Agent; Agents can appear only as supporting agents in expanded detail.
 _Avoid_: agent owner, automated accountability, orphaned next action.

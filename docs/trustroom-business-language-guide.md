@@ -56,6 +56,7 @@
 | Customer Export | 从 Final Pack 生成的客户可提交输出；正文默认只含 Included Answers | customer-facing export、submission body | blocked / pending items in answer body、unmarked exceptions |
 | Review Appendix | Customer Export 或 reviewer package 里的非提交附录，用于透明展示 Final Pack Exceptions | customer transparency appendix、internal review package | unlabeled exception list、customer-submittable answer body |
 | Review Appendix Exception Item | Review Appendix 中单个 excluded / pending Question Item 的最小可见记录 | appendix item、reviewer view、customer transparency | raw log row、included answer、customer-submittable content |
+| Review Appendix Exception Detail | Review Appendix Exception Item 的展开详情，可展示 supporting_agent、evidence refs、handoff summary、redacted audit refs | appendix drill-down、reviewer view、judge inspection | supporting_agent in collapsed item、raw logs |
 | Review Appendix Exception Owner | Review Appendix Exception Item 下一步动作的 accountable human / business owner | appendix item、reviewer view、next action | agent owner、automated accountability |
 | Review Appendix Export Decision | human/business owner 对是否随 Customer Export 附带 Review Appendix 的显式决定；只控制附录可见性，不审批答案 | export settings、customer transparency、audit trail | agent-added appendix、appendix as approval |
 | Review Appendix Export Record | Review Appendix Export Decision 的最小审计记录：decision、owner_role、reason、scope | export settings、audit trail、customer transparency | reasonless inclusion、agent-only export setting |
@@ -374,9 +375,26 @@ Review Appendix Exception Item 最少只需要 5 个字段：
 
 Review Appendix Exception Item 不能使用 `included`，也不能承载客户可提交答案正文。它的作用是解释为什么某个 Question Item 当前不能提交，以及下一步谁处理。
 
+Review Appendix Exception Item 折叠态固定只展示这 5 个字段，不展示 `supporting_agent`。如果用户、评委或 reviewer 需要看 Agent 协助链路，应进入 Review Appendix Exception Detail。
+
 Review Appendix Exception Item 标准句式：
 
 > Review Appendix Exception Item: Q-006; inclusion: `excluded`; reason_or_blocker: stale/conflicting evidence and missing valid approval; owner: Security Policy Owner; next_action: provide current evidence or approve scoped wording.
+
+Review Appendix Exception Detail 可展示：
+
+- `supporting_agent`
+- evidence refs
+- handoff summary
+- decision reason detail
+- timestamp / elapsed time
+- redacted audit refs
+
+Review Appendix Exception Detail 仍然不能展示 raw logs、chain-of-thought、secret、真实 room id、agent key 或未脱敏 provider metadata。`supporting_agent` 只能说明谁提供了证据、建议或 handoff，不进入折叠态，也不改变 `owner`。
+
+Review Appendix Exception Detail 标准句式：
+
+> Review Appendix Exception Detail: supporting_agent evidence-retriever-agent provided evidence refs `EV-IR-2026` and flagged stale/conflicting policy dates; owner remains Security Policy Owner.
 
 Review Appendix Exception Owner 责任规则：
 
@@ -479,6 +497,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 | 阻塞 | Q-006 stays out of the Final Pack because evidence is stale/conflicting and no valid approval exists. | The system failed Q-006. |
 | 客户导出 | Customer Export answer body contains only Included Answers; Q-006 appears only in the Review Appendix as not customer-submittable. | Customer Export includes all questions, including blocked drafts. |
 | 附录单项 | Review Appendix Exception Item: Q-006; inclusion: `excluded`; owner: Security Policy Owner; next_action: provide current evidence. | Show the raw agent logs for Q-006. |
+| 附录展开 | Review Appendix Exception Detail: supporting_agent evidence-retriever-agent provided evidence refs; owner remains Security Policy Owner. | Add supporting_agent to the collapsed exception item. |
 | 附录责任 | Review Appendix Exception Owner: Security Policy Owner owns Q-006 next action; supporting_agent: evidence-retriever-agent. | owner: evidence-retriever-agent. |
 | 导出附录 | Review Appendix Export Record: `include_appendix`; owner_role: Security Policy Owner; scope: Customer Export `CE-ACME-v1`, Q-006 only. | Agent automatically attached blocked items to the Customer Export. |
 | 记录复用 | Customer Export `CE-ACME-v2` changed evidence refs, so the previous Review Appendix Export Record is not valid and a new owner decision is required. | Reuse the last appendix decision for the updated export. |
@@ -495,6 +514,7 @@ TrustRoom 使用四层展示，不需要单独为评委做一个判断页。
 - 是否说明哪些内容进入 Final Pack，哪些被排除？
 - Customer Export answer body 是否只包含 Included Answers，且 Review Appendix 是否标记 `not customer-submittable`？
 - Review Appendix Exception Item 是否包含 `question_item`、`inclusion`、`reason_or_blocker`、`owner`、`next_action`？
+- `supporting_agent` 是否只出现在 Review Appendix Exception Detail，而不是折叠态 Exception Item？
 - Review Appendix Exception Item 的 `owner` 是否是 accountable human / business owner，而不是 Agent？
 - Review Appendix 是否有 human / business owner 的显式 Export Decision，而不是 Agent 自动附加？
 - Review Appendix Export Record 是否包含 `decision`、`owner_role`、`reason`、`scope`？
