@@ -44,6 +44,7 @@
       <a href="#blocked-impact-path">Q-006 Blocked Path</a>
       <a href="#q006-buyer-story">Buyer Story</a>
       <a href="#responsibility-queue">Work Queue</a>
+      <a href="#approval-workbench">Approvals</a>
       <a href="#final-pack">Final Pack</a>
       <a href="#replay-live-boundary">Replay Boundary</a>
     </div>
@@ -447,32 +448,61 @@
       {% endfor %}
     </div>
 
-    <div class="panel">
-      <h2>Approval Workbench</h2>
+    <div id="approval-workbench" class="panel approval-workbench" aria-label="Approval Workbench">
+      <div class="row-topline">
+        <div>
+          <span class="eyebrow">Human approval product</span>
+          <h2>Approval Workbench</h2>
+          <p class="small">Scope, expiry, allowed wording and prohibited wording are visible before final-pack inclusion.</p>
+        </div>
+        <span class="status review">{{ approval_queue|length }} gates</span>
+      </div>
+      <p class="small">Approved evidence refs are reviewer context, not a machine-enforced evidence-set gate.</p>
       {% for item in approval_queue %}
-        <article class="row">
-          <span class="status {% if item.decision == 'approved' %}ready{% else %}blocked{% endif %}">{{ item.decision }}</span>
-          <h3>{{ item.item_id }} · Human approval</h3>
-          <p class="small">{{ item.owner }} owner · {{ item.approval_role }}</p>
+        <article class="approval-product-card {% if item.decision == 'approved' %}ready{% else %}blocked{% endif %}">
+          <div class="row-topline">
+            <span class="status {% if item.decision == 'approved' %}ready{% else %}blocked{% endif %}">{{ item.decision }}</span>
+            <span class="small">{{ item.item_id }} · {{ item.owner }} owner</span>
+          </div>
+          <h3>{{ item.approval_owner }}</h3>
+          <p class="small">{{ item.question }}</p>
+          <div class="approval-field-grid">
+            <section class="approval-field">
+              <span class="eyebrow">Approval scope</span>
+              <p>{{ item.approval_scope or "No approval scope is attached yet." }}</p>
+            </section>
+            <section class="approval-field">
+              <span class="eyebrow">Validity / expiry</span>
+              <p>{{ item.approval_validity }}{% if item.approval_expires_at_label %} · {{ item.approval_expires_at_label }}{% else %} · no valid approval record{% endif %}</p>
+            </section>
+            <section class="approval-field">
+              <span class="eyebrow">Allowed wording</span>
+              <p>{{ item.allowed_wording }}</p>
+            </section>
+            <section class="approval-field">
+              <span class="eyebrow">Prohibited wording</span>
+              <p>{{ item.prohibited_wording }}</p>
+            </section>
+          </div>
           {% if item.approval_reason %}
             <p class="small">{{ item.approval_reason }}</p>
-            <details>
-              <summary>scope and evidence</summary>
-              <div class="approval-detail">
-                <p class="small"><strong>Question:</strong> {{ item.question }}</p>
-                <p class="small"><strong>Review record:</strong> {{ item.decision_id }} · {{ item.reason }}</p>
-                <p class="small"><strong>Scope:</strong> {{ item.approval_scope }}</p>
-                <p class="small"><strong>Validity:</strong> {{ item.approval_validity }} · {{ item.approval_expires_at_label }}</p>
-                {% if item.approved_evidence_ids %}
-                  <div class="trace compact" aria-label="{{ item.item_id }} approved evidence refs">
-                    {% for evidence_id in item.approved_evidence_ids %}
-                      <span>{{ evidence_id }}</span>
-                    {% endfor %}
-                  </div>
-                {% endif %}
-              </div>
-            </details>
           {% endif %}
+          <details>
+            <summary>review record and evidence refs</summary>
+            <div class="approval-detail">
+              <p class="small"><strong>Review record:</strong> {{ item.decision_id }} · {{ item.reason }}</p>
+              <p class="small">{{ item.context_boundary }}</p>
+              {% if item.approved_evidence_ids %}
+                <div class="trace compact" aria-label="{{ item.item_id }} approved evidence refs">
+                  {% for evidence_id in item.approved_evidence_ids %}
+                    <span>{{ evidence_id }}</span>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <p class="small">No approved evidence refs are attached yet.</p>
+              {% endif %}
+            </div>
+          </details>
           {% if item.required_follow_up %}
             <p class="small">Follow-up: {{ item.required_follow_up }}</p>
           {% endif %}

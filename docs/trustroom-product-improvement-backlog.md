@@ -16,7 +16,7 @@ RFP TrustRoom should make every RFP / security-questionnaire answer traceable to
 | P0 | PM-02 | Compress the product promise into one verifiable sentence | All public copy and video narration align around evidence, review, approval and safe final-pack decision | Codex controller | complete |
 | P0 | PM-03 | Turn Q-006 into the memorable buyer-safe story | The demo's strongest moment is the unsafe answer being excluded, not merely flagged | Codex controller + UI/UX review | complete |
 | P1 | PM-04 | Add responsibility / SLA / next-step queue semantics | The dashboard feels like a workbench teams can use the next morning | Codex controller | complete |
-| P1 | PM-05 | Make Approval Workbench read like an approval product | Reviewers see scope, expiry, allowed wording, prohibited wording, evidence refs and owner | Codex controller | queued |
+| P1 | PM-05 | Make Approval Workbench read like an approval product | Reviewers see scope, expiry, allowed wording, prohibited wording, evidence refs and owner | Codex controller | complete |
 | P1 | PM-06 | Translate Answer Lineage into business language | Non-technical reviewers can follow where an answer came from, who changed it and why it is safe or blocked | Codex controller | queued |
 | P2 | PM-07 | Clarify agent roles without over-personalizing them | Judges understand specialized roles while the product still feels enterprise-grade | UI/UX agent + Codex | queued |
 | P2 | PM-08 | Evolve Handoff Trace into a lightweight collaboration map | Users can inspect by answer, agent, blocker or final-pack status | Codex controller | queued |
@@ -94,6 +94,8 @@ Acceptance:
 
 ### PM-05 Make Approval Workbench Read Like An Approval Product
 
+Status: complete in PM-R5.
+
 Goal: make human approval semantics clearer.
 
 Potential fields:
@@ -107,8 +109,9 @@ Potential fields:
 
 Acceptance:
 
-- Approval evidence refs remain reviewer context, not a machine-enforced evidence-set gate.
-- Q-004 legal approval and Q-002 SME approval stay scoped sample approvals.
+- [x] Approval evidence refs remain reviewer context, not a machine-enforced evidence-set gate.
+- [x] Q-004 legal approval and Q-002 SME approval stay scoped sample approvals.
+- [x] Approval Workbench exposes scope, validity / expiry, allowed wording, prohibited wording, evidence refs and approval owner.
 
 ### PM-06 Translate Answer Lineage Into Business Language
 

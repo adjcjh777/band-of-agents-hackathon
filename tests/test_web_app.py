@@ -130,6 +130,28 @@ def test_replay_route_surfaces_human_approval_basis() -> None:
     assert "Hackathon demo / working prototype only." in response.text
 
 
+def test_replay_route_makes_approval_workbench_product_readable() -> None:
+    response = client.get("/runs/demo/replay")
+
+    assert response.status_code == 200
+    assert 'id="approval-workbench"' in response.text
+    assert 'href="#approval-workbench">Approvals</a>' in response.text
+    assert "Human approval product" in response.text
+    assert "Scope, expiry, allowed wording and prohibited wording are visible before final-pack inclusion." in response.text
+    assert "Approval scope" in response.text
+    assert "Validity / expiry" in response.text
+    assert "Allowed wording" in response.text
+    assert "Prohibited wording" in response.text
+    assert "Approved evidence refs are reviewer context, not a machine-enforced evidence-set gate." in response.text
+    assert "SOC 2 summary availability and bridge-letter sharing for approved prospects." in response.text
+    assert "Do not imply public SOC 2 distribution, certification, or blanket access." in response.text
+    assert "Bounded region-restricted pilot wording from the legal approval scope." in response.text
+    assert "Do not promise unconditional EU-only processing." in response.text
+    assert "No customer wording is approved yet." in response.text
+    assert "Do not commit to an incident-response notification target until policy owner approval." in response.text
+    assert "No approved evidence refs are attached yet." in response.text
+
+
 def test_replay_route_surfaces_customer_safe_answer_copy_and_followups() -> None:
     response = client.get("/runs/demo/replay")
 
@@ -329,6 +351,8 @@ def test_replay_route_provides_judge_recording_anchor_navigation() -> None:
     assert 'href="#blocked-impact-path">Q-006 Blocked Path</a>' in response.text
     assert 'id="responsibility-queue"' in response.text
     assert 'href="#responsibility-queue">Work Queue</a>' in response.text
+    assert 'id="approval-workbench"' in response.text
+    assert 'href="#approval-workbench">Approvals</a>' in response.text
     assert 'id="final-pack"' in response.text
     assert 'href="#final-pack">Final Pack</a>' in response.text
     assert 'id="replay-live-boundary"' in response.text

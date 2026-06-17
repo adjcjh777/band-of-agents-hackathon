@@ -327,6 +327,8 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
         if review.status == ReviewStatus.NEEDS_HUMAN_APPROVAL:
             approval = approval_by_item_id.get(review.item_id)
             suggestion = suggestion_by_item_id.get(review.item_id)
+            approval_role = approval.reviewer_role if approval else "security policy owner"
+            approval_scope = approval.scope if approval else ""
             approval_valid = _approval_is_valid_for_answer(
                 approval,
                 draft_by_item_id.get(review.item_id),
@@ -339,12 +341,22 @@ def _dashboard_context(*, mode: ExecutionMode) -> dict[str, Any]:
                     "owner": question_by_id[review.item_id].business_owner.value,
                     "reviewer": review.reviewer_agent,
                     "decision_id": review.decision_id,
-                    "approval_role": approval.reviewer_role if approval else "security policy owner",
+                    "approval_role": approval_role,
+                    "approval_owner": _approval_owner_label(approval_role),
                     "approval_reason": approval.reason if approval else "",
-                    "approval_scope": approval.scope if approval else "",
+                    "approval_scope": approval_scope,
                     "approval_validity": approval.validity.value if approval else "missing",
                     "approval_expires_at_label": approval.expires_at_label if approval else "",
                     "approved_evidence_ids": approval.approved_evidence_ids if approval else [],
+                    "allowed_wording": _approval_allowed_wording(
+                        item_id=review.item_id,
+                        approval_valid=approval_valid,
+                        approval_scope=approval_scope,
+                    ),
+                    "prohibited_wording": _approval_prohibited_wording(review.item_id),
+                    "context_boundary": (
+                        "Approved evidence refs are reviewer context, not a machine-enforced evidence-set gate."
+                    ),
                     "owner_review_suggestion": (
                         {
                             "suggestion_id": suggestion.suggestion_id,
@@ -936,6 +948,42 @@ def _q006_buyer_safe_story(
         ],
         "safe_boundary": "Customer Export stays at 7/8 until this owner decision is complete.",
     }
+
+
+def _approval_owner_label(role: str) -> str:
+    normalized = role.lower()
+    if "security policy" in normalized:
+        return "Security Policy Owner"
+    if "legal" in normalized:
+        return "Legal Reviewer"
+    if "sme" in normalized:
+        return "SME Approver"
+    return role.replace("-", " ").title()
+
+
+def _approval_allowed_wording(
+    *,
+    item_id: str,
+    approval_valid: bool,
+    approval_scope: str,
+) -> str:
+    if not approval_valid:
+        return "No customer wording is approved yet."
+    if item_id == "Q-002":
+        return "SOC 2 summary availability and bridge-letter sharing for approved prospects."
+    if item_id == "Q-004":
+        return "Bounded region-restricted pilot wording from the legal approval scope."
+    return approval_scope or "Only the scoped approval wording can be used."
+
+
+def _approval_prohibited_wording(item_id: str) -> str:
+    if item_id == "Q-002":
+        return "Do not imply public SOC 2 distribution, certification, or blanket access."
+    if item_id == "Q-004":
+        return "Do not promise unconditional EU-only processing."
+    if item_id == "Q-006":
+        return "Do not commit to an incident-response notification target until policy owner approval."
+    return "Do not expand beyond the recorded approval scope."
 
 
 def _responsibility_queue(

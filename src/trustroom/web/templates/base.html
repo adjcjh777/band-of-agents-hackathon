@@ -555,6 +555,55 @@
         background: #f8faf5;
       }
 
+      .approval-workbench {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+      }
+
+      .approval-product-card {
+        display: grid;
+        gap: 9px;
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--green);
+        border-radius: 8px;
+        background: #fbfcf8;
+      }
+
+      .approval-product-card.blocked {
+        border-left-color: var(--red);
+        background: #fff8f6;
+      }
+
+      .approval-product-card h3,
+      .approval-product-card p {
+        overflow-wrap: anywhere;
+      }
+
+      .approval-field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .approval-field {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .approval-field p {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
       .appendix-detail,
       .suggestion-detail {
         display: grid;
@@ -1069,7 +1118,8 @@
         .milestone-grid,
         .item-trace-grid,
         .buyer-story-steps,
-        .queue-meta {
+        .queue-meta,
+        .approval-field-grid {
           grid-template-columns: 1fr;
         }
       }
